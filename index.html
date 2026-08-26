@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f6f3">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>海岛火山之旅 · 2026.9.25–10.07</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --card: #fff;
+      --text: #1c1917;
+      --muted: #78716c;
+      --line: #e7e5e4;
+      --accent: #1d4ed8;
+      --komodo: #0f766e;
+      --bali: #0369a1;
+      --java: #b91c1c;
+      --warn: #c2410c;
+      --ok: #15803d;
+      --safe: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      font-size: 15px;
+      padding-bottom: calc(72px + var(--safe));
+    }
+    header {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(244,241,234,.92);
+      backdrop-filter: blur(12px);
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .app { min-height: 100vh; }
+    header h1 { font-size: 17px; font-weight: 600; }
+    header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .wrap { padding: 12px 14px 8px; max-width: 720px; margin: 0 auto; }
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 2px rgba(28,25,23,.04);
+    }
+    .kicker { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; }
+    .next { font-size: 20px; font-weight: 700; margin: 4px 0 6px; }
+    .chip {
+      display: inline-block; font-size: 11px; font-weight: 650;
+      padding: 2px 8px; border-radius: 99px; margin-right: 4px;
+    }
+    .chip-komodo { background: #ccfbf1; color: var(--komodo); }
+    .chip-bali { background: #e0f2fe; color: var(--bali); }
+    .chip-java { background: #fee2e2; color: var(--java); }
+    .chip-transit { background: #f5f5f4; color: #57534e; }
+    .chip-skip { background: #ffedd5; color: var(--warn); }
+    .chip-must { background: #dcfce7; color: var(--ok); }
+    .warn {
+      background: #fff7ed; color: #9a3412; border-radius: 10px;
+      padding: 10px 12px; font-size: 13px; margin-top: 8px;
+    }
+    .row {
+      display: grid; grid-template-columns: 52px 1fr;
+      gap: 8px; padding: 8px 0; border-top: 1px solid #f5f5f4;
+    }
+    .row:first-of-type { border-top: none; }
+    .t { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--muted); padding-top: 2px; }
+    .title { font-weight: 600; font-size: 14px; }
+    .note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .hl { color: var(--warn); }
+    .memo { color: var(--ok); }
+    .day-btn {
+      width: 100%; text-align: left; background: var(--card); border: 0;
+      border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .day-btn .d { font-weight: 800; color: var(--accent); min-width: 42px; font-size: 13px; }
+    .day-btn .ttl { flex: 1; font-weight: 600; font-size: 14px; }
+    .filters { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; }
+    .filters button {
+      border: 0; background: #e7e5e4; color: #44403c;
+      border-radius: 99px; padding: 6px 12px; font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .filters button.on { background: #1c1917; color: #fff; }
+    .check { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid #f5f5f4; }
+    .check:first-of-type { border-top: none; }
+    .check input { margin-top: 3px; width: 18px; height: 18px; }
+    .check.done .lab { color: var(--muted); text-decoration: line-through; }
+    textarea {
+      width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px; font: inherit; resize: vertical; background: #fafaf9;
+    }
+    .hint { font-size: 12px; color: var(--muted); margin: 6px 0 10px; }
+    nav {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      background: #fff; border-top: 1px solid var(--line);
+      padding-bottom: var(--safe);
+    }
+    nav button {
+      border: 0; background: none; padding: 8px 0 6px; font-size: 11px; color: var(--muted); font-weight: 600;
+    }
+    nav button.on { color: var(--accent); }
+    .page { display: none; }
+    .page.on { display: block; }
+    .empty { color: var(--muted); font-size: 13px; padding: 8px 0; }
+
+    @media (min-width: 800px) {
+      body { padding-bottom: 24px; }
+      .app {
+        max-width: 720px;
+        margin: 24px auto;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(28,25,23,.06);
+      }
+      header { position: static; }
+      nav {
+        position: static;
+        border-top: none;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0;
+      }
+      nav button { font-size: 13px; padding: 12px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>海岛火山之旅</h1>
+    <p>2026.9.25 – 10.07 · 科莫多 → 巴厘 → 爪哇 · 只读行程</p>
+  </header>
+
+  <nav>
+    <button class="on" data-page="today">今日</button>
+    <button data-page="trip">行程</button>
+    <button data-page="prep">准备</button>
+    <button data-page="note">备忘</button>
+  </nav>
+
+  <main class="wrap">
+    <section id="page-today" class="page on"></section>
+    <section id="page-trip" class="page"></section>
+    <section id="page-prep" class="page"></section>
+    <section id="page-note" class="page"></section>
+  </main>
+</div>
+
+<script>
+const START = new Date(2026, 8, 25);
+const END = new Date(2026, 9, 7);
+const KEY_PREP = "trip2026-prep";
+const KEY_NOTE = "trip2026-note";
+
+const days = [
+  { date:"9.25", iso:"2026-09-25", title:"北京 → 吉隆坡", phase:"transit", events:[
+    { t:"08:00", title:"北京机场出发", note:"护照、签证、行程单；提前3小时", kind:"must" },
+    { t:"14:30", title:"抵达吉隆坡，入住市区", note:"倒时差休整", kind:"hl" },
+    { t:"18:00", title:"市区晚餐", note:"兑换少量马币", kind:"must" }
+  ]},
+  { date:"9.26", iso:"2026-09-26", title:"吉隆坡 → 科莫多", phase:"komodo", events:[
+    { t:"08:00", title:"酒店退房", note:"检查行李", kind:"must" },
+    { t:"10:00", title:"飞 Labuan Bajo", note:"俯瞰海岛", kind:"hl" },
+    { t:"14:00", title:"入住豪华酒店", note:"仅1晚，确认行李寄存", kind:"must" },
+    { t:"15:00", title:"泳池 / 海边躺平", note:"回血", kind:"hl" },
+    { t:"18:30", title:"酒店晚餐", note:"预约次日早餐", kind:"must" }
+  ]},
+  { date:"9.27", iso:"2026-09-27", title:"酒店休闲 · 蝙蝠日落", phase:"komodo", events:[
+    { t:"全天", title:"豪华酒店放松", note:"瑜伽 / 皮划艇", kind:"hl" },
+    { t:"14:00", title:"退房，行李寄存", note:"贵重物品随身", kind:"must" },
+    { t:"15:00", title:"Kalong 岛蝙蝠半日游", note:"万只蝙蝠 + 海上日落", kind:"hl" },
+    { t:"18:30", title:"回 LB 镇", note:"驱蚊液、薄外套", kind:"must" },
+    { t:"19:00", title:"入住码头附近酒店", note:"方便次日接送", kind:"must" },
+    { t:"19:30", title:"本地海鲜", note:"", kind:"hl" }
+  ]},
+  { date:"9.28", iso:"2026-09-28", title:"科莫多全日精华游", phase:"komodo", events:[
+    { t:"06:00", title:"接送至码头", note:"速干衣、浴巾、防晒", kind:"must" },
+    { t:"06:30", title:"全日游出发", note:"帕达尔 / 粉红沙滩 / Manta", kind:"hl" },
+    { t:"08:00", title:"帕达尔岛徒步", note:"四色海湾", kind:"hl" },
+    { t:"09:30", title:"粉红沙滩浮潜", note:"船上提供装备", kind:"must" },
+    { t:"11:00", title:"林卡岛看科莫多龙", note:"跟向导，勿靠近", kind:"must" },
+    { t:"14:00", title:"Manta Point", note:"近距离看魔鬼鱼", kind:"hl" },
+    { t:"15:30", title:"海龟湾浮潜", note:"不摸珊瑚和生物", kind:"must" },
+    { t:"16:30", title:"回酒店冲洗", note:"冲盐分、换衣服", kind:"must" }
+  ]},
+  { date:"9.29", iso:"2026-09-29", title:"科莫多 → 库塔", phase:"bali", events:[
+    { t:"08:00", title:"早餐退房", note:"提前联系送机", kind:"must" },
+    { t:"12:00", title:"飞登巴萨", note:"免签，备入境卡", kind:"must" },
+    { t:"14:30", title:"接机入住库塔", note:"包车直达", kind:"must" },
+    { t:"16:30", title:"首次冲浪", note:"零基础、教练带教", kind:"hl" },
+    { t:"19:00", title:"休息拉伸", note:"", kind:"must" }
+  ]},
+  { date:"9.30", iso:"2026-09-30", title:"库塔冲浪 → 乌布", phase:"bali", events:[
+    { t:"07:30", title:"海景早餐", note:"", kind:"hl" },
+    { t:"08:30", title:"上午冲浪", note:"防水防晒", kind:"must" },
+    { t:"15:00", title:"下午冲浪", note:"可放弃，留给考证体力", kind:"skip" },
+    { t:"17:30", title:"库塔退房", note:"打包去乌布", kind:"must" },
+    { t:"18:30", title:"包车乌布入住", note:"住1晚，含本地课", kind:"must" },
+    { t:"20:00", title:"稻田景观晚餐", note:"", kind:"hl" }
+  ]},
+  { date:"10.01", iso:"2026-10-01", title:"乌布体验 → 图兰本", phase:"bali", events:[
+    { t:"09:00", title:"有机农场烹饪课", note:"采香料做巴厘菜", kind:"hl" },
+    { t:"12:00", title:"自制午餐", note:"课程含食材", kind:"must" },
+    { t:"14:00", title:"木雕 / 咖啡二选一", note:"作品可带走", kind:"hl" },
+    { t:"16:30", title:"包车图兰本", note:"单向北上", kind:"hl" },
+    { t:"19:00", title:"入住潜店旁", note:"早睡储备考证", kind:"must" }
+  ]},
+  { date:"10.02", iso:"2026-10-02", title:"OW 考证 Day 1", phase:"bali", events:[
+    { t:"08:00", title:"海边早餐", note:"", kind:"hl" },
+    { t:"09:00", title:"理论复习 + 装备", note:"eLearning 应已完成", kind:"must" },
+    { t:"10:30", title:"平静水域训练", note:"岸潜，不晕船", kind:"hl" },
+    { t:"14:00", title:"强化练习", note:"自由号浅区", kind:"hl" }
+  ]},
+  { date:"10.03", iso:"2026-10-03", title:"OW Day 2 → 罗威纳", phase:"bali", events:[
+    { t:"08:00", title:"早餐", note:"提前换好潜水服", kind:"must" },
+    { t:"09:00", title:"开放水域第1潜", note:"自由号沉船", kind:"hl" },
+    { t:"11:00", title:"开放水域第2潜", note:"完成考核", kind:"must" },
+    { t:"14:00", title:"领 OW 证书", note:"证书妥善保管", kind:"must" },
+    { t:"15:30", title:"包车罗威纳", note:"北部沿海，不经乌布", kind:"must" },
+    { t:"19:00", title:"晚餐休息", note:"20点前睡", kind:"must" }
+  ]},
+  { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java", events:[
+    { t:"04:30", title:"出海追海豚", note:"可放弃，优先保证宜珍体力", kind:"skip" },
+    { t:"06:00", title:"海上日出", note:"薄外套", kind:"hl" },
+    { t:"10:00", title:"去 Gilimanuk 码头", note:"船票提前订", kind:"must" },
+    { t:"11:30", title:"轮渡去外南梦", note:"", kind:"hl" },
+    { t:"14:30", title:"宜珍山脚补觉", note:"晕车药、山路颠簸", kind:"must" },
+    { t:"22:00", title:"起床整装", note:"头灯、杖、外套、口罩", kind:"must" }
+  ]},
+  { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java", events:[
+    { t:"01:00", title:"徒步宜珍", note:"慢慢走，留体力", kind:"must" },
+    { t:"04:00", title:"蓝火 + 硫磺湖", note:"全球稀有", kind:"hl" },
+    { t:"08:30", title:"回酒店冲洗", note:"换衣服", kind:"must" },
+    { t:"11:00", title:"包车布罗莫", note:"路上停一次休息", kind:"must" },
+    { t:"18:00", title:"山脚入住晚餐", note:"", kind:"hl" }
+  ]},
+  { date:"10.06", iso:"2026-10-06", title:"布罗莫 · 赛武 · 泗水", phase:"java", events:[
+    { t:"03:30", title:"吉普去观景台", note:"厚外套", kind:"must" },
+    { t:"05:30", title:"火山日出 + 云海", note:"", kind:"hl" },
+    { t:"07:00", title:"火山口徒步", note:"远离边缘", kind:"must" },
+    { t:"13:00", title:"赛武瀑布", note:"15点关门；深入玩水可放弃", kind:"skip" },
+    { t:"15:00", title:"出发泗水", note:"", kind:"must" },
+    { t:"18:00", title:"市区酒店", note:"消除赶机风险", kind:"must" },
+    { t:"19:00", title:"市集 + 爪哇餐", note:"早睡", kind:"must" }
+  ]},
+  { date:"10.07", iso:"2026-10-07", title:"泗水 → 北京", phase:"transit", events:[
+    { t:"08:00", title:"自然醒早餐", note:"不赶场", kind:"hl" },
+    { t:"10:00", title:"去泗水机场", note:"车程约30分钟", kind:"must" },
+    { t:"12:00", title:"飞吉隆坡转机", note:"提前2小时；联程不取行李", kind:"must" },
+    { t:"22:00", title:"抵达北京", note:"检查行李", kind:"must" }
+  ]}
+];
+
+const prep = [
+  { id:"pass", g:"证件", t:"护照、签证/入境卡、机票行程单" },
+  { id:"mdac", g:"证件", t:"马来西亚中转申报（MDAC 等，出发前再核一次）" },
+  { id:"ins", g:"证件", t:"旅行险覆盖水肺潜水（OW 训练深度）和火山徒步" },
+  { id:"cash", g:"钱", t:"备印尼盾现金：科莫多、图兰本、宜珍一带刷卡不便" },
+  { id:"kl", g:"交通", t:"北京↔吉隆坡↔科莫多 / 泗水联程机票确认" },
+  { id:"car", g:"交通", t:"巴厘/爪哇包车：库塔、乌布、图兰本、罗威纳、Gilimanuk、宜珍、布罗莫、泗水" },
+  { id:"ferry", g:"交通", t:"10.04 Gilimanuk 轮渡票" },
+  { id:"komodo", g:"活动", t:"科莫多全日游 + Kalong 蝙蝠半日游（旺季提前1–2周）" },
+  { id:"surf", g:"活动", t:"库塔冲浪教练（9.30下午可减掉）" },
+  { id:"dive", g:"潜水", t:"图兰本潜店：中文教练或1对2；确认 10.02–10.03 两天能拿证" },
+  { id:"el", g:"潜水", t:"两人 PADI eLearning（中文）10.02 前学完" },
+  { id:"swim", g:"潜水", t:"出发前测：200m 游泳或 300m 浮潜 + 10分钟漂浮" },
+  { id:"ijen", g:"火山", t:"宜珍向导/蓝火政策、防毒面具；布罗莫吉普" },
+  { id:"bag1", g:"行李", t:"科莫多：速干、reef-safe防晒、驱蚊、薄外套" },
+  { id:"bag2", g:"行李", t:"冲浪：防水防晒、芦荟胶" },
+  { id:"bag3", g:"行李", t:"潜水：泳镜/个人咬嘴（其余可租）" },
+  { id:"bag4", g:"行李", t:"火山：头灯、保暖中层、口罩、登山杖、脏衣袋" }
+];
+
+const phaseName = { komodo:"科莫多", bali:"巴厘", java:"爪哇", transit:"中转" };
+const phaseChip = p => `<span class="chip chip-${p}">${phaseName[p]}</span>`;
+
+function todayISO() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
+}
+function parseISO(iso){ const [y,m,d]=iso.split("-").map(Number); return new Date(y,m-1,d); }
+function diffDays(a,b){ return Math.round((parseISO(b)-parseISO(a))/86400000); }
+
+function currentDay() {
+  const iso = todayISO();
+  const found = days.find(d => d.iso === iso);
+  if (found) return { mode:"during", day: found };
+  if (iso < days[0].iso) return { mode:"before", day: days[0], left: diffDays(iso, days[0].iso) };
+  return { mode:"after", day: days[days.length - 1] };
+}
+
+function nextEvent(day) {
+  if (!day) return null;
+  const now = new Date();
+  const iso = todayISO();
+  if (day.iso !== iso) return day.events[0];
+  const hm = now.getHours()*60 + now.getMinutes();
+  for (const e of day.events) {
+    if (e.t === "全天") continue;
+    const [h,m] = e.t.split(":").map(Number);
+    if (h*60 + m >= hm - 20) return e;
+  }
+  return day.events[day.events.length - 1];
+}
+
+function eventRows(events) {
+  return events.map(e => `
+    <div class="row">
+      <div class="t">${e.t}</div>
+      <div>
+        <div class="title">${e.title} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
+        ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${e.note}</div>`:""}
+      </div>
+    </div>`).join("");
+}
+
+function renderToday() {
+  const st = currentDay();
+  const box = document.getElementById("page-today");
+  if (st.mode === "before") {
+    box.innerHTML = `
+      <div class="card">
+        <div class="kicker">出发倒计时</div>
+        <div class="next">还有 ${st.left} 天</div>
+        <p class="hint">9.25 北京出发。行前先把「准备」里的未完成项勾掉。</p>
+        ${phaseChip("transit")}${phaseChip("komodo")}${phaseChip("bali")}${phaseChip("java")}
+      </div>
+      <div class="card">
+        <div class="kicker">第一天</div>
+        <div class="title" style="margin:6px 0">${st.day.date} ${st.day.title}</div>
+        ${eventRows(st.day.events)}
+      </div>`;
+    return;
+  }
+  if (st.mode === "after") {
+    box.innerHTML = `<div class="card"><div class="kicker">行程已结束</div><div class="next">到北京了</div><p class="hint">需要回顾时去「行程」翻天看。</p></div>`;
+    return;
+  }
+  const d = st.day;
+  const nx = nextEvent(d);
+  const idx = days.indexOf(d);
+  const tomorrow = days[idx+1];
+  const hard = ["10.04","10.05","10.06"].includes(d.date);
+  box.innerHTML = `
+    <div class="card">
+      <div class="kicker">${d.iso} · ${d.date}</div>
+      <div class="next">${d.title}</div>
+      ${phaseChip(d.phase)}
+      ${hard?`<div class="warn">这三天连续熬夜，是全程瓶颈。海豚 / 赛武深入玩水都可以放弃，优先睡够、保证宜珍和布罗莫。</div>`:""}
+    </div>
+    <div class="card">
+      <div class="kicker">下一步</div>
+      <div class="next" style="font-size:18px">${nx.t} ${nx.title}</div>
+      ${nx.note?`<div class="note">${nx.note}</div>`:""}
+    </div>
+    <div class="card">
+      <div class="kicker">当天安排</div>
+      ${eventRows(d.events)}
+    </div>
+    ${tomorrow?`<div class="card"><div class="kicker">明天早起</div><div class="title">${tomorrow.date} ${tomorrow.title}</div><div class="note" style="margin-top:6px">${tomorrow.events[0].t} ${tomorrow.events[0].title} · ${tomorrow.events[0].note||""}</div></div>`:""}`;
+}
+
+function renderTrip(filter="all") {
+  const box = document.getElementById("page-trip");
+  box.innerHTML = `
+    <div class="filters">
+      ${["all","komodo","bali","java","transit"].map(p=>`<button data-f="${p}" class="${filter===p?"on":""}">${p==="all"?"全部":phaseName[p]}</button>`).join("")}
+    </div>
+    ${days.filter(d=>filter==="all"||d.phase===filter).map((d,i)=>`
+      <button class="day-btn" data-i="${days.indexOf(d)}">
+        <span class="d">${d.date}</span>
+        <span class="ttl">${d.title}</span>
+        ${phaseChip(d.phase)}
+      </button>
+      <div class="card" id="day-${days.indexOf(d)}" style="display:none">${eventRows(d.events)}</div>
+    `).join("")}`;
+  box.querySelectorAll("[data-f]").forEach(b => b.onclick = () => renderTrip(b.dataset.f));
+  box.querySelectorAll(".day-btn").forEach(b => b.onclick = () => {
+    const el = document.getElementById("day-"+b.dataset.i);
+    el.style.display = el.style.display==="none" ? "block" : "none";
+  });
+}
+
+function loadPrep(){ try { return JSON.parse(localStorage.getItem(KEY_PREP)||"{}"); } catch { return {}; } }
+function savePrep(s){ localStorage.setItem(KEY_PREP, JSON.stringify(s)); }
+
+function renderPrep() {
+  const st = loadPrep();
+  const groups = [...new Set(prep.map(p=>p.g))];
+  const box = document.getElementById("page-prep");
+  const left = prep.filter(p=>!st[p.id]).length;
+  box.innerHTML = `
+    <div class="card">
+      <div class="kicker">行前待办</div>
+      <div class="next" style="font-size:18px">还剩 ${left} / ${prep.length} 项</div>
+      <p class="hint">勾选只存在这台电脑/手机，朋友打开同一链接看不到你的勾选。酒店确认号、护照号不要写在分享页。</p>
+    </div>
+    ${groups.map(g=>`
+      <div class="card">
+        <div class="kicker">${g}</div>
+        ${prep.filter(p=>p.g===g).map(p=>`
+          <label class="check ${st[p.id]?"done":""}">
+            <input type="checkbox" data-id="${p.id}" ${st[p.id]?"checked":""}>
+            <span class="lab">${p.t}</span>
+          </label>`).join("")}
+      </div>`).join("")}`;
+  box.querySelectorAll("input").forEach(inp => inp.onchange = () => {
+    const s = loadPrep(); s[inp.dataset.id] = inp.checked; savePrep(s); renderPrep();
+  });
+}
+
+function renderNote() {
+  const box = document.getElementById("page-note");
+  box.innerHTML = `
+    <div class="card">
+      <div class="kicker">私密备忘</div>
+      <p class="hint">写在下面的内容只保存在这台电脑/手机，刷新还在，但朋友看不到。若要让朋友看到新安排，告诉我改网页后重新发布。</p>
+      <textarea id="noteBox" placeholder="确认号、花费、身体情况、和对象的分工……">${localStorage.getItem(KEY_NOTE)||""}</textarea>
+    </div>
+    <div class="card">
+      <div class="kicker">给朋友看的公开说明</div>
+      <p class="note">这是只读行程页：路线、每天几点干什么、哪些项目可以放弃。不含证件号和订单号。</p>
+      <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。可放弃：9.30下午冲浪、10.04追海豚、10.06赛武深入玩水。</p>
+      <p class="note" style="margin-top:8px">OW 考证：图兰本 10.02–10.03，建议中文教练 + 出发前用中文 eLearning。</p>
+    </div>`;
+  const ta = document.getElementById("noteBox");
+  ta.oninput = () => localStorage.setItem(KEY_NOTE, ta.value);
+}
+
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+    btn.classList.add("on");
+    document.getElementById("page-"+btn.dataset.page).classList.add("on");
+    window.scrollTo(0,0);
+  };
+});
+
+try { renderToday(); } catch (e) { document.getElementById("page-today").innerHTML = '<div class="card">今日页加载失败，请点「行程」查看。</div>'; }
+try { renderTrip(); } catch (e) {}
+try { renderPrep(); } catch (e) {}
+try { renderNote(); } catch (e) {}
+</script>
+</body>
+</html>
