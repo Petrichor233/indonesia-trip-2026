@@ -161,7 +161,13 @@
   </nav>
 
   <main class="wrap">
-    <section id="page-today" class="page on"></section>
+    <section id="page-today" class="page on">
+      <div class="card">
+        <div class="kicker">出发倒计时</div>
+        <div class="next">2026.9.25 北京出发</div>
+        <p class="hint">点下面「行程」可看全部 13 天。若本页一直空白，请强制刷新。</p>
+      </div>
+    </section>
     <section id="page-trip" class="page"></section>
     <section id="page-prep" class="page"></section>
     <section id="page-note" class="page"></section>
@@ -600,16 +606,6 @@ function renderNote() {
   bindGate(box);
   const ta = document.getElementById("noteBox");
   ta.value = cloud.notes || "";
-  ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
-}
-    <div class="card">
-      <div class="kicker">给朋友看的公开说明</div>
-      <p class="note">路线、每天几点干什么、哪些项目可以放弃。不含证件号和订单号。</p>
-      <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。可放弃：9.30下午冲浪、10.04追海豚、10.06赛武深入玩水。</p>
-      <p class="note" style="margin-top:8px">OW 考证：图兰本 10.02–10.03，建议中文教练 + 出发前用中文 eLearning。</p>
-    </div>`;
-  bindGate(box);
-  const ta = document.getElementById("noteBox");
   ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
 }
 
