@@ -97,6 +97,19 @@
       padding: 10px; font: inherit; resize: vertical; background: #fafaf9;
     }
     .hint { font-size: 12px; color: var(--muted); margin: 6px 0 10px; }
+    .btn {
+      border: 0; background: #1c1917; color: #fff; border-radius: 10px;
+      padding: 9px 12px; font: inherit; font-weight: 600; font-size: 13px;
+    }
+    .btn.sec { background: #e7e5e4; color: #1c1917; }
+    .btn:disabled { opacity: .45; }
+    .field {
+      width: 100%; border: 1px solid var(--line); border-radius: 10px;
+      padding: 9px 10px; font: inherit; background: #fafaf9; margin-bottom: 8px;
+    }
+    .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .okline { font-size: 12px; color: var(--ok); }
+    .err { font-size: 12px; color: var(--java); }
     nav {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
       display: grid; grid-template-columns: repeat(4, 1fr);
@@ -137,7 +150,7 @@
 <div class="app">
   <header>
     <h1>海岛火山之旅</h1>
-    <p>2026.9.25 – 10.07 · 科莫多 → 巴厘 → 爪哇 · 只读行程</p>
+    <p>2026.9.25 – 10.07 · 科莫多 → 巴厘 → 爪哇 · 情侣可勾选</p>
   </header>
 
   <nav>
@@ -158,8 +171,14 @@
 <script>
 const START = new Date(2026, 8, 25);
 const END = new Date(2026, 9, 7);
-const KEY_PREP = "trip2026-prep";
-const KEY_NOTE = "trip2026-note";
+const KEY_WHO = "trip2026-who";
+const KEY_SID = "trip2026-sid";
+const KEY_UNLOCK = "trip2026-unlock";
+
+let cloud = { prep: {}, notes: "", pinHash: "", updatedAt: "", by: "" };
+let canEdit = false;
+let syncing = false;
+let saveTimer = null;
 
 const days = [
   { date:"9.25", iso:"2026-09-25", title:"北京 → 吉隆坡", phase:"transit", events:[
@@ -390,50 +409,208 @@ function renderTrip(filter="all") {
   });
 }
 
-function loadPrep(){ try { return JSON.parse(localStorage.getItem(KEY_PREP)||"{}"); } catch { return {}; } }
-function savePrep(s){ localStorage.setItem(KEY_PREP, JSON.stringify(s)); }
+function sid() {
+  const q = new URLSearchParams(location.search).get("sid");
+  return (q || localStorage.getItem(KEY_SID) || "").trim();
+}
+function blobUrl(id) { return "https://jsonblob.com/api/jsonBlob/" + id; }
+function who() { return localStorage.getItem(KEY_WHO) || ""; }
+
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("island-volcano-2026|" + pin));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function setSid(id) {
+  localStorage.setItem(KEY_SID, id);
+  const u = new URL(location.href);
+  u.searchParams.set("sid", id);
+  history.replaceState({}, "", u);
+}
+
+async function pullCloud() {
+  const id = sid();
+  if (!id) return false;
+  const r = await fetch(blobUrl(id), { headers: { Accept: "application/json" } });
+  if (!r.ok) throw new Error("读取失败 " + r.status);
+  cloud = Object.assign({ prep: {}, notes: "", pinHash: "", updatedAt: "", by: "" }, await r.json());
+  return true;
+}
+
+async function pushCloud() {
+  const id = sid();
+  if (!id) return;
+  cloud.updatedAt = new Date().toISOString();
+  cloud.by = who() || "未署名";
+  const r = await fetch(blobUrl(id), {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(cloud)
+  });
+  if (!r.ok) throw new Error("保存失败 " + r.status);
+}
+
+async function createCloud() {
+  const body = JSON.stringify({ prep: {}, notes: "", pinHash: "", updatedAt: "", by: "" });
+  const r = await fetch("https://jsonblob.com/api/jsonBlob", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body
+  });
+  if (!r.ok) throw new Error("创建失败 " + r.status);
+  const loc = r.headers.get("Location") || r.headers.get("location") || "";
+  const headerId = r.headers.get("X-jsonBlob") || r.headers.get("x-jsonblob") || "";
+  const id = headerId || (loc.match(/jsonBlob\/([^/?#]+)/) || [])[1];
+  if (!id) throw new Error("没有拿到同步码");
+  setSid(id);
+  cloud = { prep: {}, notes: "", pinHash: "", updatedAt: "", by: "" };
+}
+
+function shareLink() {
+  const u = new URL(location.href);
+  if (sid()) u.searchParams.set("sid", sid());
+  return u.toString();
+}
+
+function schedulePush() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    pushCloud().then(() => renderSyncBits()).catch(err => alert(err.message));
+  }, 500);
+}
+
+function renderSyncBits() {
+  document.querySelectorAll("[data-sync]").forEach(el => {
+    el.textContent = cloud.updatedAt
+      ? `上次由 ${cloud.by || "?"} 更新于 ${cloud.updatedAt.replace("T", " ").slice(0, 16)}`
+      : "还没有云端记录";
+  });
+}
+
+function gateCard() {
+  const unlocked = canEdit ? `<p class="okline">已解锁，勾选和备忘会同步给对方。</p>` : "";
+  return `
+    <div class="card">
+      <div class="kicker">情侣同步</div>
+      <div class="title" style="margin:6px 0">${sid() ? "已连接云端" : "还没有共享本"}</div>
+      <p class="hint">你们两人用同一个链接 + 同一口令。朋友没有口令只能看行程和勾选进度，不能改。不要把护照号、证件扫描写进来。</p>
+      <input class="field" id="whoBox" placeholder="你的称呼，例如 小冉 / 对象" value="${who()}">
+      <input class="field" id="pinBox" type="password" placeholder="情侣口令（两人设成一样）">
+      <div class="bar">
+        ${sid() ? `<button class="btn" id="btnUnlock">解锁编辑</button>` : `<button class="btn" id="btnCreate">创建共享并解锁</button>`}
+        ${sid() ? `<button class="btn sec" id="btnCopy">复制情侣链接</button>` : ""}
+      </div>
+      ${unlocked}
+      <p class="hint" data-sync></p>
+      <p class="err" id="syncErr"></p>
+    </div>`;
+}
+
+function bindGate(box) {
+  const whoBox = box.querySelector("#whoBox");
+  if (whoBox) whoBox.onchange = () => localStorage.setItem(KEY_WHO, whoBox.value.trim());
+  const err = (m) => { const el = box.querySelector("#syncErr"); if (el) el.textContent = m; };
+  const afterUnlock = async () => {
+    sessionStorage.setItem(KEY_UNLOCK, "1");
+    canEdit = true;
+    renderPrep();
+    renderNote();
+  };
+  const btnCreate = box.querySelector("#btnCreate");
+  if (btnCreate) btnCreate.onclick = async () => {
+    try {
+      const pin = (box.querySelector("#pinBox").value || "").trim();
+      const name = (box.querySelector("#whoBox").value || "").trim();
+      if (!name) return err("先填称呼");
+      if (pin.length < 4) return err("口令至少 4 位");
+      localStorage.setItem(KEY_WHO, name);
+      await createCloud();
+      canEdit = true;
+      cloud.pinHash = await hashPin(pin);
+      await pushCloud();
+      await afterUnlock();
+    } catch (e) { err(e.message + "。若在国内打不开，把报错发给我换存储。"); }
+  };
+  const btnUnlock = box.querySelector("#btnUnlock");
+  if (btnUnlock) btnUnlock.onclick = async () => {
+    try {
+      const pin = (box.querySelector("#pinBox").value || "").trim();
+      const name = (box.querySelector("#whoBox").value || "").trim();
+      if (!name) return err("先填称呼");
+      if (!pin) return err("输入口令");
+      localStorage.setItem(KEY_WHO, name);
+      await pullCloud();
+      const h = await hashPin(pin);
+      if (cloud.pinHash && cloud.pinHash !== h) return err("口令不对");
+      if (!cloud.pinHash) { cloud.pinHash = h; await pushCloud(); }
+      await afterUnlock();
+    } catch (e) { err(e.message); }
+  };
+  const btnCopy = box.querySelector("#btnCopy");
+  if (btnCopy) btnCopy.onclick = async () => {
+    try { await navigator.clipboard.writeText(shareLink()); btnCopy.textContent = "已复制"; }
+    catch { prompt("复制这个链接发给对方", shareLink()); }
+  };
+  renderSyncBits();
+}
 
 function renderPrep() {
-  const st = loadPrep();
+  const st = cloud.prep || {};
   const groups = [...new Set(prep.map(p=>p.g))];
   const box = document.getElementById("page-prep");
   const left = prep.filter(p=>!st[p.id]).length;
-  box.innerHTML = `
+  box.innerHTML = gateCard() + `
     <div class="card">
       <div class="kicker">行前待办</div>
       <div class="next" style="font-size:18px">还剩 ${left} / ${prep.length} 项</div>
-      <p class="hint">勾选只存在这台电脑/手机，朋友打开同一链接看不到你的勾选。酒店确认号、护照号不要写在分享页。</p>
+      <p class="hint">${canEdit ? "勾选会立刻同步到云端。" : "先解锁才能勾选。未解锁也能看到对方已经勾了什么。"}</p>
     </div>
     ${groups.map(g=>`
       <div class="card">
         <div class="kicker">${g}</div>
         ${prep.filter(p=>p.g===g).map(p=>`
           <label class="check ${st[p.id]?"done":""}">
-            <input type="checkbox" data-id="${p.id}" ${st[p.id]?"checked":""}>
+            <input type="checkbox" data-id="${p.id}" ${st[p.id]?"checked":""} ${canEdit?"":"disabled"}>
             <span class="lab">${p.t}</span>
           </label>`).join("")}
       </div>`).join("")}`;
-  box.querySelectorAll("input").forEach(inp => inp.onchange = () => {
-    const s = loadPrep(); s[inp.dataset.id] = inp.checked; savePrep(s); renderPrep();
+  bindGate(box);
+  box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
+    cloud.prep = cloud.prep || {};
+    cloud.prep[inp.dataset.id] = inp.checked;
+    renderPrep();
+    schedulePush();
   });
 }
 
 function renderNote() {
   const box = document.getElementById("page-note");
-  box.innerHTML = `
+  box.innerHTML = gateCard() + `
     <div class="card">
-      <div class="kicker">私密备忘</div>
-      <p class="hint">写在下面的内容只保存在这台电脑/手机，刷新还在，但朋友看不到。若要让朋友看到新安排，告诉我改网页后重新发布。</p>
-      <textarea id="noteBox" placeholder="确认号、花费、身体情况、和对象的分工……">${localStorage.getItem(KEY_NOTE)||""}</textarea>
+      <div class="kicker">共享备忘</div>
+      <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
+      <textarea id="noteBox" placeholder="花费分摊、潜店 WhatsApp、明早谁带口罩……" ${canEdit?"":"disabled"}></textarea>
     </div>
     <div class="card">
       <div class="kicker">给朋友看的公开说明</div>
-      <p class="note">这是只读行程页：路线、每天几点干什么、哪些项目可以放弃。不含证件号和订单号。</p>
+      <p class="note">路线、每天几点干什么、哪些项目可以放弃。不含证件号和订单号。</p>
       <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。可放弃：9.30下午冲浪、10.04追海豚、10.06赛武深入玩水。</p>
       <p class="note" style="margin-top:8px">OW 考证：图兰本 10.02–10.03，建议中文教练 + 出发前用中文 eLearning。</p>
     </div>`;
+  bindGate(box);
   const ta = document.getElementById("noteBox");
-  ta.oninput = () => localStorage.setItem(KEY_NOTE, ta.value);
+  ta.value = cloud.notes || "";
+  ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
+}
+    <div class="card">
+      <div class="kicker">给朋友看的公开说明</div>
+      <p class="note">路线、每天几点干什么、哪些项目可以放弃。不含证件号和订单号。</p>
+      <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。可放弃：9.30下午冲浪、10.04追海豚、10.06赛武深入玩水。</p>
+      <p class="note" style="margin-top:8px">OW 考证：图兰本 10.02–10.03，建议中文教练 + 出发前用中文 eLearning。</p>
+    </div>`;
+  bindGate(box);
+  const ta = document.getElementById("noteBox");
+  ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
 }
 
 document.querySelectorAll("nav button").forEach(btn => {
@@ -448,8 +625,29 @@ document.querySelectorAll("nav button").forEach(btn => {
 
 try { renderToday(); } catch (e) { document.getElementById("page-today").innerHTML = '<div class="card">今日页加载失败，请点「行程」查看。</div>'; }
 try { renderTrip(); } catch (e) {}
-try { renderPrep(); } catch (e) {}
-try { renderNote(); } catch (e) {}
+
+(async () => {
+  try {
+    if (sid()) {
+      localStorage.setItem(KEY_SID, sid());
+      await pullCloud();
+      if (sessionStorage.getItem(KEY_UNLOCK) === "1") canEdit = true;
+    }
+  } catch (e) { console.warn(e); }
+  try { renderPrep(); } catch (e) {}
+  try { renderNote(); } catch (e) {}
+  setInterval(async () => {
+    if (syncing || document.hidden || !sid()) return;
+    if (document.activeElement && document.activeElement.id === "noteBox") return;
+    syncing = true;
+    try {
+      const prev = JSON.stringify(cloud);
+      await pullCloud();
+      if (JSON.stringify(cloud) !== prev) { renderPrep(); renderNote(); }
+    } catch (e) {}
+    syncing = false;
+  }, 8000);
+})();
 </script>
 </body>
 </html>
