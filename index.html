@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f7f6f3">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>海岛火山之旅 · 2026.9.25–10.07</title>
+  <title>海岛火山之旅 · 2026.9.25–10.8</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -164,7 +164,7 @@
 <div class="app">
   <header>
     <h1>海岛火山之旅</h1>
-    <p>2026.9.25 – 10.07 · 科莫多 → 巴厘 → 爪哇 · 情侣可勾选</p>
+    <p>2026.9.25–10.8 · 科莫多 → 巴厘 → 爪哇 · 情侣可勾选</p>
   </header>
 
   <nav>
@@ -194,7 +194,7 @@
 
 <script>
 const START = new Date(2026, 8, 25);
-const END = new Date(2026, 9, 7);
+const END = new Date(2026, 9, 8);
 const KEY_WHO = "trip2026-who";
 const KEY_SID = "trip2026-sid";
 const KEY_UNLOCK = "trip2026-unlock";
@@ -205,20 +205,24 @@ let syncing = false;
 let saveTimer = null;
 
 const flights = [
-  { date:"9.25", route:"北京 → 吉隆坡", no:"以机票为准", dep:"08:00 北京机场出发", arr:"14:30 抵达吉隆坡", note:"提前 3 小时到机场；带护照、签证、行程单" },
+  { date:"9.25", route:"北京大兴 → 胡志明", no:"VN517", dep:"08:30 北京大兴起飞", arr:"12:35 抵达胡志明", note:"提前 3 小时到大兴机场；护照、签证、行程单；入境越南后衔接飞吉隆坡" },
+  { date:"9.25", route:"胡志明 → 吉隆坡", no:"衔接航班，以机票为准", dep:"下午胡志明起飞", arr:"傍晚抵达吉隆坡", note:"VN517 落地后转机；当晚吉隆坡市区酒店倒时差" },
   { date:"9.26", route:"吉隆坡 → 科莫多 Labuan Bajo", no:"以机票为准", dep:"10:00 起飞", arr:"14:00 抵达", note:"08:00 吉隆坡酒店退房；空中俯瞰海岛" },
   { date:"9.29", route:"科莫多 → 巴厘岛登巴萨", no:"以机票为准", dep:"12:00 起飞", arr:"14:30 接机", note:"08:00 早餐后退房；10:00 去科莫多机场；巴厘免签，备入境卡；包车直达库塔" },
-  { date:"10.07", route:"泗水 → 吉隆坡 → 北京", no:"联程，以机票为准", dep:"12:00 泗水起飞", arr:"15:30 吉隆坡转机 / 22:00 抵达北京", note:"10:00 出发去机场（约 30 分钟）；提前 2 小时值机；联程无需提取行李" }
+  { date:"10.07", route:"泗水 → 胡志明", no:"以机票为准", dep:"午后泗水起飞", arr:"傍晚抵达胡志明", note:"10:00 出发去机场（约 30 分钟）；胡志明过夜，次日回京" },
+  { date:"10.08", route:"胡志明 → 北京大兴", no:"以机票为准", dep:"上午胡志明起飞", arr:"下午抵达北京大兴", note:"胡志明过夜后回京；检查行李" }
 ];
 
 const days = [
-  { date:"9.25", iso:"2026-09-25", title:"北京 → 吉隆坡", phase:"transit", stop:1,
+  { date:"9.25", iso:"2026-09-25", title:"北京 → 胡志明 → 吉隆坡", phase:"transit", stop:1,
     stay:"吉隆坡市区酒店", breakfast:"无（路上/抵达后晚餐）",
-    flight:"08:00 北京机场出发 → 14:30 抵达吉隆坡（航班号以机票为准）",
+    flight:"VN517 08:30 北京大兴 → 12:35 胡志明；下午衔接飞吉隆坡",
     events:[
-    { t:"08:00", title:"北京机场出发", note:"护照、签证、机票行程单；提前 3 小时到机场", kind:"must" },
-    { t:"14:30", title:"抵达吉隆坡，入住市区酒店", note:"市区简单休整，倒时差", kind:"hl" },
-    { t:"18:00", title:"市区晚餐，休息", note:"兑换少量马币，准备次日飞科莫多", kind:"must" }
+    { t:"05:30", title:"出发去北京大兴机场", note:"护照、签证、机票行程单；VN517 提前 3 小时到场", kind:"must" },
+    { t:"08:30", title:"VN517 飞往胡志明", note:"越南航空，北京大兴 → 新山一", kind:"hl" },
+    { t:"12:35", title:"抵达胡志明，衔接飞吉隆坡", note:"过境/入境以机票为准，预留转机时间", kind:"must" },
+    { t:"傍晚", title:"抵达吉隆坡，入住市区酒店", note:"市区简单休整，倒时差", kind:"hl" },
+    { t:"20:00", title:"市区晚餐，休息", note:"兑换少量马币，准备次日飞科莫多", kind:"must" }
   ]},
   { date:"9.26", iso:"2026-09-26", title:"吉隆坡 → 科莫多", phase:"komodo", stop:2,
     stay:"科莫多豪华酒店（仅 1 晚）", breakfast:"抵达日无早；当晚预约次日酒店早餐时间",
@@ -351,17 +355,25 @@ const days = [
     { t:"13:00", title:"赛武瀑布徒步拍照", note:"15 点关门；深入玩水可放弃", kind:"skip" },
     { t:"15:00", title:"出发前往泗水", note:"赛武瀑布 15 点关门", kind:"must" },
     { t:"18:00", title:"抵达泗水，入住市区酒店", note:"彻底消除赶机风险，市区自由休整", kind:"must" },
-    { t:"19:00", title:"逛本地市集，爪哇美食，晚餐休息", note:"早睡，准备次日返程", kind:"must" }
+    { t:"19:00", title:"逛本地市集，爪哇美食，晚餐休息", note:"早睡，准备次日飞胡志明", kind:"must" }
   ]},
-  { date:"10.07", iso:"2026-10-07", title:"泗水 → 北京", phase:"transit", stop:14,
-    stay:"返程无酒店", breakfast:"08:00 自然醒，酒店早餐",
-    flight:"12:00 泗水→吉隆坡；15:30 转机回京；22:00 抵京（联程、航班号以机票为准）",
+  { date:"10.07", iso:"2026-10-07", title:"泗水 → 胡志明过夜", phase:"transit", stop:13,
+    stay:"胡志明市区/机场酒店（过夜）", breakfast:"08:00 自然醒，泗水酒店早餐",
+    flight:"午后泗水起飞 → 傍晚抵达胡志明（航班号以机票为准）",
     events:[
     { t:"08:00", title:"自然醒，酒店早餐", note:"从容不迫，无赶场压力", kind:"hl" },
     { t:"10:00", title:"酒店退房，前往泗水机场", note:"市区到机场约 30 分钟，缓冲充足", kind:"must" },
-    { t:"12:00", title:"泗水乘机飞往吉隆坡", note:"提前 2 小时到机场，办理值机", kind:"must" },
-    { t:"15:30", title:"抵达吉隆坡，转机回京", note:"联程机票，无需提取行李", kind:"must" },
-    { t:"22:00", title:"抵达北京，行程结束", note:"检查行李", kind:"must" }
+    { t:"午后", title:"泗水乘机飞往胡志明", note:"提前 2 小时到机场，办理值机", kind:"must" },
+    { t:"傍晚", title:"抵达胡志明，入住过夜酒店", note:"过境越南，次日回京", kind:"hl" },
+    { t:"21:00", title:"晚餐，早睡", note:"预留次日去新山一机场时间", kind:"must" }
+  ]},
+  { date:"10.08", iso:"2026-10-08", title:"胡志明 → 北京", phase:"transit", stop:0,
+    stay:"返程无酒店", breakfast:"酒店/机场简餐",
+    flight:"上午胡志明 → 下午北京大兴（航班号以机票为准）",
+    events:[
+    { t:"上午", title:"胡志明酒店退房，去新山一机场", note:"护照、行程单；预留进城到机场时间", kind:"must" },
+    { t:"上午", title:"乘机飞往北京大兴", note:"越南回京，检查行李额", kind:"hl" },
+    { t:"下午", title:"抵达北京，行程结束", note:"检查行李", kind:"must" }
   ]}
 ];
 
@@ -383,7 +395,8 @@ const bags = [
 ];
 
 const stops = [
-  { id:0,  name:"北京", lat:39.9042, lng:116.4074, phase:"transit", date:"9.25 / 10.07", desc:"出发与返程" },
+  { id:0,  name:"北京", lat:39.9042, lng:116.4074, phase:"transit", date:"9.25 / 10.08", desc:"出发与返程" },
+  { id:13, name:"胡志明", lat:10.7769, lng:106.7009, phase:"transit", date:"9.25 / 10.07–08", desc:"VN517 入境；返程过夜" },
   { id:1,  name:"吉隆坡", lat:3.1390, lng:101.6869, phase:"transit", date:"9.25–26", desc:"倒时差，兑换马币" },
   { id:2,  name:"科莫多 LB", lat:-8.4961, lng:119.8877, phase:"komodo", date:"9.26–28", desc:"豪华酒店 · 蝙蝠日落 · 全日精华游" },
   { id:3,  name:"库塔", lat:-8.7183, lng:115.1686, phase:"bali", date:"9.29–30", desc:"冲浪，海景酒店" },
@@ -395,9 +408,9 @@ const stops = [
   { id:9,  name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.04–05", desc:"通宵徒步，蓝火" },
   { id:10, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.05–06", desc:"吉普观日出" },
   { id:11, name:"赛武瀑布", lat:-8.1583, lng:112.9197, phase:"java", date:"10.06", desc:"15点关门" },
-  { id:12, name:"泗水", lat:-7.2575, lng:112.7521, phase:"java", date:"10.06–07", desc:"市区休整返程" }
+  { id:12, name:"泗水", lat:-7.2575, lng:112.7521, phase:"java", date:"10.06–07", desc:"市区休整后飞胡志明" }
 ];
-const flightSegs = [[0,1],[1,2],[2,3],[12,1],[1,0]];
+const flightSegs = [[0,13],[13,1],[1,2],[2,3],[12,13],[13,0]];
 const groundSegs = [[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#0369a1", java:"#b91c1c", transit:"#78716c" };
 
@@ -406,7 +419,7 @@ const prep = [
   { id:"mdac", g:"证件", t:"马来西亚中转申报（MDAC 等，出发前再核一次）" },
   { id:"ins", g:"证件", t:"旅行险覆盖水肺潜水（OW 训练深度）和火山徒步" },
   { id:"cash", g:"钱", t:"备印尼盾现金：科莫多、图兰本、宜珍一带刷卡不便" },
-  { id:"kl", g:"交通", t:"北京↔吉隆坡↔科莫多 / 泗水联程机票确认" },
+  { id:"kl", g:"交通", t:"VN517 北京大兴→胡志明，以及胡志明↔吉隆坡 / 科莫多 / 泗水衔接机票确认" },
   { id:"car", g:"交通", t:"巴厘/爪哇包车：库塔、乌布、图兰本、罗威纳、Gilimanuk、宜珍、布罗莫、泗水" },
   { id:"ferry", g:"交通", t:"10.04 Gilimanuk 轮渡票" },
   { id:"komodo", g:"活动", t:"科莫多全日游 + Kalong 蝙蝠半日游（旺季提前1–2周）" },
@@ -475,7 +488,7 @@ function renderToday() {
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">还有 ${st.left} 天</div>
-        <p class="hint">9.25 北京出发。航班时刻见下；航班号以机票为准（飞书页我无法登录核对编号）。</p>
+        <p class="hint">9.25 北京出发。去程 VN517 北京大兴 → 胡志明；其余衔接以机票为准。</p>
         ${phaseChip("transit")}${phaseChip("komodo")}${phaseChip("bali")}${phaseChip("java")}
         ${dayMeta(st.day)}
       </div>
@@ -524,7 +537,7 @@ function renderTrip(filter="all") {
   box.innerHTML = `
     <div class="card">
       <div class="kicker">航班速查</div>
-      <p class="hint">时刻来自你确认过的行程表。航班号以机票为准，没有编造编号。</p>
+      <p class="hint">去程已写入 VN517（北京大兴 → 胡志明）。其余衔接航班号以机票为准。</p>
       ${flights.map(f=>`<div class="flight"><div class="title">${f.date} ${f.route}</div><div class="note memo">${f.no}</div><div class="note">${f.dep} → ${f.arr}</div><div class="note">${f.note}</div></div>`).join("")}
     </div>
     <div class="filters">
@@ -555,7 +568,7 @@ function renderMap() {
     box.innerHTML = `
       <div class="card">
         <div class="kicker">路线</div>
-        <div class="next" style="font-size:18px">北京 → 吉隆坡 → 科莫多 → 巴厘 → 爪哇 → 泗水 → 北京</div>
+        <div class="next" style="font-size:18px">北京 → 胡志明 → 吉隆坡 → 科莫多 → 巴厘 → 爪哇 → 泗水 → 胡志明 → 北京</div>
         <div class="map-legend">
           <span><i class="legend-line" style="background:#2563eb;background-image:repeating-linear-gradient(90deg,#2563eb 0 6px,transparent 6px 10px)"></i>虚线航班</span>
           <span><i class="legend-line" style="background:#0f766e"></i>实线陆路/轮渡</span>
