@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f7f6f3">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>海岛火山之旅 · 2026.9.25–10.8</title>
+  <title>印尼双节旅行 · 2026.9.25–10.8</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -62,6 +62,9 @@
     .chip-transit { background: #f5f5f4; color: #57534e; }
     .chip-skip { background: #ffedd5; color: var(--warn); }
     .chip-must { background: #dcfce7; color: var(--ok); }
+    .chip-ok { background: #dcfce7; color: var(--ok); }
+    .chip-wait { background: #ffedd5; color: var(--warn); }
+    .chip-off { background: #e7e5e4; color: #57534e; }
     .warn {
       background: #fff7ed; color: #9a3412; border-radius: 10px;
       padding: 10px 12px; font-size: 13px; margin-top: 8px;
@@ -126,6 +129,8 @@
     .kv { font-size: 13px; margin-top: 6px; color: var(--text); }
     .kv b { color: var(--muted); font-weight: 600; margin-right: 6px; }
     .flight { border-left: 3px solid var(--accent); padding: 8px 0 8px 10px; margin: 8px 0; }
+    .hotel { border-left: 3px solid var(--komodo); padding: 8px 0 8px 10px; margin: 8px 0; }
+    .act { border-left: 3px solid var(--bali); padding: 8px 0 8px 10px; margin: 8px 0; }
     .map-box { height: 52vh; min-height: 280px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
     .map-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; font-size: 12px; color: var(--muted); margin: 8px 0 12px; }
     .legend-line { display: inline-block; width: 22px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
@@ -163,8 +168,8 @@
 <body>
 <div class="app">
   <header>
-    <h1>海岛火山之旅</h1>
-    <p>2026.9.25–10.8 · 科莫多 → 巴厘 → 爪哇 · 情侣可勾选</p>
+    <h1>印尼双节旅行</h1>
+    <p>2026.9.25–10.8 · 14天 · WANG/QI · RAN/WEIJUN</p>
   </header>
 
   <nav>
@@ -180,7 +185,7 @@
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">2026.9.25 北京出发</div>
-        <p class="hint">点「行程」看航班/酒店，「地图」看路线。</p>
+        <p class="hint">点「行程」看航班/酒店，「准备」看待办和行李。</p>
       </div>
     </section>
     <section id="page-trip" class="page"></section>
@@ -205,233 +210,287 @@ let syncing = false;
 let saveTimer = null;
 
 const flights = [
-  { date:"9.25", route:"北京大兴 → 胡志明", no:"VN517", dep:"08:30 北京大兴起飞", arr:"12:35 抵达胡志明", note:"提前 3 小时到大兴机场；护照、签证、行程单；入境越南后衔接飞吉隆坡" },
-  { date:"9.25", route:"胡志明 → 吉隆坡", no:"衔接航班，以机票为准", dep:"下午胡志明起飞", arr:"傍晚抵达吉隆坡", note:"VN517 落地后转机；当晚吉隆坡市区酒店倒时差" },
-  { date:"9.26", route:"吉隆坡 → 科莫多 Labuan Bajo", no:"以机票为准", dep:"10:00 起飞", arr:"14:00 抵达", note:"08:00 吉隆坡酒店退房；空中俯瞰海岛" },
-  { date:"9.29", route:"科莫多 → 巴厘岛登巴萨", no:"以机票为准", dep:"12:00 起飞", arr:"14:30 接机", note:"08:00 早餐后退房；10:00 去科莫多机场；巴厘免签，备入境卡；包车直达库塔" },
-  { date:"10.07", route:"泗水 → 胡志明", no:"以机票为准", dep:"午后泗水起飞", arr:"傍晚抵达胡志明", note:"10:00 出发去机场（约 30 分钟）；胡志明过夜，次日回京" },
-  { date:"10.08", route:"胡志明 → 北京大兴", no:"以机票为准", dep:"上午胡志明起飞", arr:"下午抵达北京大兴", note:"胡志明过夜后回京；检查行李" }
+  { date:"9.25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段" },
+  { date:"9.25", no:"VN679", al:"越南航空", route:"胡志明新山一 T2 → 吉隆坡 T1", dep:"15:25", arr:"18:25", bag:"托运 23KG", book:"去哪儿", note:"同机场 T2 中转；当晚住 T2 附近方便次日亚航" },
+  { date:"9.26", no:"AK310", al:"亚洲航空", route:"吉隆坡 T2 → 科莫多", dep:"10:45", arr:"14:25", bag:"无免费托运（已加购）", book:"去哪儿", note:"两人分单；从 T1 酒店转到 T2" },
+  { date:"9.29", no:"QZ647", al:"印尼亚航", route:"科莫多 → 巴厘岛登巴萨 D", dep:"13:05", arr:"14:20", bag:"以机票为准", book:"去哪儿", note:"抵登巴萨后接机去库塔" },
+  { date:"10.7", no:"QZ322", al:"印尼亚航", route:"泗水朱安达 T2 → 吉隆坡 T2", dep:"11:20", arr:"15:00", bag:"以机票为准", book:"去哪儿", note:"无餐食；机场酒店出发" },
+  { date:"10.7", no:"VN678", al:"越南航空", route:"吉隆坡 T1 → 胡志明新山一 T2", dep:"19:25", arr:"20:15", bag:"托运 23KG", book:"去哪儿", note:"KUL T2 转到 T1，预留 4 小时" },
+  { date:"10.8", no:"VN516", al:"越南航空", route:"胡志明新山一 T2 → 北京大兴", dep:"00:35", arr:"06:30", bag:"托运 23KG", book:"去哪儿", note:"时刻已变更（原 00:45）；SGN 过夜中转不出机场" }
+];
+
+const hotels = [
+  { inn:"9.25", out:"9.26", nights:1, name:"吉隆坡市区酒店（T2附近）", room:"待定", status:"wait", platform:"", note:"待预订；次日 AK310 从 T2 起飞" },
+  { inn:"9.26", out:"9.27", nights:1, name:"Katamaran Hotel & Resort Komodo", room:"豪华海景特大床房", status:"ok", platform:"去哪儿", note:"卡塔马兰；酒店桨板 / 浮潜" },
+  { inn:"9.27", out:"9.29", nights:2, name:"Seaesta Komodo Hostel & Hotel", room:"双人房", status:"ok", platform:"去哪儿", note:"西亚斯塔；不含早餐" },
+  { inn:"9.29", out:"9.30", nights:1, name:"The Kuta Beach Heritage Hotel", room:"经典传统特大床房", status:"ok", platform:"去哪儿", note:"库塔海滩遗产酒店，雅高管理" },
+  { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", room:"—", status:"canceling", platform:"Booking", note:"待退订，勿入住" },
+  { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村" },
+  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅" },
+  { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋" },
+  { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机" }
+];
+
+const acts = [
+  { date:"9.27", name:"科莫多半日游", who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船" },
+  { date:"9.28", name:"科莫多一日跳岛", who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000" },
+  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397" },
+  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707" },
+  { date:"10.2–10.3", name:"OW 潜水考证", who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认" }
 ];
 
 const days = [
-  { date:"9.25", iso:"2026-09-25", title:"北京 → 胡志明 → 吉隆坡", phase:"transit", stop:1,
-    stay:"吉隆坡市区酒店", breakfast:"无（路上/抵达后晚餐）",
-    flight:"VN517 08:30 北京大兴 → 12:35 胡志明；下午衔接飞吉隆坡",
+  { date:"9.25", iso:"2026-09-25", title:"北京 → 胡志明 → 吉隆坡", phase:"transit",
+    stay:"吉隆坡市区酒店（T2附近，待预订）", breakfast:"机上 / 抵达后晚餐",
+    flight:"VN517 08:30–12:25；VN679 15:25–18:25",
     events:[
-    { t:"05:30", title:"出发去北京大兴机场", note:"护照、签证、机票行程单；VN517 提前 3 小时到场", kind:"must" },
-    { t:"08:30", title:"VN517 飞往胡志明", note:"越南航空，北京大兴 → 新山一", kind:"hl" },
-    { t:"12:35", title:"抵达胡志明，衔接飞吉隆坡", note:"过境/入境以机票为准，预留转机时间", kind:"must" },
-    { t:"傍晚", title:"抵达吉隆坡，入住市区酒店", note:"市区简单休整，倒时差", kind:"hl" },
-    { t:"20:00", title:"市区晚餐，休息", note:"兑换少量马币，准备次日飞科莫多", kind:"must" }
+    { t:"05:30", title:"出发去北京大兴机场", note:"护照、e-VOA、行程单；VN517 提前 3 小时到场", kind:"must" },
+    { t:"08:30", title:"VN517 飞胡志明", note:"越南航空，大兴 → 新山一 T2，托运 23KG", kind:"hl" },
+    { t:"12:25", title:"抵达胡志明 T2", note:"不出海关，同航站楼转 VN679", kind:"must" },
+    { t:"15:25", title:"VN679 飞吉隆坡", note:"新山一 T2 → 吉隆坡 T1，托运 23KG", kind:"hl" },
+    { t:"18:25", title:"抵达吉隆坡 T1，入住 T2 附近酒店", note:"酒店待预订；次日亚航在 T2", kind:"must" }
   ]},
-  { date:"9.26", iso:"2026-09-26", title:"吉隆坡 → 科莫多", phase:"komodo", stop:2,
-    stay:"科莫多豪华酒店（仅 1 晚）", breakfast:"抵达日无早；当晚预约次日酒店早餐时间",
-    flight:"10:00 吉隆坡起飞 → 14:00 抵达 Labuan Bajo（航班号以机票为准）",
+  { date:"9.26", iso:"2026-09-26", title:"吉隆坡 → 科莫多", phase:"komodo",
+    stay:"Katamaran Hotel & Resort Komodo（豪华海景大床，已确认）", breakfast:"吉隆坡酒店后退房",
+    flight:"AK310 10:45 吉隆坡 T2 → 14:25 科莫多",
     events:[
-    { t:"08:00", title:"吉隆坡酒店退房", note:"检查行李，勿遗漏物品", kind:"must" },
-    { t:"10:00", title:"乘机飞往科莫多 Labuan Bajo", note:"空中俯瞰印尼海岛风光", kind:"hl" },
-    { t:"14:00", title:"抵达科莫多，入住豪华酒店", note:"仅住 1 晚，行李寄存服务提前确认", kind:"must" },
-    { t:"15:00", title:"酒店躺平、泳池、海边休闲", note:"豪华酒店私享海景，纯放松回血", kind:"hl" },
-    { t:"18:30", title:"酒店晚餐，休息", note:"预约次日酒店早餐时间", kind:"must" }
+    { t:"08:00", title:"吉隆坡酒店退房，去 T2", note:"已加购 AK310 托运行李；两人分单", kind:"must" },
+    { t:"10:45", title:"AK310 飞科莫多", note:"亚洲航空，无免费托运", kind:"hl" },
+    { t:"14:25", title:"抵达 Labuan Bajo，入住 Katamaran", note:"卡塔马兰酒店及度假村", kind:"must" },
+    { t:"16:00", title:"酒店玩桨板", note:"可预约酒店活动", kind:"hl" }
   ]},
-  { date:"9.27", iso:"2026-09-27", title:"酒店休闲 · 蝙蝠日落", phase:"komodo", stop:2,
-    stay:"白天豪华酒店；19:00 换 LB 镇经济型酒店（近码头）", breakfast:"豪华酒店早餐（前一晚已预约）",
+  { date:"9.27", iso:"2026-09-27", title:"酒店浮潜 · 蝙蝠日落", phase:"komodo",
+    stay:"白天 Katamaran；晚 Seaesta Komodo（双人房，不含早餐）", breakfast:"Katamaran 早餐",
     flight:"无航班",
     events:[
-    { t:"全天", title:"豪华酒店休闲放松", note:"酒店瑜伽 / 皮划艇轻体验，免费参与", kind:"hl" },
-    { t:"14:00", title:"豪华酒店退房，行李寄存", note:"贵重物品随身携带，寄存拿好凭证", kind:"must" },
-    { t:"15:00", title:"Kalong 岛落日蝙蝠半日游", note:"万只蝙蝠出巢 + 海上日落", kind:"hl" },
-    { t:"18:30", title:"半日游结束，返回 LB 镇", note:"驱蚊液、薄外套，傍晚海边微凉", kind:"must" },
-    { t:"19:00", title:"入住 LB 镇经济型酒店", note:"靠近码头，方便次日一日游接送", kind:"must" },
-    { t:"19:30", title:"晚餐，休息", note:"尝科莫多本地海鲜简餐", kind:"hl" }
+    { t:"上午", title:"Katamaran 酒店浮潜", note:"退房前用完酒店设施", kind:"hl" },
+    { t:"14:00", title:"Katamaran 退房", note:"换住西亚斯塔，近码头", kind:"must" },
+    { t:"15:00", title:"科莫多半日游", note:"GP Travel / Jordy：Kelor → Menjerite → Kalong 落日；英文向导，12人船", kind:"hl" },
+    { t:"19:00", title:"入住 Seaesta Komodo", note:"不含早餐；续住至 9.29", kind:"must" }
   ]},
-  { date:"9.28", iso:"2026-09-28", title:"科莫多全日精华游", phase:"komodo", stop:2,
-    stay:"LB 镇经济型酒店", breakfast:"早出发，船上 12:30 简餐",
+  { date:"9.28", iso:"2026-09-28", title:"科莫多一日跳岛", phase:"komodo",
+    stay:"Seaesta Komodo Hostel & Hotel（不含早餐）", breakfast:"船上简餐",
     flight:"无航班",
     events:[
-    { t:"06:00", title:"酒店接送至码头", note:"穿速干衣、带浴巾、防晒装备", kind:"must" },
-    { t:"06:30", title:"科莫多全日精华游出发", note:"帕达尔岛、粉红沙滩、Manta 点全覆盖", kind:"hl" },
-    { t:"08:00", title:"帕达尔岛徒步打卡", note:"俯瞰四色海湾，出片圣地", kind:"hl" },
-    { t:"09:30", title:"粉红沙滩浮潜拍照", note:"浮潜装备船上提供，无证可玩", kind:"must" },
-    { t:"11:00", title:"林卡岛观看科莫多龙", note:"跟随向导，切勿靠近野生巨蜥", kind:"must" },
-    { t:"12:30", title:"船上简餐休息", note:"海上用餐，小众体验", kind:"hl" },
-    { t:"14:00", title:"Manta Point 浮潜看魔鬼鱼", note:"无潜水证核心体验，近距离看 Manta", kind:"hl" },
-    { t:"15:30", title:"海龟湾浮潜", note:"保护珊瑚，不触摸海洋生物", kind:"must" },
-    { t:"16:30", title:"返回码头，回酒店休整", note:"冲洗盐分，更换干衣物", kind:"must" }
+    { t:"全天", title:"科莫多一日跳岛", note:"GP Travel：帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾；18–25座船", kind:"hl" },
+    { t:"晚上", title:"续住 Seaesta", note:"两日船游两人共 IDR 1,400,000；确认是否含国家公园门票", kind:"must" }
   ]},
-  { date:"9.29", iso:"2026-09-29", title:"科莫多 → 库塔", phase:"bali", stop:3,
-    stay:"库塔豪华酒店", breakfast:"08:00 酒店早餐后退房",
-    flight:"12:00 科莫多起飞 → 14:30 登巴萨接机（航班号以机票为准）",
+  { date:"9.29", iso:"2026-09-29", title:"科莫多 → 库塔冲浪", phase:"bali",
+    stay:"The Kuta Beach Heritage Hotel（经典传统大床，已确认）", breakfast:"Seaesta 不含早",
+    flight:"QZ647 13:05 科莫多 → 14:20 登巴萨 D",
     events:[
-    { t:"08:00", title:"酒店早餐，退房", note:"提前联系送机司机", kind:"must" },
-    { t:"10:00", title:"前往科莫多机场", note:"结束科莫多行程，前往巴厘岛", kind:"hl" },
-    { t:"12:00", title:"乘机飞往巴厘岛登巴萨", note:"巴厘岛免签，准备入境卡", kind:"must" },
-    { t:"14:30", title:"接机前往库塔豪华酒店", note:"包车提前预订，直达酒店", kind:"must" },
-    { t:"16:30", title:"库塔海滩首次冲浪体验", note:"零基础友好，教练带教", kind:"hl" },
-    { t:"19:00", title:"酒店休息", note:"冲浪后拉伸，缓解疲劳", kind:"must" }
+    { t:"10:00", title:"Seaesta 退房，去科莫多机场", note:"印尼亚航 QZ647", kind:"must" },
+    { t:"13:05", title:"QZ647 飞登巴萨", note:"抵达航站楼 D", kind:"hl" },
+    { t:"14:20", title:"接机去库塔海滩遗产酒店", note:"接机待预订；雅高管理", kind:"must" },
+    { t:"16:00", title:"库塔冲浪私人课 2 小时", note:"Daddy and Mom Surfing School；Klook REJ355397", kind:"hl" }
   ]},
-  { date:"9.30", iso:"2026-09-30", title:"库塔冲浪 → 乌布", phase:"bali", stop:4,
-    stay:"白天库塔；18:30 乌布酒店（住 1 晚，含本地课）", breakfast:"07:30 库塔海景早餐",
+  { date:"9.30", iso:"2026-09-30", title:"库塔冲浪 → 乌布", phase:"bali",
+    stay:"Meruhdani Boutique Ubud（园景高级豪华房，已确认）", breakfast:"库塔酒店早餐",
     flight:"无航班，包车去乌布",
     events:[
-    { t:"07:30", title:"酒店早餐", note:"库塔海景早餐", kind:"hl" },
-    { t:"08:30", title:"库塔上午冲浪练习", note:"涂防水防晒，避免晒伤", kind:"must" },
-    { t:"12:00", title:"午餐 + 午休休整", note:"库塔海滩边网红简餐", kind:"hl" },
-    { t:"15:00", title:"库塔下午冲浪练习", note:"冲浪板酒店/俱乐部提供；可放弃留给考证体力", kind:"skip" },
-    { t:"17:30", title:"库塔酒店退房", note:"打包行李，准备前往乌布", kind:"must" },
-    { t:"18:30", title:"包车前往乌布，入住酒店", note:"乌布住 1 晚，酒店含本地体验课程", kind:"must" },
-    { t:"20:00", title:"乌布晚餐，休息", note:"乌布稻田景观餐厅，静谧无游客", kind:"hl" }
+    { t:"上午", title:"库塔海滩冲浪练习", note:"待预订", kind:"hl" },
+    { t:"下午", title:"包车前往乌布，入住 Meruhdani", note:"包车待预订；梅鲁达尼精品酒店", kind:"must" },
+    { t:"傍晚", title:"乌布 SPA + 手工体验", note:"待预订", kind:"hl" }
   ]},
-  { date:"10.01", iso:"2026-10-01", title:"乌布体验 → 图兰本", phase:"bali", stop:5,
-    stay:"图兰本潜店旁酒店", breakfast:"课程自制午餐 12:00",
-    flight:"无航班，16:30 包车北上图兰本",
+  { date:"10.01", iso:"2026-10-01", title:"烹饪课 → 图蓝本", phase:"bali",
+    stay:"Habitat Boutique Dive Resort（微信已确认，2 晚）", breakfast:"烹饪课午餐 12:30",
+    flight:"无航班，下午包车北上图蓝本",
     events:[
-    { t:"09:00", title:"酒店有机农场烹饪课", note:"非网红本地体验，采香料 + 做巴厘菜", kind:"hl" },
-    { t:"12:00", title:"享用自制午餐", note:"课程含食材、工具，成品可全部食用", kind:"must" },
-    { t:"14:00", title:"酒店木雕 / 咖啡品鉴课二选一", note:"作品可带走，留旅行纪念", kind:"hl" },
-    { t:"16:00", title:"乌布酒店退房", note:"确认包车司机，前往图兰本", kind:"must" },
-    { t:"16:30", title:"包车前往图兰本", note:"沿途稻田风光，单向北上不绕路", kind:"hl" },
-    { t:"19:00", title:"入住图兰本潜店旁酒店", note:"靠近潜点，方便次日 OW 考证", kind:"must" },
-    { t:"19:30", title:"晚餐，休息", note:"早睡，储备考证精力", kind:"must" }
+    { t:"08:30", title:"Ketut's Bali 烹饪课", note:"市场导览 → 09:30 烹饪 → 12:30 午餐；含乌布接送；Klook CAP433326 / KLK0925092707", kind:"hl" },
+    { t:"下午", title:"包车前往图蓝本", note:"包车待预订；入住 Habitat，勿去已退的 Seamount / 待退的 Ocean Villa", kind:"must" },
+    { t:"晚上", title:"休整，准备 OW", note:"yansu_diving / Let's dive 中文教练", kind:"must" }
   ]},
-  { date:"10.02", iso:"2026-10-02", title:"OW 考证 Day 1", phase:"bali", stop:5,
-    stay:"图兰本潜店旁酒店", breakfast:"08:00 图兰本海边简餐",
+  { date:"10.02", iso:"2026-10-02", title:"OW 考证 Day 1", phase:"bali",
+    stay:"Habitat Boutique Dive Resort", breakfast:"酒店 / 潜店简餐",
     flight:"无航班",
     events:[
-    { t:"08:00", title:"酒店早餐", note:"图兰本海边简餐，清新安静", kind:"hl" },
-    { t:"09:00", title:"OW 考证理论 + 装备讲解", note:"带笔记本，记录核心知识点", kind:"must" },
-    { t:"10:30", title:"平静水域技巧训练", note:"岸潜零基础友好，无晕船风险", kind:"hl" },
-    { t:"12:00", title:"午餐休息", note:"清淡饮食，避免肠胃不适", kind:"must" },
-    { t:"14:00", title:"平静水域强化练习", note:"听从教练，放松心态", kind:"must" },
-    { t:"17:30", title:"训练结束，休息", note:"自由号沉船浅区练习，水下景观美", kind:"hl" }
+    { t:"全天", title:"OW 理论 + 平静水域技巧", note:"图蓝本自由号沉船课程；中文教练", kind:"hl" },
+    { t:"傍晚", title:"下课去艾湄湾逛", note:"不住艾湄；回 Habitat", kind:"hl" }
   ]},
-  { date:"10.03", iso:"2026-10-03", title:"OW Day 2 → 罗威纳", phase:"bali", stop:6,
-    stay:"罗威纳海边酒店", breakfast:"08:00 酒店早餐；潜店 12:00 简餐",
-    flight:"无航班，15:30 包车北部沿海直达罗威纳",
+  { date:"10.03", iso:"2026-10-03", title:"OW 取证 → 罗威纳", phase:"bali",
+    stay:"New Sunari Lovina Beach Resort（高级房，已确认）", breakfast:"潜店简餐",
+    flight:"无航班，下午包车去罗威纳",
     events:[
-    { t:"08:00", title:"酒店早餐", note:"提前换好潜水服，节省时间", kind:"must" },
-    { t:"09:00", title:"OW 开放水域第 1 潜", note:"探秘自由号沉船，新手核心体验", kind:"hl" },
-    { t:"11:00", title:"OW 开放水域第 2 潜", note:"完成考核项目，保持中性浮力", kind:"must" },
-    { t:"12:00", title:"午餐休息", note:"潜店专属简餐，补充体力", kind:"hl" },
-    { t:"14:00", title:"考核通过，领取 OW 证书", note:"正式持证潜水，证书妥善保管", kind:"must" },
-    { t:"15:00", title:"酒店退房", note:"检查潜水装备，勿遗漏", kind:"must" },
-    { t:"15:30", title:"包车前往罗威纳", note:"北部沿海直达，不经乌布，路况平稳", kind:"must" },
-    { t:"18:30", title:"入住罗威纳酒店", note:"海边酒店，为追海豚储备体力", kind:"hl" },
-    { t:"19:00", title:"晚餐，休息", note:"20 点前入睡，次日凌晨追海豚", kind:"must" }
+    { t:"上午", title:"OW 开放水域第 1、2 潜，取证", note:"自由号沉船考核", kind:"hl" },
+    { t:"下午", title:"包车前往罗威纳", note:"包车待预订；入住新苏纳里罗威那海滩度假村", kind:"must" },
+    { t:"晚上", title:"休整", note:"次日追海豚，早睡", kind:"must" }
   ]},
-  { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java", stop:9,
-    stay:"宜珍火山山脚酒店", breakfast:"07:00 罗威纳返回后海边日出早餐",
-    flight:"无飞机；11:30 Gilimanuk 轮渡去外南梦",
+  { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java",
+    stay:"Grand Harvest Resort & Villas Ijen（花园景豪华双人，已确认）", breakfast:"追海豚后简餐",
+    flight:"无飞机；Gilimanuk 轮渡去爪哇",
     events:[
-    { t:"04:30", title:"出海追海豚", note:"罗威纳必体验；天气不好可放弃，优先宜珍体力", kind:"skip" },
-    { t:"06:00", title:"海上观日出", note:"带薄外套，凌晨海风凉", kind:"hl" },
-    { t:"07:00", title:"返回酒店，早餐", note:"海边日出早餐，浪漫治愈", kind:"hl" },
-    { t:"09:00", title:"酒店退房", note:"打包行李，准备前往爪哇", kind:"must" },
-    { t:"10:00", title:"包车前往 Gilimanuk 码头", note:"提前预订船票，避免无票", kind:"must" },
-    { t:"11:30", title:"轮渡前往爪哇外南梦", note:"跨海轮渡，俯瞰巴厘海峡", kind:"hl" },
-    { t:"13:00", title:"包车前往宜珍火山山脚酒店", note:"山路颠簸，备好晕车药", kind:"must" },
-    { t:"14:30", title:"入住酒店，补觉休整", note:"充足睡眠，应对宜珍通宵徒步", kind:"hl" },
-    { t:"22:00", title:"起床，准备登山装备", note:"头灯、登山杖、保暖外套、口罩", kind:"must" }
+    { t:"上午", title:"罗威纳追海豚，海上日出", note:"船待预订", kind:"hl" },
+    { t:"下午", title:"包车 → Gilimanuk 轮渡 → 外南梦 → 宜珍", note:"跨岛全程待预订（包车+轮渡+包车）", kind:"must" },
+    { t:"晚上", title:"入住大丰收度假村，补觉", note:"准备凌晨夜爬；头灯、登山杖、口罩", kind:"must" }
   ]},
-  { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java", stop:10,
-    stay:"布罗莫火山山脚酒店", breakfast:"08:30 宜珍山脚酒店早餐休整",
-    flight:"无航班，11:00 包车去布罗莫",
+  { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java",
+    stay:"Omah Kayu Bromo（已确认）", breakfast:"夜爬后回酒店补觉",
+    flight:"无航班，下午包车去布罗莫",
     events:[
-    { t:"01:00", title:"出发徒步宜珍火山", note:"缓慢徒步，保存体力", kind:"must" },
-    { t:"04:00", title:"山顶看蓝火 + 硫磺湖", note:"全球稀有蓝火景观", kind:"hl" },
-    { t:"08:30", title:"返回山脚酒店，早餐休整", note:"冲洗汗水，更换干衣物", kind:"must" },
-    { t:"11:00", title:"包车前往布罗莫山脚酒店", note:"若途中玩水，先冲澡再赶路", kind:"must" },
-    { t:"18:00", title:"入住酒店，晚餐休息", note:"布罗莫火山脚下静谧住宿", kind:"hl" }
+    { t:"凌晨", title:"宜珍火山夜爬：蓝火 + 硫磺湖", note:"向导+门票+装备待预订", kind:"hl" },
+    { t:"上午", title:"返回酒店休整补觉", note:"冲洗硫磺味", kind:"must" },
+    { t:"下午", title:"包车前往布罗莫，入住 Omah Kayu", note:"包车待预订", kind:"must" }
   ]},
-  { date:"10.06", iso:"2026-10-06", title:"布罗莫 · 赛武 · 泗水", phase:"java", stop:12,
-    stay:"泗水市区酒店", breakfast:"09:00 布罗莫返回后酒店早餐",
-    flight:"无航班；15:00 出发去泗水",
+  { date:"10.06", iso:"2026-10-06", title:"布罗莫日出 → 泗水", phase:"java",
+    stay:"Premier Place Surabaya Airport（经典大床，已确认）", breakfast:"日出后酒店简餐",
+    flight:"无航班，下午包车去泗水机场酒店",
     events:[
-    { t:"03:30", title:"吉普车前往布罗莫观景台", note:"带厚外套，山顶气温低", kind:"must" },
-    { t:"05:30", title:"布罗莫日出 + 云海观景", note:"火山日出天花板，必拍大片", kind:"hl" },
-    { t:"07:00", title:"火山口徒步探险", note:"跟随向导，远离火山口边缘", kind:"must" },
-    { t:"09:00", title:"返回酒店，早餐", note:"休整后准备前往赛武瀑布", kind:"must" },
-    { t:"10:00", title:"包车前往赛武瀑布", note:"中途可停靠休息", kind:"must" },
-    { t:"13:00", title:"赛武瀑布徒步拍照", note:"15 点关门；深入玩水可放弃", kind:"skip" },
-    { t:"15:00", title:"出发前往泗水", note:"赛武瀑布 15 点关门", kind:"must" },
-    { t:"18:00", title:"抵达泗水，入住市区酒店", note:"彻底消除赶机风险，市区自由休整", kind:"must" },
-    { t:"19:00", title:"逛本地市集，爪哇美食，晚餐休息", note:"早睡，准备次日飞胡志明", kind:"must" }
+    { t:"凌晨", title:"吉普车布罗莫观景台", note:"日出 + 云海 + 火山口徒步；吉普待预订", kind:"hl" },
+    { t:"下午", title:"包车前往泗水机场酒店", note:"赛武瀑布已取消；包车待预订", kind:"must" },
+    { t:"晚上", title:"入住 Premier Place，休整", note:"确认免费送机", kind:"must" }
   ]},
-  { date:"10.07", iso:"2026-10-07", title:"泗水 → 胡志明过夜", phase:"transit", stop:13,
-    stay:"胡志明市区/机场酒店（过夜）", breakfast:"08:00 自然醒，泗水酒店早餐",
-    flight:"午后泗水起飞 → 傍晚抵达胡志明（航班号以机票为准）",
+  { date:"10.07", iso:"2026-10-07", title:"泗水 → 吉隆坡 → 胡志明", phase:"transit",
+    stay:"胡志明新山一中转（不出机场）", breakfast:"机场酒店早餐",
+    flight:"QZ322 11:20–15:00；VN678 19:25–20:15",
     events:[
-    { t:"08:00", title:"自然醒，酒店早餐", note:"从容不迫，无赶场压力", kind:"hl" },
-    { t:"10:00", title:"酒店退房，前往泗水机场", note:"市区到机场约 30 分钟，缓冲充足", kind:"must" },
-    { t:"午后", title:"泗水乘机飞往胡志明", note:"提前 2 小时到机场，办理值机", kind:"must" },
-    { t:"傍晚", title:"抵达胡志明，入住过夜酒店", note:"过境越南，次日回京", kind:"hl" },
-    { t:"21:00", title:"晚餐，早睡", note:"预留次日去新山一机场时间", kind:"must" }
+    { t:"09:00", title:"机场酒店退房，送机", note:"确认 Premier Place 免费送机；QZ322 无餐食", kind:"must" },
+    { t:"11:20", title:"QZ322 飞吉隆坡 T2", note:"泗水朱安达 T2 → 吉隆坡 T2", kind:"hl" },
+    { t:"15:00", title:"抵达吉隆坡 T2，转到 T1", note:"VN678 在 T1，预留 4 小时", kind:"must" },
+    { t:"19:25", title:"VN678 飞胡志明", note:"吉隆坡 T1 → 新山一 T2，托运 23KG", kind:"hl" },
+    { t:"20:15", title:"抵达胡志明 T2，过夜中转", note:"不出机场；联程行李直挂", kind:"must" }
   ]},
-  { date:"10.08", iso:"2026-10-08", title:"胡志明 → 北京", phase:"transit", stop:0,
-    stay:"返程无酒店", breakfast:"酒店/机场简餐",
-    flight:"上午胡志明 → 下午北京大兴（航班号以机票为准）",
+  { date:"10.08", iso:"2026-10-08", title:"胡志明 → 北京", phase:"transit",
+    stay:"返程无酒店", breakfast:"机上",
+    flight:"VN516 00:35 新山一 T2 → 06:30 北京大兴",
     events:[
-    { t:"上午", title:"胡志明酒店退房，去新山一机场", note:"护照、行程单；预留进城到机场时间", kind:"must" },
-    { t:"上午", title:"乘机飞往北京大兴", note:"越南回京，检查行李额", kind:"hl" },
-    { t:"下午", title:"抵达北京，行程结束", note:"检查行李", kind:"must" }
+    { t:"00:35", title:"VN516 飞北京大兴", note:"时刻已变更（原 00:45）；托运 23KG", kind:"hl" },
+    { t:"06:30", title:"抵达北京大兴，行程结束", note:"检查行李", kind:"must" }
   ]}
 ];
 
 const bags = [
-  { id:"b1", g:"证件随身", t:"护照 + 签证页复印件 / 电子件" },
-  { id:"b2", g:"证件随身", t:"机票行程单、入境卡/MDAC 信息" },
-  { id:"b3", g:"证件随身", t:"信用卡/借记卡 + 少量马币 + 印尼盾现金" },
-  { id:"b4", g:"证件随身", t:"保险单（含潜水）、紧急联系人" },
-  { id:"b5", g:"换洗", t:"速干衣裤 3 套（科莫多一日游 + 火山）" },
-  { id:"b6", g:"换洗", t:"内衣袜、睡衣、薄外套（Kalong / 海豚 / 飞机）" },
-  { id:"b7", g:"换洗", t:"厚外套或抓绒（布罗莫凌晨、宜珍山顶）" },
-  { id:"b8", g:"科莫多", t:"Reef-safe 防晒、墨镜、帽子、浴巾" },
-  { id:"b9", g:"科莫多", t:"驱蚊液、防水袋、拖鞋" },
-  { id:"b10", g:"冲浪", t:"防水防晒、冲浪裤/泳衣、芦荟胶" },
-  { id:"b11", g:"潜水", t:"泳衣、个人咬嘴（可选）、防水笔记本" },
-  { id:"b12", g:"火山", t:"头灯、登山杖、口罩/防毒面具、脏衣袋（硫磺味）" },
-  { id:"b13", g:"药", t:"晕车药、创可贴、肠胃药、常用药" },
-  { id:"b14", g:"充电", t:"转换插头、充电宝、手机" }
+  { id:"b-pass", g:"证件类", t:"护照", done:true },
+  { id:"b-id", g:"证件类", t:"身份证", done:true },
+  { id:"b-visa", g:"证件类", t:"签证打印件（待办 e-VOA）", done:false },
+  { id:"b-tix", g:"证件类", t:"机票行程单", done:false },
+  { id:"b-card", g:"证件类", t:"信用卡 / 借记卡", done:true },
+  { id:"b-cash", g:"证件类", t:"现金印尼盾 + 马来币", done:false },
+  { id:"e-fan", g:"电子设备", t:"挂脖风扇", done:true },
+  { id:"e-lamp", g:"电子设备", t:"头灯 + 电池", done:true },
+  { id:"e-sim", g:"电子设备", t:"电话卡", done:false },
+  { id:"e-chg", g:"电子设备", t:"手机充电器", done:true },
+  { id:"e-pwr", g:"电子设备", t:"充电宝", done:true },
+  { id:"e-plug", g:"电子设备", t:"转换插头", done:true },
+  { id:"e-ear", g:"电子设备", t:"耳机", done:true },
+  { id:"e-case", g:"电子设备", t:"相机潜水壳", done:false },
+  { id:"e-bag", g:"电子设备", t:"潜水相机 / 防水手机袋", done:true },
+  { id:"c-water", g:"衣物类", t:"涉水鞋", done:true },
+  { id:"c-pants", g:"衣物类", t:"冲锋裤", done:false },
+  { id:"c-towel", g:"衣物类", t:"速干浴巾", done:true },
+  { id:"c-jacket", g:"衣物类", t:"冲锋衣 + 内胆", done:true },
+  { id:"c-sun", g:"衣物类", t:"防晒服", done:true },
+  { id:"c-slip", g:"衣物类", t:"拖鞋", done:true },
+  { id:"c-short", g:"衣物类", t:"短袖短裤", done:true },
+  { id:"c-long", g:"衣物类", t:"长袖长裤", done:true },
+  { id:"c-und", g:"衣物类", t:"内衣内裤", done:true },
+  { id:"c-sock", g:"衣物类", t:"袜子", done:true },
+  { id:"c-swim", g:"衣物类", t:"泳衣 & 潜水服", done:true },
+  { id:"c-pyj", g:"衣物类", t:"睡衣", done:true },
+  { id:"c-umb", g:"衣物类", t:"轻便晴雨伞", done:true },
+  { id:"c-hat", g:"衣物类", t:"遮阳帽", done:true },
+  { id:"c-glass", g:"衣物类", t:"太阳镜", done:false },
+  { id:"s-slip", g:"鞋类", t:"拖鞋 / 凉鞋", done:true },
+  { id:"s-hike", g:"鞋类", t:"运动鞋 / 徒步鞋", done:true },
+  { id:"s-boot", g:"鞋类", t:"潜水靴", done:false },
+  { id:"h-makeup", g:"洗护用品", t:"化妆包", done:true },
+  { id:"h-brush", g:"洗护用品", t:"牙刷 / 牙膏", done:true },
+  { id:"h-face", g:"洗护用品", t:"洗面奶", done:true },
+  { id:"h-spf", g:"洗护用品", t:"防晒霜 + 海洋友好防晒泥", done:true },
+  { id:"h-after", g:"洗护用品", t:"晒后修复", done:true },
+  { id:"h-shampoo", g:"洗护用品", t:"洗发水 / 沐浴露", done:true },
+  { id:"h-towel", g:"洗护用品", t:"毛巾", done:true },
+  { id:"h-tissue", g:"洗护用品", t:"纸巾 / 湿纸巾", done:true },
+  { id:"h-shave", g:"洗护用品", t:"剃须刀 + 充电器", done:true },
+  { id:"h-fem", g:"洗护用品", t:"女性用品", done:true },
+  { id:"m-cold", g:"药品类", t:"感冒药", done:true },
+  { id:"m-gut", g:"药品类", t:"肠胃药 / 止泻药", done:true },
+  { id:"m-sea", g:"药品类", t:"晕车 / 晕船药", done:true },
+  { id:"m-band", g:"药品类", t:"创可贴", done:true },
+  { id:"m-moz", g:"药品类", t:"防蚊液", done:true },
+  { id:"m-oil", g:"药品类", t:"清凉油", done:true },
+  { id:"m-own", g:"药品类", t:"个人常用药", done:true },
+  { id:"d-cert", g:"潜水/户外装备", t:"潜水证", done:true },
+  { id:"d-mask", g:"潜水/户外装备", t:"面镜 / 呼吸管", done:true },
+  { id:"d-jelly", g:"潜水/户外装备", t:"水母衣 / 防晒衣", done:true },
+  { id:"d-stick", g:"潜水/户外装备", t:"登山杖", done:true },
+  { id:"d-lamp", g:"潜水/户外装备", t:"头灯 / 手电筒", done:true },
+  { id:"d-warm", g:"潜水/户外装备", t:"保暖层", done:true },
+  { id:"o-neck", g:"其他", t:"廉航颈枕", done:true },
+  { id:"o-eye", g:"其他", t:"眼罩", done:true },
+  { id:"o-ear", g:"其他", t:"耳塞", done:true },
+  { id:"o-pack", g:"其他", t:"轻薄背包", done:true },
+  { id:"o-pen", g:"其他", t:"笔", done:true }
 ];
 
 const stops = [
-  { id:0,  name:"北京", lat:39.9042, lng:116.4074, phase:"transit", date:"9.25 / 10.08", desc:"出发与返程" },
-  { id:13, name:"胡志明", lat:10.7769, lng:106.7009, phase:"transit", date:"9.25 / 10.07–08", desc:"VN517 入境；返程过夜" },
-  { id:1,  name:"吉隆坡", lat:3.1390, lng:101.6869, phase:"transit", date:"9.25–26", desc:"倒时差，兑换马币" },
-  { id:2,  name:"科莫多 LB", lat:-8.4961, lng:119.8877, phase:"komodo", date:"9.26–28", desc:"豪华酒店 · 蝙蝠日落 · 全日精华游" },
-  { id:3,  name:"库塔", lat:-8.7183, lng:115.1686, phase:"bali", date:"9.29–30", desc:"冲浪，海景酒店" },
-  { id:4,  name:"乌布", lat:-8.5069, lng:115.2625, phase:"bali", date:"10.01", desc:"烹饪课 · 木雕/咖啡" },
-  { id:5,  name:"图兰本", lat:-8.2767, lng:115.5928, phase:"bali", date:"10.01–03", desc:"OW 考证，自由号沉船" },
-  { id:6,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.03–04", desc:"凌晨追海豚" },
-  { id:7,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.04", desc:"巴厘西端轮渡码头" },
-  { id:8,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.04", desc:"爪哇登陆" },
-  { id:9,  name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.04–05", desc:"通宵徒步，蓝火" },
-  { id:10, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.05–06", desc:"吉普观日出" },
-  { id:11, name:"赛武瀑布", lat:-8.1583, lng:112.9197, phase:"java", date:"10.06", desc:"15点关门" },
-  { id:12, name:"泗水", lat:-7.2575, lng:112.7521, phase:"java", date:"10.06–07", desc:"市区休整后飞胡志明" }
+  { id:0,  name:"北京", lat:39.9042, lng:116.4074, phase:"transit", date:"9.25 / 10.8", desc:"VN517 去，VN516 回" },
+  { id:1,  name:"胡志明", lat:10.7769, lng:106.7009, phase:"transit", date:"9.25 / 10.7–8", desc:"VN679 去；VN678/VN516 回，不出机场" },
+  { id:2,  name:"吉隆坡", lat:3.1390, lng:101.6869, phase:"transit", date:"9.25–26 / 10.7", desc:"T1 抵达、T2 亚航；返程 T2→T1" },
+  { id:3,  name:"科莫多 LB", lat:-8.4961, lng:119.8877, phase:"komodo", date:"9.26–29", desc:"Katamaran + Seaesta · 半日+一日船" },
+  { id:4,  name:"库塔", lat:-8.7183, lng:115.1686, phase:"bali", date:"9.29–30", desc:"Kuta Beach Heritage · 冲浪课" },
+  { id:5,  name:"乌布", lat:-8.5069, lng:115.2625, phase:"bali", date:"9.30–10.1", desc:"Meruhdani · Ketut's 烹饪课" },
+  { id:6,  name:"图蓝本", lat:-8.2767, lng:115.5928, phase:"bali", date:"10.1–03", desc:"Habitat · OW 考证" },
+  { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 追海豚" },
+  { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4", desc:"巴厘西端轮渡" },
+  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"爪哇登陆" },
+  { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Grand Harvest · 蓝火" },
+  { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · 日出" },
+  { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place 机场酒店" }
 ];
-const flightSegs = [[0,13],[13,1],[1,2],[2,3],[12,13],[13,0]];
-const groundSegs = [[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
+const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
+const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#0369a1", java:"#b91c1c", transit:"#78716c" };
 
 const prep = [
-  { id:"pass", g:"证件", t:"护照、签证/入境卡、机票行程单" },
-  { id:"mdac", g:"证件", t:"马来西亚中转申报（MDAC 等，出发前再核一次）" },
-  { id:"ins", g:"证件", t:"旅行险覆盖水肺潜水（OW 训练深度）和火山徒步" },
-  { id:"cash", g:"钱", t:"备印尼盾现金：科莫多、图兰本、宜珍一带刷卡不便" },
-  { id:"kl", g:"交通", t:"VN517 北京大兴→胡志明，以及胡志明↔吉隆坡 / 科莫多 / 泗水衔接机票确认" },
-  { id:"car", g:"交通", t:"巴厘/爪哇包车：库塔、乌布、图兰本、罗威纳、Gilimanuk、宜珍、布罗莫、泗水" },
-  { id:"ferry", g:"交通", t:"10.04 Gilimanuk 轮渡票" },
-  { id:"komodo", g:"活动", t:"科莫多全日游 + Kalong 蝙蝠半日游（旺季提前1–2周）" },
-  { id:"surf", g:"活动", t:"库塔冲浪教练（9.30下午可减掉）" },
-  { id:"dive", g:"潜水", t:"图兰本潜店：中文教练或1对2；确认 10.02–10.03 两天能拿证" },
-  { id:"el", g:"潜水", t:"两人 PADI eLearning（中文）10.02 前学完" },
-  { id:"swim", g:"潜水", t:"出发前测：200m 游泳或 300m 浮潜 + 10分钟漂浮" },
-  { id:"ijen", g:"火山", t:"宜珍向导/蓝火政策、防毒面具；布罗莫吉普" }
+  { id:"pre-evoa", g:"行前必办", t:"办理印尼 e-VOA 电子落地签（2人，约 IDR 500,000/人，molina.imigrasi.go.id）", done:false },
+  { id:"pre-akbag", g:"行前必办", t:"购买 AK310 亚航托运行李额（2人）", done:true },
+  { id:"pre-ins", g:"行前必办", t:"购买境外旅行保险（含潜水、火山徒步）", done:false },
+  { id:"pre-mdac", g:"行前必办", t:"填写吉隆坡 MDAC 电子入境卡（出发前 72 小时内）", done:false },
+  { id:"pre-seamount", g:"行前必办", t:"退订 Seamount Amed 艾湄海山酒店", done:true },
+  { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（Booking）", done:false },
+  { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
+  { id:"pre-ow", g:"行前必办", t:"OW 潜水课提前学理论课", done:false },
+  { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡市区酒店（1晚，T2附近）", done:false },
+  { id:"d-kata", g:"按日期", t:"9.26 Katamaran 酒店预约活动", done:false },
+  { id:"d-pick", g:"按日期", t:"9.29 预订登巴萨机场 → 库塔酒店接机", done:false },
+  { id:"d-surf", g:"按日期", t:"9.30 预订库塔冲浪练习", done:false },
+  { id:"d-ubudcar", g:"按日期", t:"9.30 预订库塔 → 乌布包车", done:false },
+  { id:"d-spa", g:"按日期", t:"9.30 预订乌布 SPA + 手工体验", done:false },
+  { id:"d-cook", g:"按日期", t:"10.1 预订乌布农场烹饪课（已订 Ketut's Bali）", done:true },
+  { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车", done:false },
+  { id:"d-lovcar", g:"按日期", t:"10.3 预订图蓝本 → 罗威纳包车", done:false },
+  { id:"d-dol", g:"按日期", t:"10.4 预订罗威纳追海豚船", done:false },
+  { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → 宜珍跨岛全程（包车+轮渡+包车）", done:false },
+  { id:"d-ijenh", g:"按日期", t:"10.5 预订宜珍火山夜爬（向导+门票+装备）", done:false },
+  { id:"d-bromocar", g:"按日期", t:"10.5 预订宜珍 → 布罗莫包车", done:false },
+  { id:"d-jeep", g:"按日期", t:"10.6 预订布罗莫吉普车日出游", done:false },
+  { id:"d-subcar", g:"按日期", t:"10.6 预订布罗莫 → 泗水包车", done:false },
+  { id:"d-shuttle", g:"按日期", t:"10.7 确认泗水机场酒店免费送机", done:false }
 ];
 
 const phaseName = { komodo:"科莫多", bali:"巴厘", java:"爪哇", transit:"中转" };
 const phaseChip = p => `<span class="chip chip-${p}">${phaseName[p]}</span>`;
+function statusChip(s) {
+  if (s==="ok") return '<span class="chip chip-ok">已确认</span>';
+  if (s==="wait") return '<span class="chip chip-wait">待预订</span>';
+  if (s==="cancel") return '<span class="chip chip-off">已退订</span>';
+  if (s==="canceling") return '<span class="chip chip-wait">待退订</span>';
+  return "";
+}
+function isChecked(list, item) {
+  const st = cloud[list] || {};
+  if (Object.prototype.hasOwnProperty.call(st, item.id)) return !!st[item.id];
+  return !!item.done;
+}
+function seedDefaults() {
+  const prepSt = {}, packSt = {};
+  prep.forEach(p => { if (p.done) prepSt[p.id] = true; });
+  bags.forEach(p => { if (p.done) packSt[p.id] = true; });
+  return { prep: prepSt, pack: packSt };
+}
 
 function todayISO() {
   const n = new Date();
@@ -455,7 +514,7 @@ function nextEvent(day) {
   if (day.iso !== iso) return day.events[0];
   const hm = now.getHours()*60 + now.getMinutes();
   for (const e of day.events) {
-    if (e.t === "全天") continue;
+    if (!/^\d{1,2}:\d{2}$/.test(e.t)) continue;
     const [h,m] = e.t.split(":").map(Number);
     if (h*60 + m >= hm - 20) return e;
   }
@@ -480,21 +539,28 @@ function eventRows(events) {
     </div>`).join("");
 }
 
+function flightBlock(f) {
+  return `<div class="flight"><div class="title">${f.date} ${f.no} · ${f.route}</div>
+    <div class="note memo">${f.al} · ${f.dep} → ${f.arr} · ${f.bag}</div>
+    <div class="note">${f.book}${f.note?" · "+f.note:""}</div></div>`;
+}
+
 function renderToday() {
   const st = currentDay();
   const box = document.getElementById("page-today");
   if (st.mode === "before") {
+    const leftPrep = prep.filter(p => !isChecked("prep", p)).length;
     box.innerHTML = `
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">还有 ${st.left} 天</div>
-        <p class="hint">9.25 北京出发。去程 VN517 北京大兴 → 胡志明；其余衔接以机票为准。</p>
+        <p class="hint">9.25 VN517 北京大兴 08:30。科莫多海底 · 巴厘文化海岛 · 泗水火山反穿。行前待办还剩 ${leftPrep} 项。</p>
         ${phaseChip("transit")}${phaseChip("komodo")}${phaseChip("bali")}${phaseChip("java")}
         ${dayMeta(st.day)}
       </div>
       <div class="card">
-        <div class="kicker">航班速查</div>
-        ${flights.map(f=>`<div class="flight"><div class="title">${f.date} ${f.route}</div><div class="note memo">${f.no} · ${f.dep} · ${f.arr}</div><div class="note">${f.note}</div></div>`).join("")}
+        <div class="kicker">航班速查 · 7 段</div>
+        ${flights.map(flightBlock).join("")}
       </div>
       <div class="card">
         <div class="kicker">第一天</div>
@@ -518,7 +584,7 @@ function renderToday() {
       <div class="next">${d.title}</div>
       ${phaseChip(d.phase)}
       ${dayMeta(d)}
-      ${hard?`<div class="warn">这三天连续熬夜，是全程瓶颈。海豚 / 赛武深入玩水都可以放弃，优先睡够、保证宜珍和布罗莫。</div>`:""}
+      ${hard?`<div class="warn">10.04–10.06 连续早起，是全程瓶颈。优先睡够，保证宜珍蓝火和布罗莫日出。赛武瀑布已取消。</div>`:""}
     </div>
     <div class="card">
       <div class="kicker">下一步</div>
@@ -536,9 +602,22 @@ function renderTrip(filter="all") {
   const box = document.getElementById("page-trip");
   box.innerHTML = `
     <div class="card">
-      <div class="kicker">航班速查</div>
-      <p class="hint">去程已写入 VN517（北京大兴 → 胡志明）。其余衔接航班号以机票为准。</p>
-      ${flights.map(f=>`<div class="flight"><div class="title">${f.date} ${f.route}</div><div class="note memo">${f.no}</div><div class="note">${f.dep} → ${f.arr}</div><div class="note">${f.note}</div></div>`).join("")}
+      <div class="kicker">航班 · 7 段 · 去哪儿</div>
+      <p class="hint">VN / AK / QZ 已写入确认时刻。返程 VN516 已改为 00:35。</p>
+      ${flights.map(flightBlock).join("")}
+    </div>
+    <div class="card">
+      <div class="kicker">酒店</div>
+      ${hotels.map(h=>`<div class="hotel"><div class="title">${h.inn}–${h.out} · ${h.name} ${statusChip(h.status)}</div>
+        <div class="note memo">${h.nights} 晚 · ${h.room}${h.platform?" · "+h.platform:""}</div>
+        <div class="note">${h.note}</div></div>`).join("")}
+    </div>
+    <div class="card">
+      <div class="kicker">已订活动</div>
+      ${acts.map(a=>`<div class="act"><div class="title">${a.date} ${a.name}</div>
+        <div class="note memo">${a.who}</div>
+        <div class="note">${a.detail}</div>
+        <div class="note">${a.note}</div></div>`).join("")}
     </div>
     <div class="filters">
       ${["all","komodo","bali","java","transit"].map(p=>`<button data-f="${p}" class="${filter===p?"on":""}">${p==="all"?"全部":phaseName[p]}</button>`).join("")}
@@ -568,7 +647,7 @@ function renderMap() {
     box.innerHTML = `
       <div class="card">
         <div class="kicker">路线</div>
-        <div class="next" style="font-size:18px">北京 → 胡志明 → 吉隆坡 → 科莫多 → 巴厘 → 爪哇 → 泗水 → 胡志明 → 北京</div>
+        <div class="next" style="font-size:18px">北京 → 胡志明 → 吉隆坡 → 科莫多 → 巴厘 → 爪哇 → 泗水 → 吉隆坡 → 胡志明 → 北京</div>
         <div class="map-legend">
           <span><i class="legend-line" style="background:#2563eb;background-image:repeating-linear-gradient(90deg,#2563eb 0 6px,transparent 6px 10px)"></i>虚线航班</span>
           <span><i class="legend-line" style="background:#0f766e"></i>实线陆路/轮渡</span>
@@ -577,7 +656,7 @@ function renderMap() {
       </div>
       <div class="card">
         <div class="kicker">途经点（点击地图标记）</div>
-        ${stops.map(s=>`<div class="row"><div class="t">${s.id+1}</div><div><div class="title">${s.name}</div><div class="note">${s.date} · ${s.desc}</div></div></div>`).join("")}
+        ${stops.map((s,i)=>`<div class="row"><div class="t">${i+1}</div><div><div class="title">${s.name}</div><div class="note">${s.date} · ${s.desc}</div></div></div>`).join("")}
       </div>`;
     box.dataset.ready = "1";
   }
@@ -589,12 +668,10 @@ function initMap() {
   if (mapObj) { mapObj.invalidateSize(); return; }
   mapObj = L.map(el, { zoomControl:true, scrollWheelZoom:true }).setView([-8.3, 115.2], 7);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { attribution:"&copy; OSM &copy; CARTO", maxZoom:18 }).addTo(mapObj);
-  const markers = {};
-  stops.forEach(s => {
-    const m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className:"", html:`<div class="marker-num" style="background:${PHASE_COLOR[s.phase]}">${s.id+1}</div>`, iconSize:[26,26], iconAnchor:[13,13] }) })
+  stops.forEach((s,i) => {
+    L.marker([s.lat, s.lng], { icon: L.divIcon({ className:"", html:`<div class="marker-num" style="background:${PHASE_COLOR[s.phase]}">${i+1}</div>`, iconSize:[26,26], iconAnchor:[13,13] }) })
       .addTo(mapObj)
       .bindPopup(`<b>${s.name}</b><br>${s.date}<br>${s.desc}`);
-    markers[s.id] = m;
   });
   function draw(from, to, type) {
     const a = stops.find(x=>x.id===from), b = stops.find(x=>x.id===to);
@@ -606,7 +683,7 @@ function initMap() {
   }
   flightSegs.forEach(([f,t]) => draw(f,t,"flight"));
   groundSegs.forEach(([f,t]) => draw(f,t,"ground"));
-  mapObj.fitBounds(L.latLngBounds(stops.slice(2).map(s=>[s.lat,s.lng])).pad(.12));
+  mapObj.fitBounds(L.latLngBounds(stops.filter(s=>s.phase!=="transit"||s.name==="Gilimanuk").map(s=>[s.lat,s.lng])).pad(.12));
 }
 
 function sid() {
@@ -651,7 +728,8 @@ async function pushCloud() {
 }
 
 async function createCloud() {
-  const body = JSON.stringify({ prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "" });
+  const seeded = seedDefaults();
+  const body = JSON.stringify({ prep: seeded.prep, pack: seeded.pack, notes: "", pinHash: "", updatedAt: "", by: "" });
   const r = await fetch("https://jsonblob.com/api/jsonBlob", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -663,7 +741,7 @@ async function createCloud() {
   const id = headerId || (loc.match(/jsonBlob\/([^/?#]+)/) || [])[1];
   if (!id) throw new Error("没有拿到同步码");
   setSid(id);
-  cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "" };
+  cloud = { prep: seeded.prep, pack: seeded.pack, notes: "", pinHash: "", updatedAt: "", by: "" };
 }
 
 function shareLink() {
@@ -694,7 +772,7 @@ function gateCard() {
       <div class="kicker">情侣同步</div>
       <div class="title" style="margin:6px 0">${sid() ? "已连接云端" : "还没有共享本"}</div>
       <p class="hint">你们两人用同一个链接 + 同一口令。朋友没有口令只能看行程和勾选进度，不能改。不要把护照号、证件扫描写进来。</p>
-      <input class="field" id="whoBox" placeholder="你的称呼，例如 小冉 / 对象" value="${who()}">
+      <input class="field" id="whoBox" placeholder="你的称呼，例如 QI / WEIJUN" value="${who()}">
       <input class="field" id="pinBox" type="password" placeholder="情侣口令（两人设成一样）">
       <div class="bar">
         ${sid() ? `<button class="btn" id="btnUnlock">解锁编辑</button>` : `<button class="btn" id="btnCreate">创建共享并解锁</button>`}
@@ -755,39 +833,43 @@ function bindGate(box) {
 }
 
 function renderPrep() {
-  const st = cloud.prep || {};
-  const pk = cloud.pack || {};
   const groups = [...new Set(prep.map(p=>p.g))];
   const bgroups = [...new Set(bags.map(p=>p.g))];
   const box = document.getElementById("page-prep");
-  const left = prep.filter(p=>!st[p.id]).length;
-  const leftB = bags.filter(p=>!pk[p.id]).length;
+  const left = prep.filter(p=>!isChecked("prep", p)).length;
+  const leftB = bags.filter(p=>!isChecked("pack", p)).length;
   box.innerHTML = gateCard() + `
     <div class="card">
       <div class="kicker">行前待办</div>
-      <div class="next" style="font-size:18px">预订还剩 ${left} / ${prep.length} · 行李还剩 ${leftB} / ${bags.length}</div>
-      <p class="hint">${canEdit ? "勾选会立刻同步到云端。" : "先解锁才能勾选。"}</p>
+      <div class="next" style="font-size:18px">待办还剩 ${left} / ${prep.length} · 行李还剩 ${leftB} / ${bags.length}</div>
+      <p class="hint">${canEdit ? "勾选会立刻同步到云端。已完成项已预勾。" : "先解锁才能勾选。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
+    </div>
+    <div class="card">
+      <div class="kicker">签证与入境</div>
+      <p class="note">印尼：需 e-VOA（2025年11月起对中国不免签），约 IDR 500,000/人，官网 molina.imigrasi.go.id</p>
+      <p class="note" style="margin-top:6px">马来西亚：免签，出发前 72 小时内填 MDAC。</p>
+      <p class="note" style="margin-top:6px">越南：胡志明中转不出机场无需签证；联程行李直挂。</p>
     </div>
     ${groups.map(g=>`
       <div class="card">
         <div class="kicker">${g}</div>
         ${prep.filter(p=>p.g===g).map(p=>`
-          <label class="check ${st[p.id]?"done":""}">
-            <input type="checkbox" data-list="prep" data-id="${p.id}" ${st[p.id]?"checked":""} ${canEdit?"":"disabled"}>
+          <label class="check ${isChecked("prep",p)?"done":""}">
+            <input type="checkbox" data-list="prep" data-id="${p.id}" ${isChecked("prep",p)?"checked":""} ${canEdit?"":"disabled"}>
             <span class="lab">${p.t}</span>
           </label>`).join("")}
       </div>`).join("")}
     <div class="card">
       <div class="kicker">行李整理</div>
-      <div class="title" style="margin:6px 0">按阶段打包，避免一个箱子翻到底</div>
-      <p class="hint">科莫多 / 冲浪 / 潜水 / 火山分袋。9.27、9.30、10.01、10.03、10.04 换酒店勤，随身包精简。</p>
+      <div class="title" style="margin:6px 0">按清单勾，待购买项未勾</div>
+      <p class="hint">赛武瀑布已取消。换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
     </div>
     ${bgroups.map(g=>`
       <div class="card">
         <div class="kicker">行李 · ${g}</div>
         ${bags.filter(p=>p.g===g).map(p=>`
-          <label class="check ${pk[p.id]?"done":""}">
-            <input type="checkbox" data-list="pack" data-id="${p.id}" ${pk[p.id]?"checked":""} ${canEdit?"":"disabled"}>
+          <label class="check ${isChecked("pack",p)?"done":""}">
+            <input type="checkbox" data-list="pack" data-id="${p.id}" ${isChecked("pack",p)?"checked":""} ${canEdit?"":"disabled"}>
             <span class="lab">${p.t}</span>
           </label>`).join("")}
       </div>`).join("")}`;
@@ -810,10 +892,10 @@ function renderNote() {
       <textarea id="noteBox" placeholder="花费分摊、潜店 WhatsApp、明早谁带口罩……" ${canEdit?"":"disabled"}></textarea>
     </div>
     <div class="card">
-      <div class="kicker">给朋友看的公开说明</div>
-      <p class="note">路线、每天几点干什么、哪些项目可以放弃。不含证件号和订单号。</p>
-      <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。可放弃：9.30下午冲浪、10.04追海豚、10.06赛武深入玩水。</p>
-      <p class="note" style="margin-top:8px">OW 考证：图兰本 10.02–10.03，建议中文教练 + 出发前用中文 eLearning。</p>
+      <div class="kicker">行程亮点</div>
+      <p class="note">科莫多龙零距离 · 粉红沙滩跳岛 · 图蓝本自由号 OW 考证 · 宜珍蓝火 · 布罗莫日出</p>
+      <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
+      <p class="note" style="margin-top:8px">两人：WANG/QI、RAN/WEIJUN。公开页不含护照号。</p>
     </div>`;
   bindGate(box);
   const ta = document.getElementById("noteBox");
