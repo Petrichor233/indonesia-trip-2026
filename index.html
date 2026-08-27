@@ -109,10 +109,13 @@
     }
     .subnav button.on { background: #1c1917; color: #fff; }
     .jumps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .jump, .kv[data-jump], .flight[data-jump], .hotel[data-jump], .act[data-jump], .row[data-jump] { cursor: pointer; }
-    .jump {
-      border: 0; background: #eff6ff; color: var(--accent);
-      border-radius: 99px; padding: 3px 9px; font-size: 11px; font-weight: 650;
+    .tap {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-thickness: 1px;
+      -webkit-tap-highlight-color: transparent;
     }
     .hl-flash { animation: hlflash 1.4s ease; }
     @keyframes hlflash {
@@ -157,7 +160,12 @@
     }
     .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .okline { font-size: 12px; color: var(--ok); }
-    .err { font-size: 12px; color: var(--java); }
+    .gate-card { padding: 10px 12px; }
+    .gate-card .kicker { font-size: 10px; }
+    .gate-card .field { padding: 7px 9px; margin-bottom: 6px; }
+    .gate-card .hint { margin: 4px 0 6px; }
+    .gate-card .btn { padding: 7px 10px; font-size: 12px; }
+    .gate-card .okline { margin-top: 4px; }
     nav {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
       display: grid; grid-template-columns: repeat(4, 1fr);
@@ -176,6 +184,18 @@
     .hotel { border-left: 3px solid var(--komodo); padding: 8px 0 8px 10px; margin: 8px 0; }
     .act { border-left: 3px solid var(--bali); padding: 8px 0 8px 10px; margin: 8px 0; }
     .map-box { height: 52vh; min-height: 280px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+    .map-focus { display: flex; gap: 8px; margin: 8px 0 10px; }
+    .map-focus button {
+      flex: 1; border: 0; border-radius: 10px; padding: 8px 6px;
+      font-size: 13px; font-weight: 700; color: #fff;
+    }
+    .map-focus .f-komodo { background: #0f766e; }
+    .map-focus .f-bali { background: #0369a1; }
+    .map-focus .f-java { background: #b91c1c; }
+    .marker-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
     .map-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; font-size: 12px; color: var(--muted); margin: 8px 0 12px; }
     .legend-line { display: inline-block; width: 22px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
     .marker-num {
@@ -491,6 +511,19 @@ const stops = [
 const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
 const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#0369a1", java:"#b91c1c", transit:"#78716c" };
+const boatHalf = [
+  { name:"Kelor 岛", lat:-8.4533, lng:119.8810 },
+  { name:"Menjerite", lat:-8.4870, lng:119.7580 },
+  { name:"Kalong 蝙蝠岛", lat:-8.6083, lng:119.7475 }
+];
+const boatDay = [
+  { name:"帕达尔岛", lat:-8.6497, lng:119.5847 },
+  { name:"粉红沙滩", lat:-8.5380, lng:119.4621 },
+  { name:"科莫多龙", lat:-8.5855, lng:119.4733 },
+  { name:"月牙湾", lat:-8.4750, lng:119.5520 },
+  { name:"Manta Point", lat:-8.5333, lng:119.5833 },
+  { name:"海龟湾", lat:-8.5260, lng:119.6167 }
+];
 
 const prep = [
   { id:"pre-evoa", g:"行前必办", t:"办理印尼 e-VOA 电子落地签（2人，约 IDR 500,000/人，molina.imigrasi.go.id）", done:false },
@@ -580,15 +613,35 @@ function nextEvent(day) {
 }
 
 function dayMeta(d) {
-  const fl = flights.filter(f => md(f.date) === md(d.date));
-  const ho = hotels.filter(h => !["cancel","canceling"].includes(h.status) && hotelOnDay(h, d));
-  const stayJump = ho.length ? `data-jump="hotels" data-id="h-${hotels.indexOf(ho[0])}"` : "";
-  const flyJump = fl.length ? `data-jump="flights" data-id="f-${fl[0].no}"` : "";
+  let stay = d.stay || "";
+  hotels.filter(h => !["cancel","canceling"].includes(h.status) && hotelOnDay(h, d)).forEach(h => {
+    const short = h.name.replace(/（.*）/, "").trim();
+    const id = "h-" + hotels.indexOf(h);
+    if (short && stay.includes(short)) stay = stay.split(short).join(tap(short, "hotels", id));
+  });
+  acts.filter(a => actOnDay(a, d)).forEach(a => {
+    if (stay.includes(a.name)) stay = stay.split(a.name).join(tap(a.name, "acts", "a-"+acts.indexOf(a)));
+  });
   return `
-    <div class="kv" ${stayJump}><b>住</b>${d.stay || ""}</div>
+    <div class="kv"><b>住</b>${stay}</div>
     <div class="kv"><b>早</b>${d.breakfast || ""}</div>
-    <div class="kv" ${flyJump}><b>交通</b>${d.flight || ""}</div>
-    ${dayJumps(d)}`;
+    <div class="kv"><b>交通</b>${linkFlights(d.flight || "")}</div>`;
+}
+
+function tap(text, jump, id) {
+  return `<span class="tap" data-jump="${jump}" data-id="${id || ""}">${text}</span>`;
+}
+function linkFlights(s) {
+  let out = s || "";
+  flights.forEach(f => { out = out.split(f.no).join(tap(f.no, "flights", "f-"+f.no)); });
+  return out;
+}
+function linkActs(s) {
+  let out = s || "";
+  [...acts].sort((a,b) => b.name.length - a.name.length).forEach(a => {
+    if (out.includes(a.name)) out = out.split(a.name).join(tap(a.name, "acts", "a-"+acts.indexOf(a)));
+  });
+  return out;
 }
 
 function md(s) {
@@ -610,68 +663,24 @@ function dayIndexForDate(s) {
   const i = days.findIndex(d => md(d.date) === k);
   return i < 0 ? 0 : i;
 }
-function dayJumps(d) {
-  const bits = [];
-  flights.filter(f => md(f.date) === md(d.date)).forEach(f => {
-    bits.push(`<button type="button" class="jump" data-jump="flights" data-id="f-${f.no}">航班 ${f.no}</button>`);
-  });
-  hotels.filter(h => !["cancel","canceling"].includes(h.status) && hotelOnDay(h, d)).forEach(h => {
-    bits.push(`<button type="button" class="jump" data-jump="hotels" data-id="h-${hotels.indexOf(h)}">${h.name.replace(/（.*）/,"").split(" ")[0]}</button>`);
-  });
-  acts.filter(a => actOnDay(a, d)).forEach(a => {
-    bits.push(`<button type="button" class="jump" data-jump="acts" data-id="a-${acts.indexOf(a)}">${a.name}</button>`);
-  });
-  return bits.length ? `<div class="jumps">${bits.join("")}</div>` : "";
-}
-
-function jumpForEvent(e) {
-  const text = `${e.title || ""} ${e.note || ""}`;
-  const f = flights.find(x => text.includes(x.no));
-  if (f) return { jump:"flights", id:"f-"+f.no, label:"航班 "+f.no };
-  const a = acts.find(x => text.includes(x.name));
-  if (a) return { jump:"acts", id:"a-"+acts.indexOf(a), label:a.name };
-  const h = hotels.find(x => {
-    if (["cancel","canceling"].includes(x.status)) return false;
-    const keys = [x.name, x.name.replace(/（.*）/, ""), x.name.split(/[\s/]/)[0]].filter(k => k && k.length >= 4);
-    if (/T2/.test(x.name)) keys.push("T2附近", "T2 附近", "吉隆坡市区");
-    if (/Kuta|Heritage/i.test(x.name)) keys.push("库塔海滩遗产", "库塔海滩");
-    if (/Katamaran/i.test(x.name)) keys.push("卡塔马兰");
-    if (/Seaesta/i.test(x.name)) keys.push("西亚斯塔");
-    if (/Meruhdani/i.test(x.name)) keys.push("梅鲁达尼");
-    if (/Sunari/i.test(x.name)) keys.push("苏纳里", "罗威纳");
-    if (/Harvest|Ijen/i.test(x.name)) keys.push("大丰收", "宜珍");
-    if (/Omah/i.test(x.name)) keys.push("Omah", "布罗莫木屋");
-    if (/Premier/i.test(x.name)) keys.push("Premier Place", "泗水机场");
-    if (/Habitat/i.test(x.name)) keys.push("Habitat");
-    return keys.some(k => text.includes(k));
-  });
-  if (h) return { jump:"hotels", id:"h-"+hotels.indexOf(h), label:h.name.replace(/（.*）/,"").split(" ")[0] };
-  return null;
-}
 
 function eventRows(events) {
-  return events.map(e => {
-    const j = jumpForEvent(e);
-    const attr = j ? `data-jump="${j.jump}" data-id="${j.id}"` : "";
-    return `
-    <div class="row" ${attr}>
+  return events.map(e => `
+    <div class="row">
       <div class="t">${e.t}</div>
       <div>
-        <div class="title">${e.title} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
-        ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${e.note}</div>`:""}
-        ${j?`<div class="jumps"><button type="button" class="jump" data-jump="${j.jump}" data-id="${j.id}">${j.label}</button></div>`:""}
+        <div class="title">${linkActs(linkFlights(e.title))} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
+        ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${linkActs(linkFlights(e.note))}</div>`:""}
       </div>
-    </div>`;
-  }).join("");
+    </div>`).join("");
 }
 
 function flightBlock(f) {
   const dayId = "day-" + dayIndexForDate(f.date);
-  return `<div class="flight" id="f-${f.no}" data-jump="days" data-id="${dayId}">
-    <div class="title">${f.date} ${f.no} · ${f.route}</div>
+  return `<div class="flight" id="f-${f.no}">
+    <div class="title">${tap(f.date, "days", dayId)} ${tap(f.no, "flights", "f-"+f.no)} · ${f.route}</div>
     <div class="note memo">${f.al} · ${f.dep} → ${f.arr} · ${f.bag}</div>
     <div class="note">${f.book}${f.note?" · "+f.note:""}</div>
-    <div class="jumps"><button type="button" class="jump" data-jump="days" data-id="${dayId}">当天日程</button></div>
   </div>`;
 }
 
@@ -684,17 +693,13 @@ function renderToday() {
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">还有 ${st.left} 天</div>
-        <p class="hint">9.25 VN517 北京大兴 08:30。科莫多海底 · 巴厘文化海岛 · 泗水火山反穿。行前待办还剩 ${leftPrep} 项。</p>
+        <p class="hint">${linkFlights("9.25 VN517 北京大兴 08:30")}。科莫多海底 · 巴厘文化海岛 · 泗水火山反穿。行前待办还剩 ${leftPrep} 项。</p>
         ${phaseChip("transit")}${phaseChip("komodo")}${phaseChip("bali")}${phaseChip("java")}
       </div>
       <div class="card">
         <div class="kicker">第一天</div>
-        <div class="title" style="margin:6px 0">${st.day.date} ${st.day.title}</div>
-        ${dayJumps(st.day)}
+        <div class="title" style="margin:6px 0">${tap(st.day.date, "days", "day-0")} ${st.day.title}</div>
         ${eventRows(st.day.events)}
-        <div class="jumps" style="margin-top:10px">
-          <button type="button" class="jump" data-jump="days" data-id="day-0">打开行程日程</button>
-        </div>
       </div>`;
     bindJumps(box);
     return;
@@ -718,9 +723,8 @@ function renderToday() {
     </div>
     <div class="card">
       <div class="kicker">下一步</div>
-      <div class="next" style="font-size:18px">${nx.t} ${nx.title}</div>
-      ${nx.note?`<div class="note">${nx.note}</div>`:""}
-      ${(() => { const j = jumpForEvent(nx); return j ? `<div class="jumps"><button type="button" class="jump" data-jump="${j.jump}" data-id="${j.id}">${j.label}</button></div>` : ""; })()}
+      <div class="next" style="font-size:18px">${nx.t} ${linkActs(linkFlights(nx.title))}</div>
+      ${nx.note?`<div class="note">${linkActs(linkFlights(nx.note))}</div>`:""}
     </div>
     <div class="card">
       <div class="kicker">当天安排</div>
@@ -773,30 +777,28 @@ function renderTrip(filter, highlightId) {
   if (tripTab === "flights") {
     body = `<div class="card">
       <div class="kicker">航班 · 7 段 · 去哪儿</div>
-      <p class="hint">点航班可跳到当天日程。返程 VN516 已改为 00:35。</p>
+      <p class="hint">点日期看当天日程，点航班号定位该段。返程 VN516 已改为 00:35。</p>
       ${flights.map(flightBlock).join("")}
     </div>`;
   } else if (tripTab === "hotels") {
     body = `<div class="card">
       <div class="kicker">酒店</div>
-      <p class="hint">点酒店可跳到入住当天日程。已退订的仍列出以免走错。</p>
-      ${hotels.map((h,i)=>`<div class="hotel" id="h-${i}" data-jump="days" data-id="day-${dayIndexForDate(h.inn)}">
-        <div class="title">${h.inn}–${h.out} · ${h.name} ${statusChip(h.status)}</div>
+      <p class="hint">点入住日期看当天日程，点酒店名定位该条。已退订的仍列出以免走错。</p>
+      ${hotels.map((h,i)=>`<div class="hotel" id="h-${i}">
+        <div class="title">${tap(h.inn+"–"+h.out, "days", "day-"+dayIndexForDate(h.inn))} · ${tap(h.name, "hotels", "h-"+i)} ${statusChip(h.status)}</div>
         <div class="note memo">${h.nights} 晚 · ${h.room}${h.platform?" · "+h.platform:""}</div>
         <div class="note">${h.note}</div>
-        <div class="jumps"><button type="button" class="jump" data-jump="days" data-id="day-${dayIndexForDate(h.inn)}">入住当天</button></div>
       </div>`).join("")}
     </div>`;
   } else if (tripTab === "acts") {
     body = `<div class="card">
       <div class="kicker">已订活动</div>
-      <p class="hint">点活动可跳到对应日程。</p>
-      ${acts.map((a,i)=>`<div class="act" id="a-${i}" data-jump="days" data-id="day-${dayIndexForDate(a.date)}">
-        <div class="title">${a.date} ${a.name}</div>
+      <p class="hint">点日期看当天日程，点活动名定位该条。</p>
+      ${acts.map((a,i)=>`<div class="act" id="a-${i}">
+        <div class="title">${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))} ${tap(a.name, "acts", "a-"+i)}</div>
         <div class="note memo">${a.who}</div>
         <div class="note">${a.detail}</div>
         <div class="note">${a.note}</div>
-        <div class="jumps"><button type="button" class="jump" data-jump="days" data-id="day-${dayIndexForDate(a.date)}">对应日程</button></div>
       </div>`).join("")}
     </div>`;
   } else {
@@ -842,9 +844,15 @@ function renderMap() {
       <div class="card">
         <div class="kicker">路线</div>
         <div class="next" style="font-size:18px">北京 → 胡志明 → 吉隆坡 → 科莫多 → 巴厘 → 爪哇 → 泗水 → 吉隆坡 → 胡志明 → 北京</div>
+        <div class="map-focus">
+          <button type="button" class="f-komodo" data-focus="komodo">科莫多</button>
+          <button type="button" class="f-bali" data-focus="bali">巴厘岛</button>
+          <button type="button" class="f-java" data-focus="java">爪哇</button>
+        </div>
         <div class="map-legend">
           <span><i class="legend-line" style="background:#2563eb;background-image:repeating-linear-gradient(90deg,#2563eb 0 6px,transparent 6px 10px)"></i>虚线航班</span>
           <span><i class="legend-line" style="background:#0f766e"></i>实线陆路/轮渡</span>
+          <span><i class="legend-line" style="background:#0f766e;background-image:repeating-linear-gradient(90deg,#0f766e 0 3px,transparent 3px 6px);height:2px"></i>细虚线船游</span>
         </div>
         <div id="map" class="map-box"></div>
       </div>
@@ -854,7 +862,42 @@ function renderMap() {
       </div>`;
     box.dataset.ready = "1";
   }
+  box.querySelectorAll("[data-focus]").forEach(b => b.onclick = () => focusRegion(b.dataset.focus));
   setTimeout(initMap, 80);
+}
+function boatIcon(color) {
+  return L.divIcon({ className:"", html:`<div class="marker-dot" style="background:${color}"></div>`, iconSize:[10,10], iconAnchor:[5,5] });
+}
+function addBoatRoute(pts, color, title) {
+  pts.forEach(p => {
+    L.marker([p.lat, p.lng], { icon: boatIcon(color), zIndexOffset: -100 })
+      .addTo(mapObj)
+      .bindPopup(`<b>${p.name}</b><br>${title}`);
+  });
+  L.polyline(pts.map(p => [p.lat, p.lng]), {
+    color, weight: 1.5, dashArray: "3 5", opacity: .85
+  }).addTo(mapObj);
+}
+function regionPoints(key) {
+  if (key === "komodo") {
+    return [
+      stops.find(s => s.id === 3),
+      ...boatHalf, ...boatDay
+    ].map(p => [p.lat, p.lng]);
+  }
+  if (key === "bali") return stops.filter(s => s.phase === "bali" || s.name === "Gilimanuk").map(s => [s.lat, s.lng]);
+  if (key === "java") return stops.filter(s => s.phase === "java").map(s => [s.lat, s.lng]);
+  return [];
+}
+function focusRegion(key) {
+  const run = () => {
+    if (!mapObj) return;
+    const pts = regionPoints(key);
+    if (!pts.length) return;
+    mapObj.flyToBounds(L.latLngBounds(pts).pad(0.22), { duration: 0.7 });
+  };
+  if (!mapObj) setTimeout(run, 160);
+  else run();
 }
 function initMap() {
   const el = document.getElementById("map");
@@ -877,6 +920,8 @@ function initMap() {
   }
   flightSegs.forEach(([f,t]) => draw(f,t,"flight"));
   groundSegs.forEach(([f,t]) => draw(f,t,"ground"));
+  addBoatRoute(boatHalf, "#0f766e", "9.27 科莫多半日游");
+  addBoatRoute(boatDay, "#14b8a6", "9.28 科莫多一日跳岛");
   mapObj.fitBounds(L.latLngBounds(stops.filter(s=>s.phase!=="transit"||s.name==="Gilimanuk").map(s=>[s.lat,s.lng])).pad(.12));
 }
 
@@ -998,18 +1043,15 @@ function gateCard() {
   const id = sid();
   const legacy = id && !isTextDbSid(id);
   const connected = id && !legacy;
-  const unlocked = canEdit ? `<p class="okline">已解锁，勾选和备忘会同步给对方。</p>` : "";
-  const title = legacy ? "旧同步通道已失效" : (connected ? "已连接云端" : "还没有共享本");
+  const unlocked = canEdit ? `<p class="okline">已解锁，勾选会同步给对方。</p>` : "";
+  const title = legacy ? "旧通道失效" : (connected ? "已连接" : "未创建共享");
   return `
-    <div class="card">
-      <div class="kicker">同伴同步</div>
-      <div class="title" style="margin:6px 0">${title}</div>
-      <p class="hint">${legacy ? "之前的 jsonblob 在国内打不开。重新创建共享后，把新链接发给对方即可。" : "同伴用同一个链接 + 同一口令即可同步。解锁只需口令。朋友没有口令只能看，不能改。不要把护照号、证件扫描写进来。"}</p>
-      <input class="field" id="pinBox" type="password" placeholder="同伴口令（两人设成一样）">
-      <input class="field" id="whoBox" placeholder="署名可选，例如 QI / WEIJUN" value="${who()}">
+    <div class="card gate-card">
+      <div class="kicker">同伴同步 · ${title}</div>
+      <input class="field" id="pinBox" type="password" placeholder="同伴口令">
       <div class="bar">
-        ${legacy ? `<button class="btn" id="btnReset">重新创建共享</button>` : (connected ? `<button class="btn" id="btnUnlock">解锁编辑</button>` : `<button class="btn" id="btnCreate">创建共享并解锁</button>`)}
-        ${connected ? `<button class="btn sec" id="btnCopy">复制同伴链接</button>` : ""}
+        ${legacy ? `<button class="btn" id="btnReset">重新创建</button>` : (connected ? `<button class="btn" id="btnUnlock">解锁编辑</button>` : `<button class="btn" id="btnCreate">创建并解锁</button>`)}
+        ${connected ? `<button class="btn sec" id="btnCopy">复制链接</button>` : ""}
       </div>
       ${unlocked}
       <p class="hint" data-sync></p>
@@ -1018,16 +1060,6 @@ function gateCard() {
 }
 
 function bindGate(box) {
-  const whoBox = box.querySelector("#whoBox");
-  if (whoBox) whoBox.onchange = () => {
-    const v = whoBox.value.trim();
-    if (v) localStorage.setItem(KEY_WHO, v);
-    else localStorage.removeItem(KEY_WHO);
-  };
-  const saveName = () => {
-    const name = ((box.querySelector("#whoBox") || {}).value || "").trim();
-    if (name) localStorage.setItem(KEY_WHO, name);
-  };
   const err = (m) => { const el = box.querySelector("#syncErr"); if (el) el.textContent = m; };
   const afterUnlock = async () => {
     sessionStorage.setItem(KEY_UNLOCK, "1");
@@ -1039,7 +1071,6 @@ function bindGate(box) {
     try {
       const pin = (box.querySelector("#pinBox").value || "").trim();
       if (pin.length < 4) return err("口令至少 4 位");
-      saveName();
       await createCloud();
       canEdit = true;
       cloud.pinHash = await hashPin(pin);
@@ -1057,7 +1088,6 @@ function bindGate(box) {
     try {
       const pin = (box.querySelector("#pinBox").value || "").trim();
       if (!pin) return err("输入口令");
-      saveName();
       await pullCloud();
       const h = await hashPin(pin);
       if (cloud.pinHash && cloud.pinHash !== h) return err("口令不对");
