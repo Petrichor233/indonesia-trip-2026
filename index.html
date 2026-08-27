@@ -904,7 +904,7 @@ function initMap() {
   if (!el || typeof L === "undefined") return;
   if (mapObj) { mapObj.invalidateSize(); return; }
   mapObj = L.map(el, { zoomControl:true, scrollWheelZoom:true }).setView([-8.3, 115.2], 7);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { attribution:"&copy; OSM &copy; CARTO", maxZoom:18 }).addTo(mapObj);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution:"&copy; OpenStreetMap", maxZoom:19 }).addTo(mapObj);
   stops.forEach((s,i) => {
     L.marker([s.lat, s.lng], { icon: L.divIcon({ className:"", html:`<div class="marker-num" style="background:${PHASE_COLOR[s.phase]}">${i+1}</div>`, iconSize:[26,26], iconAnchor:[13,13] }) })
       .addTo(mapObj)
