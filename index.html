@@ -101,6 +101,7 @@
       border-bottom: 1px solid var(--line);
     }
     .subnav.n4 { grid-template-columns: repeat(4, 1fr); }
+    .subnav.n3 { grid-template-columns: repeat(3, 1fr); }
     .subnav.n2 { grid-template-columns: repeat(2, 1fr); }
     .subnav button {
       border: 0; background: #e7e5e4; color: #44403c;
@@ -108,7 +109,7 @@
     }
     .subnav button.on { background: #1c1917; color: #fff; }
     .jumps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .jump, .kv[data-jump], .flight[data-jump], .hotel[data-jump], .act[data-jump] { cursor: pointer; }
+    .jump, .kv[data-jump], .flight[data-jump], .hotel[data-jump], .act[data-jump], .row[data-jump] { cursor: pointer; }
     .jump {
       border: 0; background: #eff6ff; color: var(--accent);
       border-radius: 99px; padding: 3px 9px; font-size: 11px; font-weight: 650;
@@ -122,6 +123,23 @@
     .check:first-of-type { border-top: none; }
     .check input { margin-top: 3px; width: 18px; height: 18px; }
     .check.done .lab { color: var(--muted); text-decoration: line-through; }
+    .pack-st {
+      display: flex; gap: 10px; align-items: flex-start;
+      width: 100%; text-align: left;
+      background: none; border: 0; border-top: 1px solid #f5f5f4;
+      padding: 10px 0; font: inherit; color: inherit;
+    }
+    .pack-st:first-of-type { border-top: none; }
+    .pack-st:disabled { opacity: 1; cursor: default; }
+    .pack-st:not(:disabled) { cursor: pointer; }
+    .st-pill {
+      flex-shrink: 0; font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 99px; min-width: 52px; text-align: center;
+    }
+    .st-none .st-pill { background: #fee2e2; color: #b91c1c; }
+    .st-have .st-pill { background: #ffedd5; color: #c2410c; }
+    .st-packed .st-pill { background: #dcfce7; color: #15803d; }
+    .st-packed .lab { color: var(--muted); text-decoration: line-through; }
     textarea {
       width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 10px;
       padding: 10px; font: inherit; resize: vertical; background: #fafaf9;
@@ -211,7 +229,7 @@
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">2026.9.25 北京出发</div>
-        <p class="hint">点「行程」看日程/航班，「准备」看待办和备忘。</p>
+        <p class="hint">点「行程」看日程/航班，「准备」看待办、行李和备忘。</p>
       </div>
     </section>
     <section id="page-trip" class="page"></section>
@@ -390,68 +408,70 @@ const days = [
 ];
 
 const bags = [
-  { id:"b-pass", g:"证件类", t:"护照", done:true },
-  { id:"b-id", g:"证件类", t:"身份证", done:true },
-  { id:"b-visa", g:"证件类", t:"签证打印件（待办 e-VOA）", done:false },
-  { id:"b-tix", g:"证件类", t:"机票行程单", done:false },
-  { id:"b-card", g:"证件类", t:"信用卡 / 借记卡", done:true },
-  { id:"b-cash", g:"证件类", t:"现金印尼盾 + 马来币", done:false },
-  { id:"e-fan", g:"电子设备", t:"挂脖风扇", done:true },
-  { id:"e-lamp", g:"电子设备", t:"头灯 + 电池", done:true },
-  { id:"e-sim", g:"电子设备", t:"电话卡", done:false },
-  { id:"e-chg", g:"电子设备", t:"手机充电器", done:true },
-  { id:"e-pwr", g:"电子设备", t:"充电宝", done:true },
-  { id:"e-plug", g:"电子设备", t:"转换插头", done:true },
-  { id:"e-ear", g:"电子设备", t:"耳机", done:true },
-  { id:"e-case", g:"电子设备", t:"相机潜水壳", done:false },
-  { id:"e-bag", g:"电子设备", t:"潜水相机 / 防水手机袋", done:true },
-  { id:"c-water", g:"衣物类", t:"涉水鞋", done:true },
-  { id:"c-pants", g:"衣物类", t:"冲锋裤", done:false },
-  { id:"c-towel", g:"衣物类", t:"速干浴巾", done:true },
-  { id:"c-jacket", g:"衣物类", t:"冲锋衣 + 内胆", done:true },
-  { id:"c-sun", g:"衣物类", t:"防晒服", done:true },
-  { id:"c-slip", g:"衣物类", t:"拖鞋", done:true },
-  { id:"c-short", g:"衣物类", t:"短袖短裤", done:true },
-  { id:"c-long", g:"衣物类", t:"长袖长裤", done:true },
-  { id:"c-und", g:"衣物类", t:"内衣内裤", done:true },
-  { id:"c-sock", g:"衣物类", t:"袜子", done:true },
-  { id:"c-swim", g:"衣物类", t:"泳衣 & 潜水服", done:true },
-  { id:"c-pyj", g:"衣物类", t:"睡衣", done:true },
-  { id:"c-umb", g:"衣物类", t:"轻便晴雨伞", done:true },
-  { id:"c-hat", g:"衣物类", t:"遮阳帽", done:true },
-  { id:"c-glass", g:"衣物类", t:"太阳镜", done:false },
-  { id:"s-slip", g:"鞋类", t:"拖鞋 / 凉鞋", done:true },
-  { id:"s-hike", g:"鞋类", t:"运动鞋 / 徒步鞋", done:true },
-  { id:"s-boot", g:"鞋类", t:"潜水靴", done:false },
-  { id:"h-makeup", g:"洗护用品", t:"化妆包", done:true },
-  { id:"h-brush", g:"洗护用品", t:"牙刷 / 牙膏", done:true },
-  { id:"h-face", g:"洗护用品", t:"洗面奶", done:true },
-  { id:"h-spf", g:"洗护用品", t:"防晒霜 + 海洋友好防晒泥", done:true },
-  { id:"h-after", g:"洗护用品", t:"晒后修复", done:true },
-  { id:"h-shampoo", g:"洗护用品", t:"洗发水 / 沐浴露", done:true },
-  { id:"h-towel", g:"洗护用品", t:"毛巾", done:true },
-  { id:"h-tissue", g:"洗护用品", t:"纸巾 / 湿纸巾", done:true },
-  { id:"h-shave", g:"洗护用品", t:"剃须刀 + 充电器", done:true },
-  { id:"h-fem", g:"洗护用品", t:"女性用品", done:true },
-  { id:"m-cold", g:"药品类", t:"感冒药", done:true },
-  { id:"m-gut", g:"药品类", t:"肠胃药 / 止泻药", done:true },
-  { id:"m-sea", g:"药品类", t:"晕车 / 晕船药", done:true },
-  { id:"m-band", g:"药品类", t:"创可贴", done:true },
-  { id:"m-moz", g:"药品类", t:"防蚊液", done:true },
-  { id:"m-oil", g:"药品类", t:"清凉油", done:true },
-  { id:"m-own", g:"药品类", t:"个人常用药", done:true },
-  { id:"d-cert", g:"潜水/户外装备", t:"潜水证", done:true },
-  { id:"d-mask", g:"潜水/户外装备", t:"面镜 / 呼吸管", done:true },
-  { id:"d-jelly", g:"潜水/户外装备", t:"水母衣 / 防晒衣", done:true },
-  { id:"d-stick", g:"潜水/户外装备", t:"登山杖", done:true },
-  { id:"d-lamp", g:"潜水/户外装备", t:"头灯 / 手电筒", done:true },
-  { id:"d-warm", g:"潜水/户外装备", t:"保暖层", done:true },
-  { id:"o-neck", g:"其他", t:"廉航颈枕", done:true },
-  { id:"o-eye", g:"其他", t:"眼罩", done:true },
-  { id:"o-ear", g:"其他", t:"耳塞", done:true },
-  { id:"o-pack", g:"其他", t:"轻薄背包", done:true },
-  { id:"o-pen", g:"其他", t:"笔", done:true }
+  { id:"b-pass", g:"证件类", t:"护照", st:"have" },
+  { id:"b-id", g:"证件类", t:"身份证", st:"have" },
+  { id:"b-visa", g:"证件类", t:"签证打印件（待办 e-VOA）", st:"none" },
+  { id:"b-tix", g:"证件类", t:"机票行程单", st:"none" },
+  { id:"b-card", g:"证件类", t:"信用卡 / 借记卡", st:"have" },
+  { id:"b-cash", g:"证件类", t:"现金印尼盾 + 马来币", st:"none" },
+  { id:"e-fan", g:"电子设备", t:"挂脖风扇", st:"have" },
+  { id:"e-lamp", g:"电子设备", t:"头灯 + 电池", st:"have" },
+  { id:"e-sim", g:"电子设备", t:"电话卡", st:"none" },
+  { id:"e-chg", g:"电子设备", t:"手机充电器", st:"have" },
+  { id:"e-pwr", g:"电子设备", t:"充电宝", st:"have" },
+  { id:"e-plug", g:"电子设备", t:"转换插头", st:"have" },
+  { id:"e-ear", g:"电子设备", t:"耳机", st:"have" },
+  { id:"e-case", g:"电子设备", t:"相机潜水壳", st:"none" },
+  { id:"e-bag", g:"电子设备", t:"潜水相机 / 防水手机袋", st:"have" },
+  { id:"c-water", g:"衣物类", t:"涉水鞋", st:"have" },
+  { id:"c-pants", g:"衣物类", t:"冲锋裤", st:"none" },
+  { id:"c-towel", g:"衣物类", t:"速干浴巾", st:"have" },
+  { id:"c-jacket", g:"衣物类", t:"冲锋衣 + 内胆", st:"have" },
+  { id:"c-sun", g:"衣物类", t:"防晒服", st:"have" },
+  { id:"c-slip", g:"衣物类", t:"拖鞋", st:"have" },
+  { id:"c-short", g:"衣物类", t:"短袖短裤", st:"have" },
+  { id:"c-long", g:"衣物类", t:"长袖长裤", st:"have" },
+  { id:"c-und", g:"衣物类", t:"内衣内裤", st:"have" },
+  { id:"c-sock", g:"衣物类", t:"袜子", st:"have" },
+  { id:"c-swim", g:"衣物类", t:"泳衣 & 潜水服", st:"have" },
+  { id:"c-pyj", g:"衣物类", t:"睡衣", st:"have" },
+  { id:"c-umb", g:"衣物类", t:"轻便晴雨伞", st:"have" },
+  { id:"c-hat", g:"衣物类", t:"遮阳帽", st:"have" },
+  { id:"c-glass", g:"衣物类", t:"太阳镜", st:"none" },
+  { id:"s-slip", g:"鞋类", t:"拖鞋 / 凉鞋", st:"have" },
+  { id:"s-hike", g:"鞋类", t:"运动鞋 / 徒步鞋", st:"have" },
+  { id:"s-boot", g:"鞋类", t:"潜水靴", st:"none" },
+  { id:"h-makeup", g:"洗护用品", t:"化妆包", st:"have" },
+  { id:"h-brush", g:"洗护用品", t:"牙刷 / 牙膏", st:"have" },
+  { id:"h-face", g:"洗护用品", t:"洗面奶", st:"have" },
+  { id:"h-spf", g:"洗护用品", t:"防晒霜 + 海洋友好防晒泥", st:"have" },
+  { id:"h-after", g:"洗护用品", t:"晒后修复", st:"have" },
+  { id:"h-shampoo", g:"洗护用品", t:"洗发水 / 沐浴露", st:"have" },
+  { id:"h-towel", g:"洗护用品", t:"毛巾", st:"have" },
+  { id:"h-tissue", g:"洗护用品", t:"纸巾 / 湿纸巾", st:"have" },
+  { id:"h-shave", g:"洗护用品", t:"剃须刀 + 充电器", st:"have" },
+  { id:"h-fem", g:"洗护用品", t:"女性用品", st:"have" },
+  { id:"m-cold", g:"药品类", t:"感冒药", st:"have" },
+  { id:"m-gut", g:"药品类", t:"肠胃药 / 止泻药", st:"have" },
+  { id:"m-sea", g:"药品类", t:"晕车 / 晕船药", st:"have" },
+  { id:"m-band", g:"药品类", t:"创可贴", st:"have" },
+  { id:"m-moz", g:"药品类", t:"防蚊液", st:"have" },
+  { id:"m-oil", g:"药品类", t:"清凉油", st:"have" },
+  { id:"m-own", g:"药品类", t:"个人常用药", st:"have" },
+  { id:"d-cert", g:"潜水/户外装备", t:"潜水证", st:"have" },
+  { id:"d-mask", g:"潜水/户外装备", t:"面镜 / 呼吸管", st:"have" },
+  { id:"d-jelly", g:"潜水/户外装备", t:"水母衣 / 防晒衣", st:"have" },
+  { id:"d-stick", g:"潜水/户外装备", t:"登山杖", st:"have" },
+  { id:"d-lamp", g:"潜水/户外装备", t:"头灯 / 手电筒", st:"have" },
+  { id:"d-warm", g:"潜水/户外装备", t:"保暖层", st:"have" },
+  { id:"o-neck", g:"其他", t:"廉航颈枕", st:"have" },
+  { id:"o-eye", g:"其他", t:"眼罩", st:"have" },
+  { id:"o-ear", g:"其他", t:"耳塞", st:"have" },
+  { id:"o-pack", g:"其他", t:"轻薄背包", st:"have" },
+  { id:"o-pen", g:"其他", t:"笔", st:"have" }
 ];
+const PACK_CYCLE = ["none","have","packed"];
+const PACK_LABEL = { none:"尚无", have:"已有", packed:"已装包" };
 
 const stops = [
   { id:0,  name:"北京", lat:39.9042, lng:116.4074, phase:"transit", date:"9.25 / 10.8", desc:"VN517 去，VN516 回" },
@@ -513,10 +533,20 @@ function isChecked(list, item) {
   if (Object.prototype.hasOwnProperty.call(st, item.id)) return !!st[item.id];
   return !!item.done;
 }
+function packState(item) {
+  const raw = (cloud.pack || {})[item.id];
+  if (raw === "none" || raw === "have" || raw === "packed") return raw;
+  if (raw === true) return "have";
+  if (raw === false) return "none";
+  return item.st || "none";
+}
+function nextPackState(cur) {
+  return PACK_CYCLE[(PACK_CYCLE.indexOf(cur) + 1) % PACK_CYCLE.length];
+}
 function seedDefaults() {
   const prepSt = {}, packSt = {};
   prep.forEach(p => { if (p.done) prepSt[p.id] = true; });
-  bags.forEach(p => { if (p.done) packSt[p.id] = true; });
+  bags.forEach(p => { packSt[p.id] = p.st || "none"; });
   return { prep: prepSt, pack: packSt };
 }
 
@@ -594,15 +624,45 @@ function dayJumps(d) {
   return bits.length ? `<div class="jumps">${bits.join("")}</div>` : "";
 }
 
+function jumpForEvent(e) {
+  const text = `${e.title || ""} ${e.note || ""}`;
+  const f = flights.find(x => text.includes(x.no));
+  if (f) return { jump:"flights", id:"f-"+f.no, label:"航班 "+f.no };
+  const a = acts.find(x => text.includes(x.name));
+  if (a) return { jump:"acts", id:"a-"+acts.indexOf(a), label:a.name };
+  const h = hotels.find(x => {
+    if (["cancel","canceling"].includes(x.status)) return false;
+    const keys = [x.name, x.name.replace(/（.*）/, ""), x.name.split(/[\s/]/)[0]].filter(k => k && k.length >= 4);
+    if (/T2/.test(x.name)) keys.push("T2附近", "T2 附近", "吉隆坡市区");
+    if (/Kuta|Heritage/i.test(x.name)) keys.push("库塔海滩遗产", "库塔海滩");
+    if (/Katamaran/i.test(x.name)) keys.push("卡塔马兰");
+    if (/Seaesta/i.test(x.name)) keys.push("西亚斯塔");
+    if (/Meruhdani/i.test(x.name)) keys.push("梅鲁达尼");
+    if (/Sunari/i.test(x.name)) keys.push("苏纳里", "罗威纳");
+    if (/Harvest|Ijen/i.test(x.name)) keys.push("大丰收", "宜珍");
+    if (/Omah/i.test(x.name)) keys.push("Omah", "布罗莫木屋");
+    if (/Premier/i.test(x.name)) keys.push("Premier Place", "泗水机场");
+    if (/Habitat/i.test(x.name)) keys.push("Habitat");
+    return keys.some(k => text.includes(k));
+  });
+  if (h) return { jump:"hotels", id:"h-"+hotels.indexOf(h), label:h.name.replace(/（.*）/,"").split(" ")[0] };
+  return null;
+}
+
 function eventRows(events) {
-  return events.map(e => `
-    <div class="row">
+  return events.map(e => {
+    const j = jumpForEvent(e);
+    const attr = j ? `data-jump="${j.jump}" data-id="${j.id}"` : "";
+    return `
+    <div class="row" ${attr}>
       <div class="t">${e.t}</div>
       <div>
         <div class="title">${e.title} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
         ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${e.note}</div>`:""}
+        ${j?`<div class="jumps"><button type="button" class="jump" data-jump="${j.jump}" data-id="${j.id}">${j.label}</button></div>`:""}
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 function flightBlock(f) {
@@ -630,10 +690,10 @@ function renderToday() {
       <div class="card">
         <div class="kicker">第一天</div>
         <div class="title" style="margin:6px 0">${st.day.date} ${st.day.title}</div>
+        ${dayJumps(st.day)}
         ${eventRows(st.day.events)}
         <div class="jumps" style="margin-top:10px">
           <button type="button" class="jump" data-jump="days" data-id="day-0">打开行程日程</button>
-          <button type="button" class="jump" data-jump="flights">全部航班</button>
         </div>
       </div>`;
     bindJumps(box);
@@ -660,6 +720,7 @@ function renderToday() {
       <div class="kicker">下一步</div>
       <div class="next" style="font-size:18px">${nx.t} ${nx.title}</div>
       ${nx.note?`<div class="note">${nx.note}</div>`:""}
+      ${(() => { const j = jumpForEvent(nx); return j ? `<div class="jumps"><button type="button" class="jump" data-jump="${j.jump}" data-id="${j.id}">${j.label}</button></div>` : ""; })()}
     </div>
     <div class="card">
       <div class="kicker">当天安排</div>
@@ -899,7 +960,7 @@ async function pushCloud() {
   if (!id) return;
   if (!isTextDbSid(id)) throw new Error("旧同步通道 jsonblob 国内打不开，请点「重新创建共享」");
   cloud.updatedAt = new Date().toISOString();
-  cloud.by = who() || "未署名";
+  cloud.by = who() || "同伴";
   await writeCloud(id, cloud);
 }
 
@@ -941,14 +1002,14 @@ function gateCard() {
   const title = legacy ? "旧同步通道已失效" : (connected ? "已连接云端" : "还没有共享本");
   return `
     <div class="card">
-      <div class="kicker">情侣同步</div>
+      <div class="kicker">同伴同步</div>
       <div class="title" style="margin:6px 0">${title}</div>
-      <p class="hint">${legacy ? "之前的 jsonblob 在国内打不开。重新创建共享后，把新链接发给对方即可。" : "你们两人用同一个链接 + 同一口令。朋友没有口令只能看行程和勾选进度，不能改。不要把护照号、证件扫描写进来。"}</p>
-      <input class="field" id="whoBox" placeholder="你的称呼，例如 QI / WEIJUN" value="${who()}">
-      <input class="field" id="pinBox" type="password" placeholder="情侣口令（两人设成一样）">
+      <p class="hint">${legacy ? "之前的 jsonblob 在国内打不开。重新创建共享后，把新链接发给对方即可。" : "同伴用同一个链接 + 同一口令即可同步。解锁只需口令。朋友没有口令只能看，不能改。不要把护照号、证件扫描写进来。"}</p>
+      <input class="field" id="pinBox" type="password" placeholder="同伴口令（两人设成一样）">
+      <input class="field" id="whoBox" placeholder="署名可选，例如 QI / WEIJUN" value="${who()}">
       <div class="bar">
         ${legacy ? `<button class="btn" id="btnReset">重新创建共享</button>` : (connected ? `<button class="btn" id="btnUnlock">解锁编辑</button>` : `<button class="btn" id="btnCreate">创建共享并解锁</button>`)}
-        ${connected ? `<button class="btn sec" id="btnCopy">复制情侣链接</button>` : ""}
+        ${connected ? `<button class="btn sec" id="btnCopy">复制同伴链接</button>` : ""}
       </div>
       ${unlocked}
       <p class="hint" data-sync></p>
@@ -958,7 +1019,15 @@ function gateCard() {
 
 function bindGate(box) {
   const whoBox = box.querySelector("#whoBox");
-  if (whoBox) whoBox.onchange = () => localStorage.setItem(KEY_WHO, whoBox.value.trim());
+  if (whoBox) whoBox.onchange = () => {
+    const v = whoBox.value.trim();
+    if (v) localStorage.setItem(KEY_WHO, v);
+    else localStorage.removeItem(KEY_WHO);
+  };
+  const saveName = () => {
+    const name = ((box.querySelector("#whoBox") || {}).value || "").trim();
+    if (name) localStorage.setItem(KEY_WHO, name);
+  };
   const err = (m) => { const el = box.querySelector("#syncErr"); if (el) el.textContent = m; };
   const afterUnlock = async () => {
     sessionStorage.setItem(KEY_UNLOCK, "1");
@@ -969,10 +1038,8 @@ function bindGate(box) {
   if (btnCreate) btnCreate.onclick = async () => {
     try {
       const pin = (box.querySelector("#pinBox").value || "").trim();
-      const name = (box.querySelector("#whoBox").value || "").trim();
-      if (!name) return err("先填称呼");
       if (pin.length < 4) return err("口令至少 4 位");
-      localStorage.setItem(KEY_WHO, name);
+      saveName();
       await createCloud();
       canEdit = true;
       cloud.pinHash = await hashPin(pin);
@@ -989,10 +1056,8 @@ function bindGate(box) {
   if (btnUnlock) btnUnlock.onclick = async () => {
     try {
       const pin = (box.querySelector("#pinBox").value || "").trim();
-      const name = (box.querySelector("#whoBox").value || "").trim();
-      if (!name) return err("先填称呼");
       if (!pin) return err("输入口令");
-      localStorage.setItem(KEY_WHO, name);
+      saveName();
       await pullCloud();
       const h = await hashPin(pin);
       if (cloud.pinHash && cloud.pinHash !== h) return err("口令不对");
@@ -1013,15 +1078,18 @@ function renderPrep() {
   const bgroups = [...new Set(bags.map(p=>p.g))];
   const box = document.getElementById("page-prep");
   const left = prep.filter(p=>!isChecked("prep", p)).length;
-  const leftB = bags.filter(p=>!isChecked("pack", p)).length;
+  const noneN = bags.filter(p => packState(p) === "none").length;
+  const haveN = bags.filter(p => packState(p) === "have").length;
+  const packedN = bags.filter(p => packState(p) === "packed").length;
   const tabs = [
-    { id:"todo", label:"准备" },
+    { id:"todo", label:"待办" },
+    { id:"pack", label:"行李" },
     { id:"note", label:"备忘" }
   ];
   const todoBody = `
     <div class="card">
       <div class="kicker">行前待办</div>
-      <div class="next" style="font-size:18px">待办还剩 ${left} / ${prep.length} · 行李还剩 ${leftB} / ${bags.length}</div>
+      <div class="next" style="font-size:18px">待办还剩 ${left} / ${prep.length}</div>
       <p class="hint">${canEdit ? "勾选会立刻同步到云端。已完成项已预勾。" : "先解锁才能勾选。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
     </div>
     <div class="card">
@@ -1038,20 +1106,24 @@ function renderPrep() {
             <input type="checkbox" data-list="prep" data-id="${p.id}" ${isChecked("prep",p)?"checked":""} ${canEdit?"":"disabled"}>
             <span class="lab">${p.t}</span>
           </label>`).join("")}
-      </div>`).join("")}
+      </div>`).join("")}`;
+  const packBody = `
     <div class="card">
       <div class="kicker">行李整理</div>
-      <div class="title" style="margin:6px 0">按清单勾，待购买项未勾</div>
-      <p class="hint">赛武瀑布已取消。换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
+      <div class="next" style="font-size:18px">尚无 ${noneN} · 已有 ${haveN} · 已装包 ${packedN}</div>
+      <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。待购买项目前是尚无。" : "先解锁才能改状态。依次是尚无、已有、已装包。"}</p>
+      <p class="hint">换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
     </div>
     ${bgroups.map(g=>`
       <div class="card">
         <div class="kicker">行李 · ${g}</div>
-        ${bags.filter(p=>p.g===g).map(p=>`
-          <label class="check ${isChecked("pack",p)?"done":""}">
-            <input type="checkbox" data-list="pack" data-id="${p.id}" ${isChecked("pack",p)?"checked":""} ${canEdit?"":"disabled"}>
+        ${bags.filter(p=>p.g===g).map(p => {
+          const st = packState(p);
+          return `<button type="button" class="pack-st st-${st}" data-pack="${p.id}" ${canEdit?"":"disabled"}>
+            <span class="st-pill">${PACK_LABEL[st]}</span>
             <span class="lab">${p.t}</span>
-          </label>`).join("")}
+          </button>`;
+        }).join("")}
       </div>`).join("")}`;
   const noteBody = `
     <div class="card">
@@ -1065,13 +1137,22 @@ function renderPrep() {
       <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
       <p class="note" style="margin-top:8px">两人：WANG/QI、RAN/WEIJUN。公开页不含护照号。</p>
     </div>`;
-  box.innerHTML = subTabBar(tabs, prepTab, "n2") + gateCard() + (prepTab === "note" ? noteBody : todoBody);
+  const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
+  box.innerHTML = subTabBar(tabs, prepTab, "n3") + gateCard() + body;
   box.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { prepTab = b.dataset.sub; window.scrollTo(0,0); renderPrep(); });
   bindGate(box);
   box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
-    const list = inp.dataset.list;
-    cloud[list] = cloud[list] || {};
-    cloud[list][inp.dataset.id] = inp.checked;
+    cloud.prep = cloud.prep || {};
+    cloud.prep[inp.dataset.id] = inp.checked;
+    renderPrep();
+    schedulePush();
+  });
+  box.querySelectorAll("[data-pack]").forEach(btn => btn.onclick = () => {
+    if (!canEdit) return;
+    const id = btn.dataset.pack;
+    const item = bags.find(p => p.id === id);
+    cloud.pack = cloud.pack || {};
+    cloud.pack[id] = nextPackState(packState(item));
     renderPrep();
     schedulePush();
   });
