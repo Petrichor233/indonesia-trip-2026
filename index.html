@@ -92,6 +92,32 @@
       border-radius: 99px; padding: 6px 12px; font-size: 12px; font-weight: 600; white-space: nowrap;
     }
     .filters button.on { background: #1c1917; color: #fff; }
+    .subnav {
+      display: grid; gap: 6px;
+      margin: -12px -14px 10px; padding: 10px 14px 8px;
+      position: sticky; top: 58px; z-index: 15;
+      background: rgba(244,241,234,.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .subnav.n4 { grid-template-columns: repeat(4, 1fr); }
+    .subnav.n2 { grid-template-columns: repeat(2, 1fr); }
+    .subnav button {
+      border: 0; background: #e7e5e4; color: #44403c;
+      border-radius: 10px; padding: 8px 4px; font-size: 13px; font-weight: 650;
+    }
+    .subnav button.on { background: #1c1917; color: #fff; }
+    .jumps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .jump, .kv[data-jump], .flight[data-jump], .hotel[data-jump], .act[data-jump] { cursor: pointer; }
+    .jump {
+      border: 0; background: #eff6ff; color: var(--accent);
+      border-radius: 99px; padding: 3px 9px; font-size: 11px; font-weight: 650;
+    }
+    .hl-flash { animation: hlflash 1.4s ease; }
+    @keyframes hlflash {
+      0%, 100% { background: #fff; }
+      25% { background: #dbeafe; }
+    }
     .check { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid #f5f5f4; }
     .check:first-of-type { border-top: none; }
     .check input { margin-top: 3px; width: 18px; height: 18px; }
@@ -116,7 +142,7 @@
     .err { font-size: 12px; color: var(--java); }
     nav {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-      display: grid; grid-template-columns: repeat(5, 1fr);
+      display: grid; grid-template-columns: repeat(4, 1fr);
       background: #fff; border-top: 1px solid var(--line);
       padding-bottom: var(--safe);
     }
@@ -162,6 +188,7 @@
         padding-bottom: 0;
       }
       nav button { font-size: 13px; padding: 12px 0; }
+      .subnav { top: 0; }
     }
   </style>
 </head>
@@ -177,7 +204,6 @@
     <button data-page="trip">行程</button>
     <button data-page="map">地图</button>
     <button data-page="prep">准备</button>
-    <button data-page="note">备忘</button>
   </nav>
 
   <main class="wrap">
@@ -185,13 +211,12 @@
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">2026.9.25 北京出发</div>
-        <p class="hint">点「行程」看航班/酒店，「准备」看待办和行李。</p>
+        <p class="hint">点「行程」看日程/航班，「准备」看待办和备忘。</p>
       </div>
     </section>
     <section id="page-trip" class="page"></section>
     <section id="page-map" class="page"></section>
     <section id="page-prep" class="page"></section>
-    <section id="page-note" class="page"></section>
   </main>
 </div>
 
@@ -208,6 +233,9 @@ let cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "" 
 let canEdit = false;
 let syncing = false;
 let saveTimer = null;
+let tripTab = "days";
+let tripFilter = "all";
+let prepTab = "todo";
 
 const flights = [
   { date:"9.25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段" },
@@ -522,10 +550,48 @@ function nextEvent(day) {
 }
 
 function dayMeta(d) {
+  const fl = flights.filter(f => md(f.date) === md(d.date));
+  const ho = hotels.filter(h => !["cancel","canceling"].includes(h.status) && hotelOnDay(h, d));
+  const stayJump = ho.length ? `data-jump="hotels" data-id="h-${hotels.indexOf(ho[0])}"` : "";
+  const flyJump = fl.length ? `data-jump="flights" data-id="f-${fl[0].no}"` : "";
   return `
-    <div class="kv"><b>住</b>${d.stay || ""}</div>
+    <div class="kv" ${stayJump}><b>住</b>${d.stay || ""}</div>
     <div class="kv"><b>早</b>${d.breakfast || ""}</div>
-    <div class="kv"><b>交通</b>${d.flight || ""}</div>`;
+    <div class="kv" ${flyJump}><b>交通</b>${d.flight || ""}</div>
+    ${dayJumps(d)}`;
+}
+
+function md(s) {
+  const m = String(s).match(/(\d{1,2})\.(\d{1,2})/);
+  return m ? Number(m[1]) * 100 + Number(m[2]) : 0;
+}
+function hotelOnDay(h, d) {
+  const x = md(d.date);
+  return md(h.inn) <= x && x < md(h.out);
+}
+function actOnDay(a, d) {
+  const keys = String(a.date).match(/(\d{1,2})\.(\d{1,2})/g) || [];
+  const x = md(d.date);
+  if (keys.length >= 2) return md(keys[0]) <= x && x <= md(keys[1]);
+  return keys.some(k => md(k) === x);
+}
+function dayIndexForDate(s) {
+  const k = md(s);
+  const i = days.findIndex(d => md(d.date) === k);
+  return i < 0 ? 0 : i;
+}
+function dayJumps(d) {
+  const bits = [];
+  flights.filter(f => md(f.date) === md(d.date)).forEach(f => {
+    bits.push(`<button type="button" class="jump" data-jump="flights" data-id="f-${f.no}">航班 ${f.no}</button>`);
+  });
+  hotels.filter(h => !["cancel","canceling"].includes(h.status) && hotelOnDay(h, d)).forEach(h => {
+    bits.push(`<button type="button" class="jump" data-jump="hotels" data-id="h-${hotels.indexOf(h)}">${h.name.replace(/（.*）/,"").split(" ")[0]}</button>`);
+  });
+  acts.filter(a => actOnDay(a, d)).forEach(a => {
+    bits.push(`<button type="button" class="jump" data-jump="acts" data-id="a-${acts.indexOf(a)}">${a.name}</button>`);
+  });
+  return bits.length ? `<div class="jumps">${bits.join("")}</div>` : "";
 }
 
 function eventRows(events) {
@@ -540,9 +606,13 @@ function eventRows(events) {
 }
 
 function flightBlock(f) {
-  return `<div class="flight"><div class="title">${f.date} ${f.no} · ${f.route}</div>
+  const dayId = "day-" + dayIndexForDate(f.date);
+  return `<div class="flight" id="f-${f.no}" data-jump="days" data-id="${dayId}">
+    <div class="title">${f.date} ${f.no} · ${f.route}</div>
     <div class="note memo">${f.al} · ${f.dep} → ${f.arr} · ${f.bag}</div>
-    <div class="note">${f.book}${f.note?" · "+f.note:""}</div></div>`;
+    <div class="note">${f.book}${f.note?" · "+f.note:""}</div>
+    <div class="jumps"><button type="button" class="jump" data-jump="days" data-id="${dayId}">当天日程</button></div>
+  </div>`;
 }
 
 function renderToday() {
@@ -559,14 +629,15 @@ function renderToday() {
         ${dayMeta(st.day)}
       </div>
       <div class="card">
-        <div class="kicker">航班速查 · 7 段</div>
-        ${flights.map(flightBlock).join("")}
-      </div>
-      <div class="card">
         <div class="kicker">第一天</div>
         <div class="title" style="margin:6px 0">${st.day.date} ${st.day.title}</div>
         ${eventRows(st.day.events)}
+        <div class="jumps" style="margin-top:10px">
+          <button type="button" class="jump" data-jump="days" data-id="day-0">打开行程日程</button>
+          <button type="button" class="jump" data-jump="flights">全部航班</button>
+        </div>
       </div>`;
+    bindJumps(box);
     return;
   }
   if (st.mode === "after") {
@@ -596,48 +667,111 @@ function renderToday() {
       ${eventRows(d.events)}
     </div>
     ${tomorrow?`<div class="card"><div class="kicker">明天早起</div><div class="title">${tomorrow.date} ${tomorrow.title}</div><div class="note" style="margin-top:6px">${tomorrow.events[0].t} ${tomorrow.events[0].title} · ${tomorrow.events[0].note||""}</div></div>`:""}`;
+  bindJumps(box);
 }
 
-function renderTrip(filter="all") {
+function subTabBar(tabs, current, extraClass) {
+  return `<div class="subnav ${extraClass}">${tabs.map(t =>
+    `<button type="button" data-sub="${t.id}" class="${current===t.id?"on":""}">${t.label}</button>`
+  ).join("")}</div>`;
+}
+
+function showPage(name) {
+  document.querySelectorAll("nav > button").forEach(b => b.classList.toggle("on", b.dataset.page === name));
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "page-" + name));
+  if (name === "map") renderMap();
+}
+
+function bindJumps(root) {
+  if (!root || root.dataset.jumpBound) return;
+  root.dataset.jumpBound = "1";
+  root.addEventListener("click", e => {
+    const t = e.target.closest("[data-jump]");
+    if (!t || !root.contains(t)) return;
+    e.preventDefault();
+    openTrip(t.dataset.jump, t.dataset.id || "");
+  });
+}
+
+function openTrip(tab, id) {
+  tripTab = tab || "days";
+  if (tripTab === "days") tripFilter = "all";
+  showPage("trip");
+  renderTrip(tripFilter, id);
+}
+
+function renderTrip(filter, highlightId) {
+  if (filter) tripFilter = filter;
   const box = document.getElementById("page-trip");
-  box.innerHTML = `
-    <div class="card">
+  const tabs = [
+    { id:"days", label:"日程" },
+    { id:"flights", label:"航班" },
+    { id:"hotels", label:"酒店" },
+    { id:"acts", label:"活动" }
+  ];
+  let body = "";
+  if (tripTab === "flights") {
+    body = `<div class="card">
       <div class="kicker">航班 · 7 段 · 去哪儿</div>
-      <p class="hint">VN / AK / QZ 已写入确认时刻。返程 VN516 已改为 00:35。</p>
+      <p class="hint">点航班可跳到当天日程。返程 VN516 已改为 00:35。</p>
       ${flights.map(flightBlock).join("")}
-    </div>
-    <div class="card">
+    </div>`;
+  } else if (tripTab === "hotels") {
+    body = `<div class="card">
       <div class="kicker">酒店</div>
-      ${hotels.map(h=>`<div class="hotel"><div class="title">${h.inn}–${h.out} · ${h.name} ${statusChip(h.status)}</div>
+      <p class="hint">点酒店可跳到入住当天日程。已退订的仍列出以免走错。</p>
+      ${hotels.map((h,i)=>`<div class="hotel" id="h-${i}" data-jump="days" data-id="day-${dayIndexForDate(h.inn)}">
+        <div class="title">${h.inn}–${h.out} · ${h.name} ${statusChip(h.status)}</div>
         <div class="note memo">${h.nights} 晚 · ${h.room}${h.platform?" · "+h.platform:""}</div>
-        <div class="note">${h.note}</div></div>`).join("")}
-    </div>
-    <div class="card">
+        <div class="note">${h.note}</div>
+        <div class="jumps"><button type="button" class="jump" data-jump="days" data-id="day-${dayIndexForDate(h.inn)}">入住当天</button></div>
+      </div>`).join("")}
+    </div>`;
+  } else if (tripTab === "acts") {
+    body = `<div class="card">
       <div class="kicker">已订活动</div>
-      ${acts.map(a=>`<div class="act"><div class="title">${a.date} ${a.name}</div>
+      <p class="hint">点活动可跳到对应日程。</p>
+      ${acts.map((a,i)=>`<div class="act" id="a-${i}" data-jump="days" data-id="day-${dayIndexForDate(a.date)}">
+        <div class="title">${a.date} ${a.name}</div>
         <div class="note memo">${a.who}</div>
         <div class="note">${a.detail}</div>
-        <div class="note">${a.note}</div></div>`).join("")}
-    </div>
-    <div class="filters">
-      ${["all","komodo","bali","java","transit"].map(p=>`<button data-f="${p}" class="${filter===p?"on":""}">${p==="all"?"全部":phaseName[p]}</button>`).join("")}
-    </div>
-    ${days.filter(d=>filter==="all"||d.phase===filter).map((d)=>`
-      <button class="day-btn" data-i="${days.indexOf(d)}">
-        <span class="d">${d.date}</span>
-        <span class="ttl">${d.title}</span>
-        ${phaseChip(d.phase)}
-      </button>
-      <div class="card" id="day-${days.indexOf(d)}" style="display:none">
-        ${dayMeta(d)}
-        ${eventRows(d.events)}
+        <div class="note">${a.note}</div>
+        <div class="jumps"><button type="button" class="jump" data-jump="days" data-id="day-${dayIndexForDate(a.date)}">对应日程</button></div>
+      </div>`).join("")}
+    </div>`;
+  } else {
+    body = `
+      <div class="filters">
+        ${["all","komodo","bali","java","transit"].map(p=>`<button type="button" data-f="${p}" class="${tripFilter===p?"on":""}">${p==="all"?"全部":phaseName[p]}</button>`).join("")}
       </div>
-    `).join("")}`;
+      ${days.filter(d=>tripFilter==="all"||d.phase===tripFilter).map((d)=>`
+        <button type="button" class="day-btn" data-i="${days.indexOf(d)}">
+          <span class="d">${d.date}</span>
+          <span class="ttl">${d.title}</span>
+          ${phaseChip(d.phase)}
+        </button>
+        <div class="card" id="day-${days.indexOf(d)}" style="display:none">
+          ${dayMeta(d)}
+          ${eventRows(d.events)}
+        </div>
+      `).join("")}`;
+  }
+  box.innerHTML = subTabBar(tabs, tripTab, "n4") + body;
+  box.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { tripTab = b.dataset.sub; window.scrollTo(0,0); renderTrip(); });
   box.querySelectorAll("[data-f]").forEach(b => b.onclick = () => renderTrip(b.dataset.f));
   box.querySelectorAll(".day-btn").forEach(b => b.onclick = () => {
     const el = document.getElementById("day-"+b.dataset.i);
     el.style.display = el.style.display==="none" ? "block" : "none";
   });
+  bindJumps(box);
+  if (highlightId) {
+    const el = document.getElementById(highlightId);
+    if (el) {
+      if (highlightId.startsWith("day-")) el.style.display = "block";
+      el.classList.add("hl-flash");
+      requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "center" }));
+    }
+  }
 }
 
 let mapObj = null;
@@ -831,7 +965,6 @@ function bindGate(box) {
     sessionStorage.setItem(KEY_UNLOCK, "1");
     canEdit = true;
     renderPrep();
-    renderNote();
   };
   const btnCreate = box.querySelector("#btnCreate");
   if (btnCreate) btnCreate.onclick = async () => {
@@ -852,7 +985,6 @@ function bindGate(box) {
   if (btnReset) btnReset.onclick = () => {
     clearSid();
     renderPrep();
-    renderNote();
   };
   const btnUnlock = box.querySelector("#btnUnlock");
   if (btnUnlock) btnUnlock.onclick = async () => {
@@ -883,7 +1015,11 @@ function renderPrep() {
   const box = document.getElementById("page-prep");
   const left = prep.filter(p=>!isChecked("prep", p)).length;
   const leftB = bags.filter(p=>!isChecked("pack", p)).length;
-  box.innerHTML = gateCard() + `
+  const tabs = [
+    { id:"todo", label:"准备" },
+    { id:"note", label:"备忘" }
+  ];
+  const todoBody = `
     <div class="card">
       <div class="kicker">行前待办</div>
       <div class="next" style="font-size:18px">待办还剩 ${left} / ${prep.length} · 行李还剩 ${leftB} / ${bags.length}</div>
@@ -918,19 +1054,7 @@ function renderPrep() {
             <span class="lab">${p.t}</span>
           </label>`).join("")}
       </div>`).join("")}`;
-  bindGate(box);
-  box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
-    const list = inp.dataset.list;
-    cloud[list] = cloud[list] || {};
-    cloud[list][inp.dataset.id] = inp.checked;
-    renderPrep();
-    schedulePush();
-  });
-}
-
-function renderNote() {
-  const box = document.getElementById("page-note");
-  box.innerHTML = gateCard() + `
+  const noteBody = `
     <div class="card">
       <div class="kicker">共享备忘</div>
       <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
@@ -942,20 +1066,27 @@ function renderNote() {
       <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
       <p class="note" style="margin-top:8px">两人：WANG/QI、RAN/WEIJUN。公开页不含护照号。</p>
     </div>`;
+  box.innerHTML = subTabBar(tabs, prepTab, "n2") + gateCard() + (prepTab === "note" ? noteBody : todoBody);
+  box.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { prepTab = b.dataset.sub; window.scrollTo(0,0); renderPrep(); });
   bindGate(box);
+  box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
+    const list = inp.dataset.list;
+    cloud[list] = cloud[list] || {};
+    cloud[list][inp.dataset.id] = inp.checked;
+    renderPrep();
+    schedulePush();
+  });
   const ta = document.getElementById("noteBox");
-  ta.value = cloud.notes || "";
-  ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
+  if (ta) {
+    ta.value = cloud.notes || "";
+    ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
+  }
 }
 
-document.querySelectorAll("nav button").forEach(btn => {
+document.querySelectorAll("nav > button").forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
-    document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
-    btn.classList.add("on");
-    document.getElementById("page-"+btn.dataset.page).classList.add("on");
+    showPage(btn.dataset.page);
     window.scrollTo(0,0);
-    if (btn.dataset.page === "map") renderMap();
   };
 });
 
@@ -971,7 +1102,6 @@ try { renderTrip(); } catch (e) {}
     }
   } catch (e) { console.warn(e); }
   try { renderPrep(); } catch (e) {}
-  try { renderNote(); } catch (e) {}
   setInterval(async () => {
     if (syncing || document.hidden || !isTextDbSid(sid())) return;
     if (document.activeElement && document.activeElement.id === "noteBox") return;
@@ -979,7 +1109,7 @@ try { renderTrip(); } catch (e) {}
     try {
       const prev = JSON.stringify(cloud);
       await pullCloud();
-      if (JSON.stringify(cloud) !== prev) { renderPrep(); renderNote(); }
+      if (JSON.stringify(cloud) !== prev) { renderPrep(); }
     } catch (e) {}
     syncing = false;
   }, 8000);
