@@ -79,9 +79,11 @@
     .add-box .field { margin-bottom: 8px; }
     .ebtn, .xbtn {
       flex-shrink: 0; border: 0; background: #f3f4f6; color: #6b7280;
-      border-radius: 8px; min-width: 28px; height: 28px; padding: 0 7px; margin-top: 1px;
-      font-size: 12px; font-weight: 700; line-height: 1;
+      border-radius: 8px; width: 28px; height: 28px; padding: 0; margin-top: 1px;
+      font-size: 16px; font-weight: 700; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
     }
+    .ebtn svg { width: 14px; height: 14px; }
     .xbtn { color: #dc2626; background: #fef2f2; }
     .ebtn:active, .xbtn:active { transform: scale(.94); }
     .check-main { display: flex; gap: 10px; align-items: flex-start; flex: 1; min-width: 0; }
@@ -885,7 +887,8 @@ function removeListItem(kind, id) {
 }
 function itemActions(kind, id) {
   if (!canEdit) return "";
-  return `<button type="button" class="ebtn" data-edit-${kind}="${id}" aria-label="改">改</button><button type="button" class="xbtn" data-del-${kind}="${id}" aria-label="删除">×</button>`;
+  const pencil = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+  return `<button type="button" class="ebtn" data-edit-${kind}="${id}" aria-label="编辑">${pencil}</button><button type="button" class="xbtn" data-del-${kind}="${id}" aria-label="删除">×</button>`;
 }
 function addComposer(kind, groups, defaultGroup) {
   const opts = groups.map(g => `<option value="${esc(g)}"></option>`).join("");
@@ -1689,7 +1692,7 @@ function renderPrep() {
         <div class="prog-top"><span>已完成 ${todos.length - left} / ${todos.length}</span><b>${pct}%</b></div>
         <div class="prog-bar"><i style="width:${pct}%"></i></div>
       </div>
-      <p class="hint">${canEdit ? "勾选、添加、删除会立刻同步到云端。点「改」可改文字。" : "先解锁才能勾选、添加或删除。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
+      <p class="hint">${canEdit ? "勾选、添加、删除会立刻同步到云端。点铅笔可改文字。" : "先解锁才能勾选、添加或删除。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
     </div>
     <div class="card">
       <div class="kicker">签证与入境</div>
@@ -1719,7 +1722,7 @@ function renderPrep() {
       <div class="stat ok"><b>${packedN}</b><span>已装包</span></div>
       <div class="stat miss"><b>${noneN}</b><span>尚无</span></div>
     </div>
-    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点「改」改名字，点 × 删除。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
+    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点铅笔改名字，点 × 删除。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
     ${bgroups.map(g=>`
       <div class="card">
         <div class="kicker">${esc(g)} · ${packedItems.filter(p=>p.g===g).length}</div>
