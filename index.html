@@ -3,163 +3,241 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f6f3">
+  <meta name="theme-color" content="#1b5e4a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <title>印尼双节旅行 · 2026.9.25–10.8</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
-      --bg: #f4f1ea;
+      --bg: #f5f6f8;
       --card: #fff;
-      --text: #1c1917;
-      --muted: #78716c;
-      --line: #e7e5e4;
-      --accent: #1d4ed8;
+      --text: #1a1a1a;
+      --muted: #8c8c8c;
+      --line: #ececec;
+      --accent: #0d9b86;
+      --purple: #8b5cf6;
+      --orange: #e67e22;
+      --blue: #3b82f6;
       --komodo: #0f766e;
-      --bali: #0369a1;
-      --java: #b91c1c;
-      --warn: #c2410c;
-      --ok: #15803d;
+      --bali: #e67e22;
+      --java: #22c55e;
+      --warn: #f97316;
+      --ok: #0d9b86;
       --safe: env(safe-area-inset-bottom, 0px);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.45;
       font-size: 15px;
-      padding-bottom: calc(72px + var(--safe));
+      padding-bottom: calc(78px + var(--safe));
+    }
+    .ico {
+      width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em;
+      stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
     }
     header {
       position: sticky; top: 0; z-index: 20;
-      background: rgba(244,241,234,.92);
-      backdrop-filter: blur(12px);
-      padding: 12px 16px 10px;
-      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, #1b5e4a 0%, #2f6b45 46%, #c45c26 100%);
+      color: #fff;
+      padding: 14px 16px 16px;
     }
     .app { min-height: 100vh; }
-    header h1 { font-size: 17px; font-weight: 600; }
-    header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .wrap { padding: 12px 14px 8px; max-width: 720px; margin: 0 auto; }
+    header .eyebrow {
+      font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+      opacity: .82; font-weight: 600; margin-bottom: 4px;
+    }
+    header h1 { font-size: 22px; font-weight: 800; letter-spacing: .02em; }
+    header .dates { font-size: 12px; opacity: .88; margin-top: 6px; }
+    .wrap { padding: 14px 14px 8px; max-width: 720px; margin: 0 auto; }
     .card {
       background: var(--card);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 2px rgba(28,25,23,.04);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(16,24,40,.04);
     }
-    .kicker { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; }
-    .next { font-size: 20px; font-weight: 700; margin: 4px 0 6px; }
+    .page-head {
+      display: flex; align-items: baseline; gap: 8px;
+      margin: 2px 0 12px; font-size: 22px; font-weight: 800;
+    }
+    .page-head span { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .page-head.c-teal { color: var(--accent); }
+    .page-head.c-purple { color: #9040b2; }
+    .page-head.c-orange { color: var(--orange); }
+    .page-head.c-blue { color: #4a69bd; }
+    .kicker { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .kicker.urgent { color: #ef4444; }
+    .kicker.urgent::before {
+      content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #ef4444; margin-right: 6px; vertical-align: 1px;
+    }
+    .next { font-size: 22px; font-weight: 800; margin: 4px 0 6px; letter-spacing: -.02em; }
     .chip {
-      display: inline-block; font-size: 11px; font-weight: 650;
-      padding: 2px 8px; border-radius: 99px; margin-right: 4px;
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 3px 9px; border-radius: 99px; margin-right: 4px;
     }
-    .chip-komodo { background: #ccfbf1; color: var(--komodo); }
-    .chip-bali { background: #e0f2fe; color: var(--bali); }
-    .chip-java { background: #fee2e2; color: var(--java); }
-    .chip-transit { background: #f5f5f4; color: #57534e; }
-    .chip-skip { background: #ffedd5; color: var(--warn); }
-    .chip-must { background: #dcfce7; color: var(--ok); }
-    .chip-ok { background: #dcfce7; color: var(--ok); }
-    .chip-wait { background: #ffedd5; color: var(--warn); }
-    .chip-off { background: #e7e5e4; color: #57534e; }
+    .chip-komodo { background: #d1fae5; color: var(--komodo); }
+    .chip-bali { background: #fff3e6; color: var(--bali); }
+    .chip-java { background: #dcfce7; color: #15803d; }
+    .chip-transit { background: #f3e8ff; color: #7c3aed; }
+    .chip-skip { background: #fff3e6; color: var(--orange); }
+    .chip-must { background: #d1fae5; color: var(--ok); }
+    .chip-ok { background: #d1fae5; color: #047857; }
+    .chip-wait { background: #fff7ed; color: #c2410c; }
+    .chip-off { background: #f3f4f6; color: #6b7280; }
     .warn {
       background: #fff7ed; color: #9a3412; border-radius: 10px;
       padding: 10px 12px; font-size: 13px; margin-top: 8px;
     }
+    .callout {
+      background: #fff7e8; color: #c2410c; border-radius: 10px;
+      padding: 8px 10px; font-size: 12px; margin-top: 8px; font-weight: 600;
+    }
     .row {
       display: grid; grid-template-columns: 52px 1fr;
-      gap: 8px; padding: 8px 0; border-top: 1px solid #f5f5f4;
+      gap: 8px; padding: 10px 0; border-top: 1px solid #f3f4f6;
     }
     .row:first-of-type { border-top: none; }
     .t { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--muted); padding-top: 2px; }
-    .title { font-weight: 600; font-size: 14px; }
-    .note { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .hl { color: var(--warn); }
+    .title { font-weight: 700; font-size: 15px; }
+    .note { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .hl { color: var(--orange); }
     .memo { color: var(--ok); }
     .day-btn {
-      width: 100%; text-align: left; background: var(--card); border: 0;
-      border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
-      display: flex; align-items: center; gap: 8px;
+      width: 100%; text-align: left; background: var(--card); border: 1px solid var(--line);
+      border-radius: 16px; padding: 12px 14px; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 1px 3px rgba(16,24,40,.04);
     }
-    .day-btn .d { font-weight: 800; color: var(--accent); min-width: 42px; font-size: 13px; }
-    .day-btn .ttl { flex: 1; font-weight: 600; font-size: 14px; }
-    .filters { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; }
+    .day-btn .d {
+      font-weight: 800; min-width: 48px; font-size: 12px; color: #fff;
+      text-align: center; border-radius: 10px; padding: 8px 6px; line-height: 1.2;
+    }
+    .day-btn.ph-komodo .d { background: var(--komodo); }
+    .day-btn.ph-bali .d { background: var(--bali); }
+    .day-btn.ph-java .d { background: var(--java); }
+    .day-btn.ph-transit .d { background: var(--purple); }
+    .day-btn .ttl { flex: 1; font-weight: 700; font-size: 14px; }
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 12px; }
     .filters button {
-      border: 0; background: #e7e5e4; color: #44403c;
-      border-radius: 99px; padding: 6px 12px; font-size: 12px; font-weight: 600; white-space: nowrap;
+      border: 1px solid var(--line); background: #fff; color: #4b5563;
+      border-radius: 99px; padding: 6px 14px; font-size: 12px; font-weight: 650; white-space: nowrap;
     }
-    .filters button.on { background: #1c1917; color: #fff; }
+    .filters button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
     .subnav {
       display: grid; gap: 6px;
-      margin: -12px -14px 10px; padding: 10px 14px 8px;
-      position: sticky; top: 58px; z-index: 15;
-      background: rgba(244,241,234,.94);
+      margin: -14px -14px 12px; padding: 10px 14px 10px;
+      position: sticky; top: 86px; z-index: 15;
+      background: rgba(245,246,248,.94);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
     }
     .subnav.n4 { grid-template-columns: repeat(4, 1fr); }
     .subnav.n3 { grid-template-columns: repeat(3, 1fr); }
     .subnav.n2 { grid-template-columns: repeat(2, 1fr); }
     .subnav button {
-      border: 0; background: #e7e5e4; color: #44403c;
-      border-radius: 10px; padding: 8px 4px; font-size: 13px; font-weight: 650;
+      border: 0; background: #fff; color: #6b7280;
+      border-radius: 12px; padding: 8px 4px; font-size: 13px; font-weight: 650;
+      border: 1px solid var(--line);
     }
-    .subnav button.on { background: #1c1917; color: #fff; }
+    .subnav button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
     .jumps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .tap {
       color: var(--accent);
       cursor: pointer;
       text-decoration: underline;
-      text-underline-offset: 2px;
+      text-underline-offset: 3px;
       text-decoration-thickness: 1px;
       -webkit-tap-highlight-color: transparent;
     }
     .hl-flash { animation: hlflash 1.4s ease; }
     @keyframes hlflash {
       0%, 100% { background: #fff; }
-      25% { background: #dbeafe; }
+      25% { background: #ccfbf1; }
     }
-    .check { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid #f5f5f4; }
+    .check { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-top: 1px solid #f3f4f6; }
     .check:first-of-type { border-top: none; }
-    .check input { margin-top: 3px; width: 18px; height: 18px; }
+    .check input {
+      appearance: none; -webkit-appearance: none;
+      margin-top: 2px; width: 18px; height: 18px; flex-shrink: 0;
+      border: 1.6px solid #d1d5db; border-radius: 5px; background: #fff;
+    }
+    .check input:checked {
+      background: var(--accent); border-color: var(--accent);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.2l3 3 6-6.4'/></svg>");
+      background-size: 12px; background-repeat: no-repeat; background-position: center;
+    }
     .check.done .lab { color: var(--muted); text-decoration: line-through; }
     .pack-st {
-      display: flex; gap: 10px; align-items: flex-start;
+      display: flex; gap: 10px; align-items: center;
       width: 100%; text-align: left;
-      background: none; border: 0; border-top: 1px solid #f5f5f4;
-      padding: 10px 0; font: inherit; color: inherit;
+      background: none; border: 0; border-top: 1px solid #f3f4f6;
+      padding: 11px 0 11px 10px; font: inherit; color: inherit;
+      position: relative;
     }
     .pack-st:first-of-type { border-top: none; }
     .pack-st:disabled { opacity: 1; cursor: default; }
     .pack-st:not(:disabled) { cursor: pointer; }
+    .pack-st .lab { flex: 1; font-weight: 700; font-size: 14px; }
+    .pack-st::before {
+      content: ""; position: absolute; left: 0; top: 10px; bottom: 10px;
+      width: 4px; border-radius: 4px;
+    }
+    .st-none::before { background: var(--orange); }
+    .st-have::before { background: var(--blue); }
+    .st-packed::before { background: var(--accent); }
     .st-pill {
       flex-shrink: 0; font-size: 11px; font-weight: 700;
       padding: 2px 8px; border-radius: 99px; min-width: 52px; text-align: center;
     }
-    .st-none .st-pill { background: #fee2e2; color: #b91c1c; }
-    .st-have .st-pill { background: #ffedd5; color: #c2410c; }
-    .st-packed .st-pill { background: #dcfce7; color: #15803d; }
+    .st-none .st-pill { background: #fff3e6; color: var(--orange); }
+    .st-have .st-pill { background: #dbeafe; color: #1d4ed8; }
+    .st-packed .st-pill { background: #d1fae5; color: #047857; }
     .st-packed .lab { color: var(--muted); text-decoration: line-through; }
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 4px;
+    }
+    .stat {
+      background: #fff; border: 1px solid var(--line); border-radius: 14px;
+      padding: 12px 8px; text-align: center;
+    }
+    .stat b { display: block; font-size: 22px; font-weight: 800; line-height: 1.1; }
+    .stat span { font-size: 11px; color: var(--muted); }
+    .stat.miss b { color: var(--orange); }
+    .stat.have b { color: var(--blue); }
+    .stat.ok b { color: var(--accent); }
+    .prog { margin: 8px 0 4px; }
+    .prog-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .prog-top b { color: var(--accent); }
+    .prog-bar { height: 8px; background: #d1fae5; border-radius: 99px; overflow: hidden; }
+    .prog-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
     textarea {
-      width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 10px;
-      padding: 10px; font: inherit; resize: vertical; background: #fafaf9;
+      width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 12px;
+      padding: 10px; font: inherit; resize: vertical; background: #fafafa;
     }
     .hint { font-size: 12px; color: var(--muted); margin: 6px 0 10px; }
     .btn {
-      border: 0; background: #1c1917; color: #fff; border-radius: 10px;
-      padding: 9px 12px; font: inherit; font-weight: 600; font-size: 13px;
+      border: 0; background: var(--accent); color: #fff; border-radius: 10px;
+      padding: 9px 12px; font: inherit; font-weight: 700; font-size: 13px;
     }
-    .btn.sec { background: #e7e5e4; color: #1c1917; }
+    .btn.sec { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
     .btn:disabled { opacity: .45; }
+    .ghost {
+      display: inline-flex; align-items: center; gap: 4px;
+      border: 1px solid var(--accent); color: var(--accent); background: #fff;
+      border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700;
+    }
     .field {
       width: 100%; border: 1px solid var(--line); border-radius: 10px;
-      padding: 9px 10px; font: inherit; background: #fafaf9; margin-bottom: 8px;
+      padding: 9px 10px; font: inherit; background: #fafafa; margin-bottom: 8px;
     }
     .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .okline { font-size: 12px; color: var(--ok); }
+    .err { font-size: 12px; color: #dc2626; margin-top: 4px; }
     .gate-card { padding: 10px 12px; }
     .gate-card .kicker { font-size: 10px; }
     .gate-card .field { padding: 7px 9px; margin-bottom: 6px; }
@@ -170,28 +248,65 @@
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
       display: grid; grid-template-columns: repeat(4, 1fr);
       background: #fff; border-top: 1px solid var(--line);
-      padding-bottom: var(--safe);
+      padding: 6px 0 calc(6px + var(--safe));
     }
     nav button {
-      border: 0; background: none; padding: 8px 0 6px; font-size: 11px; color: var(--muted); font-weight: 600;
+      border: 0; background: none; padding: 4px 0 2px;
+      font-size: 10px; color: #9ca3af; font-weight: 650;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
+    nav button svg { width: 22px; height: 22px; }
     nav button.on { color: var(--accent); }
     .page { display: none; }
     .page.on { display: block; }
     .kv { font-size: 13px; margin-top: 6px; color: var(--text); }
     .kv b { color: var(--muted); font-weight: 600; margin-right: 6px; }
-    .flight { border-left: 3px solid var(--accent); padding: 8px 0 8px 10px; margin: 8px 0; }
-    .hotel { border-left: 3px solid var(--komodo); padding: 8px 0 8px 10px; margin: 8px 0; }
-    .act { border-left: 3px solid var(--bali); padding: 8px 0 8px 10px; margin: 8px 0; }
+    .item {
+      position: relative; overflow: hidden;
+      background: #fff; border: 1px solid var(--line); border-radius: 16px;
+      padding: 14px 14px 12px 16px; margin: 0 0 10px;
+      box-shadow: 0 1px 3px rgba(16,24,40,.04);
+    }
+    .item::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    }
+    .item.ph-transit::before { background: var(--purple); }
+    .item.ph-komodo::before { background: var(--komodo); }
+    .item.ph-bali::before { background: var(--bali); }
+    .item.ph-java::before { background: var(--java); }
+    .ticket-top, .stay-top {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .ticket-no { font-size: 13px; font-weight: 700; }
+    .ticket-al { color: var(--muted); font-weight: 500; }
+    .ticket-route {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 8px; margin: 10px 0 8px;
+    }
+    .ticket-time { font-size: 22px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+    .ticket-city { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .ticket-end.right { text-align: right; }
+    .ticket-mid { color: var(--accent); text-align: center; min-width: 52px; }
+    .ticket-mid svg { width: 18px; height: 18px; }
+    .ticket-mid .dash {
+      height: 0; border-top: 1.5px dashed #cbd5e1; margin-top: 4px;
+    }
+    .ticket-foot {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; font-size: 12px; color: var(--muted); margin-top: 4px;
+    }
+    .ticket-foot .bag { display: inline-flex; align-items: center; gap: 4px; }
+    .stay-name { font-size: 16px; font-weight: 800; margin: 6px 0 4px; }
+    .stay-meta { font-size: 13px; color: #4b5563; }
     .map-box { height: 52vh; min-height: 280px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
     .map-focus { display: flex; gap: 8px; margin: 8px 0 10px; }
     .map-focus button {
       flex: 1; border: 0; border-radius: 10px; padding: 8px 6px;
       font-size: 13px; font-weight: 700; color: #fff;
     }
-    .map-focus .f-komodo { background: #0f766e; }
-    .map-focus .f-bali { background: #0369a1; }
-    .map-focus .f-java { background: #b91c1c; }
+    .map-focus .f-komodo { background: var(--komodo); }
+    .map-focus .f-bali { background: var(--bali); }
+    .map-focus .f-java { background: var(--java); }
     .marker-dot {
       width: 10px; height: 10px; border-radius: 50%;
       border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
@@ -216,16 +331,16 @@
         border: 1px solid var(--line);
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 8px 30px rgba(28,25,23,.06);
+        box-shadow: 0 8px 30px rgba(28,25,23,.08);
       }
       header { position: static; }
       nav {
         position: static;
         border-top: none;
         border-bottom: 1px solid var(--line);
-        padding-bottom: 0;
+        padding-bottom: 8px;
       }
-      nav button { font-size: 13px; padding: 12px 0; }
+      nav button { font-size: 12px; }
       .subnav { top: 0; }
     }
   </style>
@@ -233,15 +348,28 @@
 <body>
 <div class="app">
   <header>
+    <p class="eyebrow">Indonesia Adventure · 2026 Autumn</p>
     <h1>印尼双节旅行</h1>
-    <p>2026.9.25–10.8 · 14天 · WANG/QI · RAN/WEIJUN</p>
+    <p class="dates">2026.9.25–10.8 · 14 天</p>
   </header>
 
   <nav>
-    <button class="on" data-page="today">今日</button>
-    <button data-page="trip">行程</button>
-    <button data-page="map">地图</button>
-    <button data-page="prep">准备</button>
+    <button class="on" data-page="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+      <span>今日</span>
+    </button>
+    <button data-page="trip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><path d="M9 3v15M15 6v15"/></svg>
+      <span>行程</span>
+    </button>
+    <button data-page="map">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>
+      <span>地图</span>
+    </button>
+    <button data-page="prep">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6.2 5.4 7.6 8 5M4 12.2 5.4 13.6 8 11M4 18.2 5.4 19.6 8 17"/></svg>
+      <span>准备</span>
+    </button>
   </nav>
 
   <main class="wrap">
@@ -510,7 +638,14 @@ const stops = [
 ];
 const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
 const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
-const PHASE_COLOR = { komodo:"#0f766e", bali:"#0369a1", java:"#b91c1c", transit:"#78716c" };
+const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:"#8b5cf6" };
+const ICO = {
+  plane: '<svg class="ico" viewBox="0 0 24 24"><path d="M2.5 16.5 10 13l3.2-8.2 1.8 1.4-.8 6.4 6.8 3.1-1 1.8-6.6-1.2-3.5 4.6H8.2l1.8-4.6-7.5-2z"/></svg>',
+  bag: '<svg class="ico" viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="2"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>',
+  bed: '<svg class="ico" viewBox="0 0 24 24"><path d="M3 18V9h8a4 4 0 0 1 4 4v5M3 18h18M7 9V6h4v3"/></svg>',
+  cal: '<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+  link: '<svg class="ico" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"/><path d="M11 6H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-4"/></svg>'
+};
 const boatHalf = [
   { name:"Kelor 岛", lat:-8.4533, lng:119.8810 },
   { name:"Menjerite", lat:-8.4870, lng:119.7580 },
@@ -554,6 +689,10 @@ const prep = [
 
 const phaseName = { komodo:"科莫多", bali:"巴厘", java:"爪哇", transit:"中转" };
 const phaseChip = p => `<span class="chip chip-${p}">${phaseName[p]}</span>`;
+function phaseForDate(s) {
+  const d = days.find(x => md(x.date) === md(s));
+  return (d && d.phase) || "transit";
+}
 function statusChip(s) {
   if (s==="ok") return '<span class="chip chip-ok">已确认</span>';
   if (s==="wait") return '<span class="chip chip-wait">待预订</span>';
@@ -677,10 +816,57 @@ function eventRows(events) {
 
 function flightBlock(f) {
   const dayId = "day-" + dayIndexForDate(f.date);
-  return `<div class="flight" id="f-${f.no}">
-    <div class="title">${tap(f.date, "days", dayId)} ${tap(f.no, "flights", "f-"+f.no)} · ${f.route}</div>
-    <div class="note memo">${f.al} · ${f.dep} → ${f.arr} · ${f.bag}</div>
-    <div class="note">${f.book}${f.note?" · "+f.note:""}</div>
+  const parts = String(f.route).split(/\s*→\s*/);
+  const from = parts[0] || "";
+  const to = parts[1] || "";
+  const ph = phaseForDate(f.date);
+  return `<div class="item ph-${ph}" id="f-${f.no}">
+    <div class="ticket-top">
+      <div class="ticket-no">${tap(f.no, "flights", "f-"+f.no)} <span class="ticket-al">· ${f.al}</span></div>
+      <div>${tap(f.date, "days", dayId)}</div>
+    </div>
+    <div class="ticket-route">
+      <div class="ticket-end">
+        <div class="ticket-time">${f.dep}</div>
+        <div class="ticket-city">${from}</div>
+      </div>
+      <div class="ticket-mid">${ICO.plane}<div class="dash"></div></div>
+      <div class="ticket-end right">
+        <div class="ticket-time">${f.arr}</div>
+        <div class="ticket-city">${to}</div>
+      </div>
+    </div>
+    <div class="ticket-foot">
+      <span class="bag">${ICO.bag} ${f.bag}</span>
+      <span class="ghost">${ICO.link} ${f.book}</span>
+    </div>
+    ${f.note ? `<div class="note" style="margin-top:8px">${f.note}</div>` : ""}
+  </div>`;
+}
+
+function hotelBlock(h, i) {
+  const ph = phaseForDate(h.inn);
+  return `<div class="item ph-${ph}" id="h-${i}">
+    <div class="stay-top">
+      <div>${tap(h.inn+"–"+h.out, "days", "day-"+dayIndexForDate(h.inn))}</div>
+      ${statusChip(h.status)}
+    </div>
+    <div class="stay-name">${tap(h.name, "hotels", "h-"+i)}</div>
+    <div class="stay-meta">${ICO.bed} ${h.nights} 晚 · ${h.room}${h.platform?" · "+h.platform:""}</div>
+    <div class="note">${h.note}</div>
+  </div>`;
+}
+
+function actBlock(a, i) {
+  const ph = phaseForDate(a.date);
+  return `<div class="item ph-${ph}" id="a-${i}">
+    <div class="stay-top">
+      <div>${ICO.cal} ${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))}</div>
+    </div>
+    <div class="stay-name">${tap(a.name, "acts", "a-"+i)}</div>
+    <div class="stay-meta">${a.who}</div>
+    <div class="note">${a.detail}</div>
+    ${a.note ? `<div class="callout">${a.note}</div>` : ""}
   </div>`;
 }
 
@@ -775,39 +961,28 @@ function renderTrip(filter, highlightId) {
   ];
   let body = "";
   if (tripTab === "flights") {
-    body = `<div class="card">
-      <div class="kicker">航班 · 7 段 · 去哪儿</div>
+    body = `
+      <div class="page-head c-purple">机票 <span>7 段 · 去哪儿</span></div>
       <p class="hint">点日期看当天日程，点航班号定位该段。返程 VN516 已改为 00:35。</p>
-      ${flights.map(flightBlock).join("")}
-    </div>`;
+      ${flights.map(flightBlock).join("")}`;
   } else if (tripTab === "hotels") {
-    body = `<div class="card">
-      <div class="kicker">酒店</div>
+    body = `
+      <div class="page-head c-teal">酒店 <span>${hotels.length} 家</span></div>
       <p class="hint">点入住日期看当天日程，点酒店名定位该条。已退订的仍列出以免走错。</p>
-      ${hotels.map((h,i)=>`<div class="hotel" id="h-${i}">
-        <div class="title">${tap(h.inn+"–"+h.out, "days", "day-"+dayIndexForDate(h.inn))} · ${tap(h.name, "hotels", "h-"+i)} ${statusChip(h.status)}</div>
-        <div class="note memo">${h.nights} 晚 · ${h.room}${h.platform?" · "+h.platform:""}</div>
-        <div class="note">${h.note}</div>
-      </div>`).join("")}
-    </div>`;
+      ${hotels.map(hotelBlock).join("")}`;
   } else if (tripTab === "acts") {
-    body = `<div class="card">
-      <div class="kicker">已订活动</div>
+    body = `
+      <div class="page-head c-orange">活动体验 <span>${acts.length} 个活动</span></div>
       <p class="hint">点日期看当天日程，点活动名定位该条。</p>
-      ${acts.map((a,i)=>`<div class="act" id="a-${i}">
-        <div class="title">${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))} ${tap(a.name, "acts", "a-"+i)}</div>
-        <div class="note memo">${a.who}</div>
-        <div class="note">${a.detail}</div>
-        <div class="note">${a.note}</div>
-      </div>`).join("")}
-    </div>`;
+      ${acts.map(actBlock).join("")}`;
   } else {
     body = `
+      <div class="page-head c-teal">行程时间线</div>
       <div class="filters">
         ${["all","komodo","bali","java","transit"].map(p=>`<button type="button" data-f="${p}" class="${tripFilter===p?"on":""}">${p==="all"?"全部":phaseName[p]}</button>`).join("")}
       </div>
       ${days.filter(d=>tripFilter==="all"||d.phase===tripFilter).map((d)=>`
-        <button type="button" class="day-btn" data-i="${days.indexOf(d)}">
+        <button type="button" class="day-btn ph-${d.phase}" data-i="${days.indexOf(d)}">
           <span class="d">${d.date}</span>
           <span class="ttl">${d.title}</span>
           ${phaseChip(d.phase)}
@@ -841,8 +1016,8 @@ function renderMap() {
   const box = document.getElementById("page-map");
   if (!box.dataset.ready) {
     box.innerHTML = `
+      <div class="page-head c-teal">路线</div>
       <div class="card">
-        <div class="kicker">路线</div>
         <div class="next" style="font-size:18px">北京 → 胡志明 → 吉隆坡 → 科莫多 → 巴厘 → 爪哇 → 泗水 → 吉隆坡 → 胡志明 → 北京</div>
         <div class="map-focus">
           <button type="button" class="f-komodo" data-focus="komodo">科莫多</button>
@@ -850,7 +1025,7 @@ function renderMap() {
           <button type="button" class="f-java" data-focus="java">爪哇</button>
         </div>
         <div class="map-legend">
-          <span><i class="legend-line" style="background:#2563eb;background-image:repeating-linear-gradient(90deg,#2563eb 0 6px,transparent 6px 10px)"></i>虚线航班</span>
+          <span><i class="legend-line" style="background:#8b5cf6;background-image:repeating-linear-gradient(90deg,#8b5cf6 0 6px,transparent 6px 10px)"></i>虚线航班</span>
           <span><i class="legend-line" style="background:#0f766e"></i>实线陆路/轮渡</span>
           <span><i class="legend-line" style="background:#0f766e;background-image:repeating-linear-gradient(90deg,#0f766e 0 3px,transparent 3px 6px);height:2px"></i>细虚线船游</span>
         </div>
@@ -914,7 +1089,7 @@ function initMap() {
     const a = stops.find(x=>x.id===from), b = stops.find(x=>x.id===to);
     if (!a || !b) return;
     L.polyline([[a.lat,a.lng],[b.lat,b.lng]], {
-      color: type==="flight" ? "#2563eb" : (PHASE_COLOR[b.phase]||"#0f766e"),
+      color: type==="flight" ? "#8b5cf6" : (PHASE_COLOR[b.phase]||"#0f766e"),
       weight: type==="flight"?2:3, dashArray: type==="flight"?"8 6":null, opacity:.75
     }).addTo(mapObj);
   }
@@ -1109,7 +1284,6 @@ function renderPrep() {
   const box = document.getElementById("page-prep");
   const left = prep.filter(p=>!isChecked("prep", p)).length;
   const noneN = bags.filter(p => packState(p) === "none").length;
-  const haveN = bags.filter(p => packState(p) === "have").length;
   const packedN = bags.filter(p => packState(p) === "packed").length;
   const tabs = [
     { id:"todo", label:"待办" },
@@ -1117,9 +1291,13 @@ function renderPrep() {
     { id:"note", label:"备忘" }
   ];
   const todoBody = `
+    <div class="page-head c-blue">待办事项 <span>${prep.length} 条任务</span></div>
     <div class="card">
-      <div class="kicker">行前待办</div>
-      <div class="next" style="font-size:18px">待办还剩 ${left} / ${prep.length}</div>
+      <div class="kicker">行前进度</div>
+      <div class="prog">
+        <div class="prog-top"><span>已完成 ${prep.length - left} / ${prep.length}</span><b>${Math.round((prep.length-left)/prep.length*100)}%</b></div>
+        <div class="prog-bar"><i style="width:${Math.round((prep.length-left)/prep.length*100)}%"></i></div>
+      </div>
       <p class="hint">${canEdit ? "勾选会立刻同步到云端。已完成项已预勾。" : "先解锁才能勾选。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
     </div>
     <div class="card">
@@ -1130,7 +1308,7 @@ function renderPrep() {
     </div>
     ${groups.map(g=>`
       <div class="card">
-        <div class="kicker">${g}</div>
+        <div class="kicker ${g==="行前必办"?"urgent":""}">${g}</div>
         ${prep.filter(p=>p.g===g).map(p=>`
           <label class="check ${isChecked("prep",p)?"done":""}">
             <input type="checkbox" data-list="prep" data-id="${p.id}" ${isChecked("prep",p)?"checked":""} ${canEdit?"":"disabled"}>
@@ -1138,24 +1316,26 @@ function renderPrep() {
           </label>`).join("")}
       </div>`).join("")}`;
   const packBody = `
-    <div class="card">
-      <div class="kicker">行李整理</div>
-      <div class="next" style="font-size:18px">尚无 ${noneN} · 已有 ${haveN} · 已装包 ${packedN}</div>
-      <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。待购买项目前是尚无。" : "先解锁才能改状态。依次是尚无、已有、已装包。"}</p>
-      <p class="hint">换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
+    <div class="page-head c-teal">行李整理 <span>${bags.length} 件</span></div>
+    <div class="stats">
+      <div class="stat"><b>${bags.length}</b><span>全部</span></div>
+      <div class="stat ok"><b>${packedN}</b><span>已装包</span></div>
+      <div class="stat miss"><b>${noneN}</b><span>尚无</span></div>
     </div>
+    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。待购买项目前是尚无。" : "先解锁才能改状态。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
     ${bgroups.map(g=>`
       <div class="card">
-        <div class="kicker">行李 · ${g}</div>
+        <div class="kicker">${g} · ${bags.filter(p=>p.g===g).length}</div>
         ${bags.filter(p=>p.g===g).map(p => {
           const st = packState(p);
           return `<button type="button" class="pack-st st-${st}" data-pack="${p.id}" ${canEdit?"":"disabled"}>
-            <span class="st-pill">${PACK_LABEL[st]}</span>
             <span class="lab">${p.t}</span>
+            <span class="st-pill">${PACK_LABEL[st]}</span>
           </button>`;
         }).join("")}
       </div>`).join("")}`;
   const noteBody = `
+    <div class="page-head c-teal">备忘</div>
     <div class="card">
       <div class="kicker">共享备忘</div>
       <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
@@ -1165,7 +1345,6 @@ function renderPrep() {
       <div class="kicker">行程亮点</div>
       <p class="note">科莫多龙零距离 · 粉红沙滩跳岛 · 图蓝本自由号 OW 考证 · 宜珍蓝火 · 布罗莫日出</p>
       <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
-      <p class="note" style="margin-top:8px">两人：WANG/QI、RAN/WEIJUN。公开页不含护照号。</p>
     </div>`;
   const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
   box.innerHTML = subTabBar(tabs, prepTab, "n3") + gateCard() + body;
