@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#1b5e4a">
-  <meta http-equiv="Cache-Control" content="no-cache">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <title>印尼双节旅行 · 2026.9.25–10.8</title>
@@ -283,11 +282,15 @@
     .btn:active { transform: scale(.97); filter: brightness(.94); }
     .btn.sec { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
     .btn:disabled { opacity: .45; }
-    .ghost {
+    .ghost, a.ghost {
       display: inline-flex; align-items: center; gap: 4px;
       border: 1px solid var(--accent); color: var(--accent); background: #fff;
-      border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 700;
+      border-radius: 8px; padding: 3px 8px; font-size: 11px; font-weight: 700;
+      text-decoration: none; flex-shrink: 0; line-height: 1.2;
+      -webkit-tap-highlight-color: transparent;
     }
+    a.ghost:active { filter: brightness(.94); }
+    .title .ghost { margin-left: 6px; vertical-align: 1px; }
     .field {
       width: 100%; border: 1px solid var(--line); border-radius: 10px;
       padding: 9px 10px; font: inherit; background: #fafafa; margin-bottom: 8px;
@@ -483,13 +486,13 @@ let tripFilter = "all";
 let prepTab = "todo";
 
 const flights = [
-  { date:"9.25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段" },
-  { date:"9.25", no:"VN679", al:"越南航空", route:"胡志明新山一 T2 → 吉隆坡 T1", dep:"15:25", arr:"18:25", bag:"托运 23KG", book:"去哪儿", note:"同机场 T2 中转；当晚住 T2 附近方便次日亚航" },
-  { date:"9.26", no:"AK310", al:"亚洲航空", route:"吉隆坡 T2 → 科莫多", dep:"10:45", arr:"14:25", bag:"无免费托运（已加购）", book:"去哪儿", note:"两人分单；从 T1 酒店转到 T2" },
-  { date:"9.29", no:"QZ647", al:"印尼亚航", route:"科莫多 → 巴厘岛登巴萨 D", dep:"13:05", arr:"14:20", bag:"以机票为准", book:"去哪儿", note:"抵登巴萨后接机去库塔" },
-  { date:"10.7", no:"QZ322", al:"印尼亚航", route:"泗水朱安达 T2 → 吉隆坡 T2", dep:"11:20", arr:"15:00", bag:"以机票为准", book:"去哪儿", note:"无餐食；机场酒店出发" },
-  { date:"10.7", no:"VN678", al:"越南航空", route:"吉隆坡 T1 → 胡志明新山一 T2", dep:"19:25", arr:"20:15", bag:"托运 23KG", book:"去哪儿", note:"KUL T2 转到 T1，预留 4 小时" },
-  { date:"10.8", no:"VN516", al:"越南航空", route:"胡志明新山一 T2 → 北京大兴", dep:"00:35", arr:"06:30", bag:"托运 23KG", book:"去哪儿", note:"时刻已变更（原 00:45）；SGN 过夜中转不出机场" }
+  { date:"9.25", iso:"2026-09-25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", from:"PKX", to:"SGN", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段" },
+  { date:"9.25", iso:"2026-09-25", no:"VN679", al:"越南航空", route:"胡志明新山一 T2 → 吉隆坡 T1", from:"SGN", to:"KUL", dep:"15:25", arr:"18:25", bag:"托运 23KG", book:"去哪儿", note:"同机场 T2 中转；当晚住 T2 附近方便次日亚航" },
+  { date:"9.26", iso:"2026-09-26", no:"AK310", al:"亚洲航空", route:"吉隆坡 T2 → 科莫多", from:"KUL", to:"LBJ", dep:"10:45", arr:"14:25", bag:"无免费托运（已加购）", book:"去哪儿", note:"两人分单；从 T1 酒店转到 T2" },
+  { date:"9.29", iso:"2026-09-29", no:"QZ647", al:"印尼亚航", route:"科莫多 → 巴厘岛登巴萨 D", from:"LBJ", to:"DPS", dep:"13:05", arr:"14:20", bag:"以机票为准", book:"去哪儿", note:"抵登巴萨后接机去库塔" },
+  { date:"10.7", iso:"2026-10-07", no:"QZ322", al:"印尼亚航", route:"泗水朱安达 T2 → 吉隆坡 T2", from:"SUB", to:"KUL", dep:"11:20", arr:"15:00", bag:"以机票为准", book:"去哪儿", note:"无餐食；机场酒店出发" },
+  { date:"10.7", iso:"2026-10-07", no:"VN678", al:"越南航空", route:"吉隆坡 T1 → 胡志明新山一 T2", from:"KUL", to:"SGN", dep:"19:25", arr:"20:15", bag:"托运 23KG", book:"去哪儿", note:"KUL T2 转到 T1，预留 4 小时" },
+  { date:"10.8", iso:"2026-10-08", no:"VN516", al:"越南航空", route:"胡志明新山一 T2 → 北京大兴", from:"SGN", to:"PKX", dep:"00:35", arr:"06:30", bag:"托运 23KG", book:"去哪儿", note:"时刻已变更（原 00:45）；SGN 过夜中转不出机场" }
 ];
 
 const hotels = [
@@ -510,8 +513,8 @@ const hotels = [
 const acts = [
   { date:"9.27", name:"科莫多半日游", aka:["半日游"], who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船" },
   { date:"9.28", name:"科莫多一日跳岛", aka:["一日跳岛"], who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000" },
-  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","库塔海滩冲浪练习","冲浪练习","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397" },
-  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707" },
+  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","库塔海滩冲浪练习","冲浪练习","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397", klook:true },
+  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707", klook:true },
   { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认" }
 ];
 
@@ -721,6 +724,9 @@ const stops = [
 const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
 const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:"#8b5cf6" };
+const VF_MP = "https://feeyo-4gavslyd9088a553-1258220651.tcloudbaseapp.com/jump-mp.html";
+const VF_SIGN = "6962cb8406913270c49eb62f06d9240e";
+const KLOOK_ORDERS = "https://www.klook.cn/zh-CN/bookings/";
 const ICO = {
   plane: '<svg class="ico" viewBox="0 0 24 24"><path d="M2.5 16.5 10 13l3.2-8.2 1.8 1.4-.8 6.4 6.8 3.1-1 1.8-6.6-1.2-3.5 4.6H8.2l1.8-4.6-7.5-2z"/></svg>',
   bag: '<svg class="ico" viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="2"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>',
@@ -1007,12 +1013,33 @@ function dayIndexForDate(s) {
   return i < 0 ? 0 : i;
 }
 
+function vfUrl(f) {
+  return VF_MP + "?path=/pages/detail/detail"
+    + "&fnum=" + encodeURIComponent(f.no)
+    + "&dep=" + encodeURIComponent(f.from)
+    + "&arr=" + encodeURIComponent(f.to)
+    + "&date=" + encodeURIComponent(f.iso)
+    + "&sign=" + VF_SIGN;
+}
+function extBtn(href, label) {
+  return `<a class="ghost" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+}
+function flightByNo(text) {
+  return flights.find(f => String(text).includes(f.no));
+}
+function eventJump(e) {
+  const f = flightByNo(e.title);
+  if (f) return extBtn(vfUrl(f), "动态");
+  if (/Klook/i.test((e.note || "") + (e.title || ""))) return extBtn(KLOOK_ORDERS, "订单");
+  return "";
+}
+
 function eventRows(events) {
   return events.map(e => `
     <div class="row">
       <div class="t">${e.t}</div>
       <div>
-        <div class="title">${linkText(e.title)} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
+        <div class="title">${linkText(e.title)} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}${eventJump(e)}</div>
         ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${linkText(e.note)}</div>`:""}
       </div>
     </div>`).join("");
@@ -1042,7 +1069,7 @@ function flightBlock(f) {
     </div>
     <div class="ticket-foot">
       <span class="bag">${ICO.bag} ${f.bag}</span>
-      <span class="ghost">${ICO.link} ${f.book}</span>
+      ${extBtn(vfUrl(f), "动态")}
     </div>
     ${f.note ? `<div class="note" style="margin-top:8px">${f.note}</div>` : ""}
   </div>`;
@@ -1066,6 +1093,7 @@ function actBlock(a, i) {
   return `<div class="item ph-${ph}" id="a-${i}">
     <div class="stay-top">
       <div>${ICO.cal} ${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))}</div>
+      ${a.klook ? extBtn(KLOOK_ORDERS, "订单") : ""}
     </div>
     <div class="stay-name">${tap(a.name, "acts", "a-"+i)}</div>
     <div class="stay-meta">${a.who}</div>
@@ -1279,7 +1307,7 @@ function renderTrip(filter, highlightId) {
   if (tripTab === "flights") {
     body = `
       <div class="page-head c-purple">机票 <span>7 段 · 去哪儿</span></div>
-      <p class="hint">点日期看当天日程，点航班号定位该段。返程 VN516 已改为 00:35。</p>
+      <p class="hint">点日期看当天日程。「动态」打开飞常准。返程 VN516 已改为 00:35。</p>
       ${flights.map(flightBlock).join("")}`;
   } else if (tripTab === "hotels") {
     body = `
@@ -1289,7 +1317,7 @@ function renderTrip(filter, highlightId) {
   } else if (tripTab === "acts") {
     body = `
       <div class="page-head c-orange">活动体验 <span>${acts.length} 个活动</span></div>
-      <p class="hint">点日期看当天日程，点活动名定位该条。</p>
+      <p class="hint">点日期看当天日程。Klook 的「订单」打开订单列表。</p>
       ${acts.map(actBlock).join("")}`;
   } else {
     body = `
