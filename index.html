@@ -291,6 +291,8 @@
     }
     a.ghost:active { filter: brightness(.94); }
     .title .ghost { margin-left: 6px; vertical-align: 1px; }
+    .ghost .ico-ext { width: 9px; height: 9px; margin-left: 1px; }
+    .wrap.swiping a.jump-ext { pointer-events: none; }
     .field {
       width: 100%; border: 1px solid var(--line); border-radius: 10px;
       padding: 9px 10px; font: inherit; background: #fafafa; margin-bottom: 8px;
@@ -732,7 +734,8 @@ const ICO = {
   bag: '<svg class="ico" viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="2"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>',
   bed: '<svg class="ico" viewBox="0 0 24 24"><path d="M3 18V9h8a4 4 0 0 1 4 4v5M3 18h18M7 9V6h4v3"/></svg>',
   cal: '<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
-  link: '<svg class="ico" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"/><path d="M11 6H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-4"/></svg>'
+  link: '<svg class="ico" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8"/><path d="M11 6H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-4"/></svg>',
+  ext: '<svg class="ico ico-ext" viewBox="0 0 12 12"><path d="M3.2 8.8 8.8 3.2M5.2 3.2h3.6V6.8"/></svg>'
 };
 const boatHalf = [
   { name:"Kelor 岛", lat:-8.4533, lng:119.8810 },
@@ -1022,15 +1025,15 @@ function vfUrl(f) {
     + "&sign=" + VF_SIGN;
 }
 function extBtn(href, label) {
-  return `<a class="ghost" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+  return `<a class="ghost jump-ext" href="${href}" target="_blank" rel="noopener" draggable="false">${label}${ICO.ext}</a>`;
 }
 function flightByNo(text) {
   return flights.find(f => String(text).includes(f.no));
 }
 function eventJump(e) {
   const f = flightByNo(e.title);
-  if (f) return extBtn(vfUrl(f), "动态");
-  if (/Klook/i.test((e.note || "") + (e.title || ""))) return extBtn(KLOOK_ORDERS, "订单");
+  if (f) return extBtn(vfUrl(f), "飞常准");
+  if (/Klook/i.test((e.note || "") + (e.title || ""))) return extBtn(KLOOK_ORDERS, "Klook");
   return "";
 }
 
@@ -1069,7 +1072,7 @@ function flightBlock(f) {
     </div>
     <div class="ticket-foot">
       <span class="bag">${ICO.bag} ${f.bag}</span>
-      ${extBtn(vfUrl(f), "动态")}
+      ${extBtn(vfUrl(f), "飞常准")}
     </div>
     ${f.note ? `<div class="note" style="margin-top:8px">${f.note}</div>` : ""}
   </div>`;
@@ -1093,7 +1096,7 @@ function actBlock(a, i) {
   return `<div class="item ph-${ph}" id="a-${i}">
     <div class="stay-top">
       <div>${ICO.cal} ${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))}</div>
-      ${a.klook ? extBtn(KLOOK_ORDERS, "订单") : ""}
+      ${a.klook ? extBtn(KLOOK_ORDERS, "Klook") : ""}
     </div>
     <div class="stay-name">${tap(a.name, "acts", "a-"+i)}</div>
     <div class="stay-meta">${a.who}</div>
@@ -1307,7 +1310,7 @@ function renderTrip(filter, highlightId) {
   if (tripTab === "flights") {
     body = `
       <div class="page-head c-purple">机票 <span>7 段 · 去哪儿</span></div>
-      <p class="hint">点日期看当天日程。「动态」打开飞常准。返程 VN516 已改为 00:35。</p>
+      <p class="hint">点日期看当天日程。「飞常准」查航班动态。返程 VN516 已改为 00:35。</p>
       ${flights.map(flightBlock).join("")}`;
   } else if (tripTab === "hotels") {
     body = `
@@ -1317,7 +1320,7 @@ function renderTrip(filter, highlightId) {
   } else if (tripTab === "acts") {
     body = `
       <div class="page-head c-orange">活动体验 <span>${acts.length} 个活动</span></div>
-      <p class="hint">点日期看当天日程。Klook 的「订单」打开订单列表。</p>
+      <p class="hint">点日期看当天日程。「Klook」打开订单列表。</p>
       ${acts.map(actBlock).join("")}`;
   } else {
     body = `
@@ -1816,7 +1819,7 @@ function syncHeaderH() {
 function bindSwipe() {
   const wrap = document.querySelector("main.wrap");
   if (!wrap) return;
-  let x0 = 0, y0 = 0, t0 = 0, tracking = false, dragging = false;
+  let x0 = 0, y0 = 0, t0 = 0, tracking = false, dragging = false, swallowClick = false, swallowTimer = 0;
   const paneOn = () => paneTarget(document.querySelector(".page.on"));
   const resetDrag = el => {
     if (!el) return;
@@ -1825,6 +1828,22 @@ function bindSwipe() {
     el.style.opacity = "";
     setTimeout(() => { el.style.transition = ""; }, 240);
   };
+  const armSwallow = () => {
+    swallowClick = true;
+    wrap.classList.add("swiping");
+    clearTimeout(swallowTimer);
+    swallowTimer = setTimeout(() => {
+      swallowClick = false;
+      wrap.classList.remove("swiping");
+    }, 480);
+  };
+  wrap.addEventListener("click", e => {
+    if (!swallowClick) return;
+    if (e.target.closest("a.jump-ext")) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
   wrap.addEventListener("touchstart", e => {
     if (paneBusy || e.touches.length !== 1) return;
     if (e.target.closest("textarea, input, select, .map-box, .filters, .add-box, .ebtn, .xbtn, .add-pill")) return;
@@ -1841,7 +1860,10 @@ function bindSwipe() {
     const t = e.touches[0];
     const dx = t.clientX - x0, dy = t.clientY - y0;
     if (Math.abs(dx) < 14 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
-    dragging = true;
+    if (!dragging) {
+      dragging = true;
+      wrap.classList.add("swiping");
+    }
     const pane = paneOn();
     if (!pane || reducedMotion()) return;
     const w = pane.clientWidth || 1;
@@ -1861,6 +1883,10 @@ function bindSwipe() {
     const i = tabs.findIndex(x => x.id === cur);
     const n = i + (dx < 0 ? 1 : -1);
     const commit = Date.now() - t0 < 800 && Math.abs(dx) >= 56 && Math.abs(dx) > Math.abs(dy) * 1.25 && n >= 0 && n < tabs.length;
+    if (dragging) {
+      if (e.cancelable) e.preventDefault();
+      armSwallow();
+    }
     if (!commit) {
       if (dragging) resetDrag(pane);
       dragging = false;
@@ -1869,6 +1895,15 @@ function bindSwipe() {
     dragging = false;
     if (on === "page-trip") switchTripTab(tabs[n].id, dx < 0 ? 1 : -1);
     else switchPrepTab(tabs[n].id, dx < 0 ? 1 : -1);
+  }, { passive: false });
+  wrap.addEventListener("touchcancel", () => {
+    if (!tracking && !dragging) return;
+    tracking = false;
+    if (dragging) {
+      armSwallow();
+      resetDrag(paneOn());
+    }
+    dragging = false;
   }, { passive: true });
 }
 syncHeaderH();
