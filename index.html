@@ -53,7 +53,7 @@
     }
     header h1 { font-size: 18px; font-weight: 800; letter-spacing: .02em; line-height: 1.25; }
     header .dates { font-size: 11px; opacity: .88; margin-top: 2px; }
-    .wrap { padding: 14px 14px 8px; max-width: 720px; margin: 0 auto; }
+    .wrap { padding: 14px 14px 8px; max-width: 720px; margin: 0 auto; overflow-x: hidden; }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -114,7 +114,9 @@
       border-radius: 16px; padding: 12px 14px; margin-bottom: 8px;
       display: flex; align-items: center; gap: 10px;
       box-shadow: 0 1px 3px rgba(16,24,40,.04);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
     }
+    .day-btn:active { transform: scale(.985); }
     .day-btn .d {
       font-weight: 800; min-width: 48px; font-size: 12px; color: #fff;
       text-align: center; border-radius: 10px; padding: 8px 6px; line-height: 1.2;
@@ -128,7 +130,9 @@
     .filters button {
       border: 1px solid var(--line); background: #fff; color: #4b5563;
       border-radius: 99px; padding: 6px 14px; font-size: 12px; font-weight: 650; white-space: nowrap;
+      transition: background .18s ease, color .18s ease, border-color .18s ease, transform .15s ease;
     }
+    .filters button:active { transform: scale(.96); }
     .filters button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
     .subchrome {
       position: sticky;
@@ -153,7 +157,9 @@
       border: 0; background: #fff; color: #6b7280;
       border-radius: 12px; padding: 8px 4px; font-size: 13px; font-weight: 650;
       border: 1px solid var(--line);
+      transition: background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
     }
+    .subnav button:active { transform: scale(.96); }
     .subnav button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
     .jumps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .tap {
@@ -164,7 +170,9 @@
       text-underline-offset: 3px;
       text-decoration-thickness: 1px;
       -webkit-tap-highlight-color: transparent;
+      transition: opacity .15s ease;
     }
+    .tap:active { opacity: .55; }
     .hl-flash { animation: hlflash 1.4s ease; }
     #page-trip .item, #page-trip .card {
       scroll-margin-top: calc(var(--header-h, 72px) + 58px);
@@ -179,12 +187,15 @@
       appearance: none; -webkit-appearance: none;
       margin-top: 2px; width: 18px; height: 18px; flex-shrink: 0;
       border: 1.6px solid #d1d5db; border-radius: 5px; background: #fff;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease;
     }
     .check input:checked {
       background: var(--accent); border-color: var(--accent);
+      transform: scale(1.06);
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.2l3 3 6-6.4'/></svg>");
       background-size: 12px; background-repeat: no-repeat; background-position: center;
     }
+    .check .lab { transition: color .16s ease; }
     .check.done .lab { color: var(--muted); text-decoration: line-through; }
     .pack-st {
       display: flex; gap: 10px; align-items: center;
@@ -192,7 +203,9 @@
       background: none; border: 0; border-top: 1px solid #f3f4f6;
       padding: 11px 0 11px 10px; font: inherit; color: inherit;
       position: relative;
+      transition: background .15s ease, transform .15s ease;
     }
+    .pack-st:not(:disabled):active { transform: scale(.99); background: #f8faf9; }
     .pack-st:first-of-type { border-top: none; }
     .pack-st:disabled { opacity: 1; cursor: default; }
     .pack-st:not(:disabled) { cursor: pointer; }
@@ -207,6 +220,7 @@
     .st-pill {
       flex-shrink: 0; font-size: 11px; font-weight: 700;
       padding: 2px 8px; border-radius: 99px; min-width: 52px; text-align: center;
+      transition: background .18s ease, color .18s ease;
     }
     .st-none .st-pill { background: #fff3e6; color: var(--orange); }
     .st-have .st-pill { background: #dbeafe; color: #1d4ed8; }
@@ -228,7 +242,7 @@
     .prog-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
     .prog-top b { color: var(--accent); }
     .prog-bar { height: 8px; background: #d1fae5; border-radius: 99px; overflow: hidden; }
-    .prog-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+    .prog-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s ease; }
     textarea {
       width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 12px;
       padding: 10px; font: inherit; resize: vertical; background: #fafafa;
@@ -237,7 +251,9 @@
     .btn {
       border: 0; background: var(--accent); color: #fff; border-radius: 10px;
       padding: 9px 12px; font: inherit; font-weight: 700; font-size: 13px;
+      transition: transform .15s ease, filter .15s ease, background .18s ease;
     }
+    .btn:active { transform: scale(.97); filter: brightness(.94); }
     .btn.sec { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
     .btn:disabled { opacity: .45; }
     .ghost {
@@ -268,11 +284,26 @@
       border: 0; background: none; padding: 4px 0 2px;
       font-size: 10px; color: #9ca3af; font-weight: 650;
       display: flex; flex-direction: column; align-items: center; gap: 2px;
+      transition: color .2s ease, transform .15s ease;
     }
-    nav button svg { width: 22px; height: 22px; }
+    nav button svg { width: 22px; height: 22px; transition: transform .18s ease; }
+    nav button:active { transform: scale(.92); }
     nav button.on { color: var(--accent); }
+    nav button.on svg { transform: scale(1.08); }
     .page { display: none; }
-    .page.on { display: block; }
+    .page.on { display: block; animation: pageIn .22s ease; }
+    .page.pane-out-left { animation: paneOutL .18s ease forwards; }
+    .page.pane-out-right { animation: paneOutR .18s ease forwards; }
+    .page.on.pane-in-left { animation: paneInL .24s ease; }
+    .page.on.pane-in-right { animation: paneInR .24s ease; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes paneOutL { to { opacity: 0; transform: translateX(-28px); } }
+    @keyframes paneOutR { to { opacity: 0; transform: translateX(28px); } }
+    @keyframes paneInL { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+    @keyframes paneInR { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+    .day-card { display: none; }
+    .day-card.open { display: block; animation: dayOpen .22s ease; }
+    @keyframes dayOpen { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
     .kv { font-size: 13px; margin-top: 6px; color: var(--text); }
     .kv b { color: var(--muted); font-weight: 600; margin-right: 6px; }
     .item {
@@ -323,7 +354,9 @@
     .map-focus button {
       flex: 1; border: 0; border-radius: 10px; padding: 8px 6px;
       font-size: 13px; font-weight: 700; color: #fff;
+      transition: transform .16s ease, filter .16s ease;
     }
+    .map-focus button:active { transform: scale(.97); filter: brightness(.92); }
     .map-focus .f-komodo { background: var(--komodo); }
     .map-focus .f-bali { background: var(--bali); }
     .map-focus .f-java { background: var(--java); }
@@ -341,6 +374,13 @@
     }
     .leaflet-popup-content { font-size: 13px; line-height: 1.4; }
     .empty { color: var(--muted); font-size: 13px; padding: 8px 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
 
     @media (min-width: 800px) {
       body { padding-bottom: 24px; }
@@ -981,6 +1021,61 @@ function subTabBar(tabs, current, extraClass) {
   ).join("")}</div>`;
 }
 
+function reducedMotion() {
+  return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+let paneBusy = false;
+function clearPaneStyle(box) {
+  if (!box) return;
+  box.classList.remove("pane-out-left","pane-out-right","pane-in-left","pane-in-right");
+  box.style.transition = "";
+  box.style.transform = "";
+  box.style.opacity = "";
+}
+function switchPane(box, dir, after) {
+  if (!box || reducedMotion()) {
+    after();
+    return;
+  }
+  if (paneBusy) return;
+  paneBusy = true;
+  const inn = dir >= 0 ? "pane-in-left" : "pane-in-right";
+  const x = dir >= 0 ? "-32px" : "32px";
+  box.style.transition = "transform .16s ease, opacity .16s ease";
+  box.style.transform = `translateX(${x})`;
+  box.style.opacity = "0";
+  setTimeout(() => {
+    after();
+    clearPaneStyle(box);
+    void box.offsetWidth;
+    box.classList.add(inn);
+    paneBusy = false;
+    setTimeout(() => box.classList.remove("pane-in-left","pane-in-right"), 280);
+  }, 160);
+}
+function switchTripTab(id, dir) {
+  if (id === tripTab || paneBusy) return;
+  const ids = TRIP_TABS.map(t => t.id);
+  if (dir == null) dir = ids.indexOf(id) >= ids.indexOf(tripTab) ? 1 : -1;
+  tripTab = id;
+  paintSubnav("trip");
+  switchPane(document.getElementById("page-trip"), dir, () => {
+    window.scrollTo(0,0);
+    renderTrip();
+  });
+}
+function switchPrepTab(id, dir) {
+  if (id === prepTab || paneBusy) return;
+  const ids = PREP_TABS.map(t => t.id);
+  if (dir == null) dir = ids.indexOf(id) >= ids.indexOf(prepTab) ? 1 : -1;
+  prepTab = id;
+  paintSubnav("prep");
+  switchPane(document.getElementById("page-prep"), dir, () => {
+    window.scrollTo(0,0);
+    renderPrep();
+  });
+}
 function paintSubnav(which) {
   const chrome = document.getElementById("subchrome");
   if (!chrome) return;
@@ -989,20 +1084,12 @@ function paintSubnav(which) {
     if (on && on !== "page-trip") return;
     chrome.hidden = false;
     chrome.innerHTML = subTabBar(TRIP_TABS, tripTab, "n4");
-    chrome.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => {
-      tripTab = b.dataset.sub;
-      window.scrollTo(0,0);
-      renderTrip();
-    });
+    chrome.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => switchTripTab(b.dataset.sub));
   } else if (which === "prep") {
     if (on && on !== "page-prep") return;
     chrome.hidden = false;
     chrome.innerHTML = subTabBar(PREP_TABS, prepTab, "n3");
-    chrome.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => {
-      prepTab = b.dataset.sub;
-      window.scrollTo(0,0);
-      renderPrep();
-    });
+    chrome.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => switchPrepTab(b.dataset.sub));
   } else {
     chrome.hidden = true;
   }
@@ -1065,7 +1152,7 @@ function renderTrip(filter, highlightId) {
           <span class="ttl">${d.title}</span>
           ${phaseChip(d.phase)}
         </button>
-        <div class="card" id="day-${days.indexOf(d)}" style="display:none">
+        <div class="card day-card" id="day-${days.indexOf(d)}">
           ${dayMeta(d)}
           ${eventRows(d.events)}
         </div>
@@ -1075,13 +1162,13 @@ function renderTrip(filter, highlightId) {
   box.querySelectorAll("[data-f]").forEach(b => b.onclick = () => renderTrip(b.dataset.f));
   box.querySelectorAll(".day-btn").forEach(b => b.onclick = () => {
     const el = document.getElementById("day-"+b.dataset.i);
-    el.style.display = el.style.display==="none" ? "block" : "none";
+    el.classList.toggle("open");
   });
   bindJumps(box);
   if (highlightId) {
     const el = document.getElementById(highlightId);
     if (el) {
-      if (highlightId.startsWith("day-")) el.style.display = "block";
+      if (highlightId.startsWith("day-")) el.classList.add("open");
       el.classList.add("hl-flash");
       requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "center" }));
     }
@@ -1458,9 +1545,17 @@ function syncHeaderH() {
 function bindSwipe() {
   const wrap = document.querySelector("main.wrap");
   if (!wrap) return;
-  let x0 = 0, y0 = 0, t0 = 0, tracking = false;
+  let x0 = 0, y0 = 0, t0 = 0, tracking = false, dragging = false;
+  const boxOn = () => document.querySelector(".page.on");
+  const resetDrag = box => {
+    if (!box) return;
+    box.style.transition = "transform .22s ease, opacity .22s ease";
+    box.style.transform = "";
+    box.style.opacity = "";
+    setTimeout(() => { box.style.transition = ""; }, 240);
+  };
   wrap.addEventListener("touchstart", e => {
-    if (e.touches.length !== 1) return;
+    if (paneBusy || e.touches.length !== 1) return;
     if (e.target.closest("textarea, input, .map-box, .filters")) return;
     const on = document.querySelector(".page.on")?.id;
     if (on !== "page-trip" && on !== "page-prep") return;
@@ -1468,29 +1563,41 @@ function bindSwipe() {
     y0 = e.touches[0].clientY;
     t0 = Date.now();
     tracking = true;
+    dragging = false;
+  }, { passive: true });
+  wrap.addEventListener("touchmove", e => {
+    if (!tracking || paneBusy) return;
+    const t = e.touches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    if (Math.abs(dx) < 14 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
+    dragging = true;
+    const box = boxOn();
+    if (!box || reducedMotion()) return;
+    const w = box.clientWidth || 1;
+    box.style.transition = "none";
+    box.style.transform = `translateX(${dx * 0.42}px)`;
+    box.style.opacity = String(Math.max(0.55, 1 - Math.abs(dx) / (w * 1.6)));
   }, { passive: true });
   wrap.addEventListener("touchend", e => {
     if (!tracking) return;
     tracking = false;
     const t = e.changedTouches[0];
     const dx = t.clientX - x0, dy = t.clientY - y0;
-    if (Date.now() - t0 > 700) return;
-    if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.35) return;
+    const box = boxOn();
     const on = document.querySelector(".page.on")?.id;
     const tabs = on === "page-trip" ? TRIP_TABS : (on === "page-prep" ? PREP_TABS : []);
     const cur = on === "page-trip" ? tripTab : prepTab;
     const i = tabs.findIndex(x => x.id === cur);
     const n = i + (dx < 0 ? 1 : -1);
-    if (n < 0 || n >= tabs.length) return;
-    if (on === "page-trip") {
-      tripTab = tabs[n].id;
-      window.scrollTo(0,0);
-      renderTrip();
-    } else {
-      prepTab = tabs[n].id;
-      window.scrollTo(0,0);
-      renderPrep();
+    const commit = Date.now() - t0 < 800 && Math.abs(dx) >= 56 && Math.abs(dx) > Math.abs(dy) * 1.25 && n >= 0 && n < tabs.length;
+    if (!commit) {
+      if (dragging) resetDrag(box);
+      dragging = false;
+      return;
     }
+    dragging = false;
+    if (on === "page-trip") switchTripTab(tabs[n].id, dx < 0 ? 1 : -1);
+    else switchPrepTab(tabs[n].id, dx < 0 ? 1 : -1);
   }, { passive: true });
 }
 syncHeaderH();
