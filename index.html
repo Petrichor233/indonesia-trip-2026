@@ -40,18 +40,19 @@
       stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
     }
     header {
-      position: sticky; top: 0; z-index: 20;
+      position: sticky; top: 0; z-index: 2000;
       background: linear-gradient(135deg, #1b5e4a 0%, #2f6b45 46%, #c45c26 100%);
       color: #fff;
-      padding: 14px 16px 16px;
+      padding: 8px 16px 9px;
+      isolation: isolate;
     }
     .app { min-height: 100vh; }
     header .eyebrow {
-      font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
-      opacity: .82; font-weight: 600; margin-bottom: 4px;
+      font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+      opacity: .82; font-weight: 600; margin-bottom: 1px;
     }
-    header h1 { font-size: 22px; font-weight: 800; letter-spacing: .02em; }
-    header .dates { font-size: 12px; opacity: .88; margin-top: 6px; }
+    header h1 { font-size: 18px; font-weight: 800; letter-spacing: .02em; line-height: 1.25; }
+    header .dates { font-size: 11px; opacity: .88; margin-top: 2px; }
     .wrap { padding: 14px 14px 8px; max-width: 720px; margin: 0 auto; }
     .card {
       background: var(--card);
@@ -132,7 +133,7 @@
     .subnav {
       display: grid; gap: 6px;
       margin: -14px -14px 12px; padding: 10px 14px 10px;
-      position: sticky; top: 86px; z-index: 15;
+      position: sticky; top: 64px; z-index: 1500;
       background: rgba(245,246,248,.94);
       backdrop-filter: blur(12px);
     }
@@ -245,7 +246,7 @@
     .gate-card .btn { padding: 7px 10px; font-size: 12px; }
     .gate-card .okline { margin-top: 4px; }
     nav {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 2100;
       display: grid; grid-template-columns: repeat(4, 1fr);
       background: #fff; border-top: 1px solid var(--line);
       padding: 6px 0 calc(6px + var(--safe));
@@ -298,7 +299,13 @@
     .ticket-foot .bag { display: inline-flex; align-items: center; gap: 4px; }
     .stay-name { font-size: 16px; font-weight: 800; margin: 6px 0 4px; }
     .stay-meta { font-size: 13px; color: #4b5563; }
-    .map-box { height: 52vh; min-height: 280px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+    .map-box {
+      height: 42vh; min-height: 220px; max-height: 380px;
+      border-radius: 14px; overflow: hidden; border: 1px solid var(--line);
+      position: relative; z-index: 0; isolation: isolate;
+      transform: translateZ(0);
+      -webkit-mask-image: -webkit-radial-gradient(white, black);
+    }
     .map-focus { display: flex; gap: 8px; margin: 8px 0 10px; }
     .map-focus button {
       flex: 1; border: 0; border-radius: 10px; padding: 8px 6px;
