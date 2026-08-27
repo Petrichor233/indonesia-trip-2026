@@ -53,7 +53,7 @@
     }
     header h1 { font-size: 18px; font-weight: 800; letter-spacing: .02em; line-height: 1.25; }
     header .dates { font-size: 11px; opacity: .88; margin-top: 2px; }
-    .wrap { padding: 14px 14px 8px; max-width: 720px; margin: 0 auto; overflow-x: hidden; }
+    .wrap { padding: 14px 14px 8px; max-width: 720px; margin: 0 auto; }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -138,6 +138,7 @@
       position: sticky;
       top: var(--header-h, 72px);
       z-index: 1900;
+      isolation: isolate;
       margin: -14px -14px 12px;
       padding: 8px 14px 10px;
       background: rgba(245,246,248,.96);
@@ -290,17 +291,8 @@
     nav button:active { transform: scale(.92); }
     nav button.on { color: var(--accent); }
     nav button.on svg { transform: scale(1.08); }
-    .page { display: none; }
-    .page.on { display: block; animation: pageIn .22s ease; }
-    .page.pane-out-left { animation: paneOutL .18s ease forwards; }
-    .page.pane-out-right { animation: paneOutR .18s ease forwards; }
-    .page.on.pane-in-left { animation: paneInL .24s ease; }
-    .page.on.pane-in-right { animation: paneInR .24s ease; }
-    @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    @keyframes paneOutL { to { opacity: 0; transform: translateX(-28px); } }
-    @keyframes paneOutR { to { opacity: 0; transform: translateX(28px); } }
-    @keyframes paneInL { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
-    @keyframes paneInR { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+    .page { display: none; position: relative; z-index: 0; }
+    .page.on { display: block; overflow-x: hidden; }
     .day-card { display: none; }
     .day-card.open { display: block; animation: dayOpen .22s ease; }
     @keyframes dayOpen { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
@@ -1026,12 +1018,17 @@ function reducedMotion() {
 }
 
 let paneBusy = false;
-function clearPaneStyle(box) {
-  if (!box) return;
-  box.classList.remove("pane-out-left","pane-out-right","pane-in-left","pane-in-right");
-  box.style.transition = "";
-  box.style.transform = "";
-  box.style.opacity = "";
+function paneTarget(box) {
+  return (box && box.querySelector(":scope > .pane-body")) || box;
+}
+function fillPane(box, html) {
+  box.innerHTML = '<div class="pane-body">' + html + "</div>";
+}
+function clearPaneStyle(el) {
+  if (!el) return;
+  el.style.transition = "";
+  el.style.transform = "";
+  el.style.opacity = "";
 }
 function switchPane(box, dir, after) {
   if (!box || reducedMotion()) {
@@ -1040,19 +1037,44 @@ function switchPane(box, dir, after) {
   }
   if (paneBusy) return;
   paneBusy = true;
-  const inn = dir >= 0 ? "pane-in-left" : "pane-in-right";
-  const x = dir >= 0 ? "-32px" : "32px";
-  box.style.transition = "transform .16s ease, opacity .16s ease";
-  box.style.transform = `translateX(${x})`;
-  box.style.opacity = "0";
-  setTimeout(() => {
+  const body = paneTarget(box);
+  const outX = dir >= 0 ? "-28px" : "28px";
+  const inX = dir >= 0 ? "28px" : "-28px";
+  const playIn = () => {
     after();
-    clearPaneStyle(box);
-    void box.offsetWidth;
-    box.classList.add(inn);
-    paneBusy = false;
-    setTimeout(() => box.classList.remove("pane-in-left","pane-in-right"), 280);
-  }, 160);
+    const next = paneTarget(box);
+    next.style.transition = "none";
+    next.style.transform = "translate3d(" + inX + ",0,0)";
+    next.style.opacity = "0";
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        next.style.transition = "transform .26s cubic-bezier(.22,.8,.36,1), opacity .22s ease";
+        next.style.transform = "translate3d(0,0,0)";
+        next.style.opacity = "1";
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          clearPaneStyle(next);
+          paneBusy = false;
+        };
+        next.addEventListener("transitionend", function te(e) {
+          if (e.target !== next || e.propertyName !== "transform") return;
+          next.removeEventListener("transitionend", te);
+          finish();
+        });
+        setTimeout(finish, 340);
+      });
+    });
+  };
+  if (body.style.transform) {
+    playIn();
+    return;
+  }
+  body.style.transition = "transform .14s ease, opacity .14s ease";
+  body.style.transform = "translate3d(" + outX + ",0,0)";
+  body.style.opacity = "0";
+  setTimeout(playIn, 140);
 }
 function switchTripTab(id, dir) {
   if (id === tripTab || paneBusy) return;
@@ -1158,7 +1180,7 @@ function renderTrip(filter, highlightId) {
         </div>
       `).join("")}`;
   }
-  box.innerHTML = body;
+  fillPane(box, body);
   box.querySelectorAll("[data-f]").forEach(b => b.onclick = () => renderTrip(b.dataset.f));
   box.querySelectorAll(".day-btn").forEach(b => b.onclick = () => {
     const el = document.getElementById("day-"+b.dataset.i);
@@ -1507,7 +1529,7 @@ function renderPrep() {
       <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
     </div>`;
   const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
-  box.innerHTML = gateCard() + body;
+  fillPane(box, gateCard() + body);
   bindGate(box);
   box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
     cloud.prep = cloud.prep || {};
@@ -1546,13 +1568,13 @@ function bindSwipe() {
   const wrap = document.querySelector("main.wrap");
   if (!wrap) return;
   let x0 = 0, y0 = 0, t0 = 0, tracking = false, dragging = false;
-  const boxOn = () => document.querySelector(".page.on");
-  const resetDrag = box => {
-    if (!box) return;
-    box.style.transition = "transform .22s ease, opacity .22s ease";
-    box.style.transform = "";
-    box.style.opacity = "";
-    setTimeout(() => { box.style.transition = ""; }, 240);
+  const paneOn = () => paneTarget(document.querySelector(".page.on"));
+  const resetDrag = el => {
+    if (!el) return;
+    el.style.transition = "transform .22s ease, opacity .22s ease";
+    el.style.transform = "";
+    el.style.opacity = "";
+    setTimeout(() => { el.style.transition = ""; }, 240);
   };
   wrap.addEventListener("touchstart", e => {
     if (paneBusy || e.touches.length !== 1) return;
@@ -1571,19 +1593,19 @@ function bindSwipe() {
     const dx = t.clientX - x0, dy = t.clientY - y0;
     if (Math.abs(dx) < 14 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
     dragging = true;
-    const box = boxOn();
-    if (!box || reducedMotion()) return;
-    const w = box.clientWidth || 1;
-    box.style.transition = "none";
-    box.style.transform = `translateX(${dx * 0.42}px)`;
-    box.style.opacity = String(Math.max(0.55, 1 - Math.abs(dx) / (w * 1.6)));
+    const pane = paneOn();
+    if (!pane || reducedMotion()) return;
+    const w = pane.clientWidth || 1;
+    pane.style.transition = "none";
+    pane.style.transform = "translate3d(" + (dx * 0.42) + "px,0,0)";
+    pane.style.opacity = String(Math.max(0.55, 1 - Math.abs(dx) / (w * 1.6)));
   }, { passive: true });
   wrap.addEventListener("touchend", e => {
     if (!tracking) return;
     tracking = false;
     const t = e.changedTouches[0];
     const dx = t.clientX - x0, dy = t.clientY - y0;
-    const box = boxOn();
+    const pane = paneOn();
     const on = document.querySelector(".page.on")?.id;
     const tabs = on === "page-trip" ? TRIP_TABS : (on === "page-prep" ? PREP_TABS : []);
     const cur = on === "page-trip" ? tripTab : prepTab;
@@ -1591,7 +1613,7 @@ function bindSwipe() {
     const n = i + (dx < 0 ? 1 : -1);
     const commit = Date.now() - t0 < 800 && Math.abs(dx) >= 56 && Math.abs(dx) > Math.abs(dy) * 1.25 && n >= 0 && n < tabs.length;
     if (!commit) {
-      if (dragging) resetDrag(box);
+      if (dragging) resetDrag(pane);
       dragging = false;
       return;
     }
