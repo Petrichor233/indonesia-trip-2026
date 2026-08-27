@@ -67,6 +67,30 @@
       margin: 2px 0 12px; font-size: 22px; font-weight: 800;
     }
     .page-head span { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .add-pill {
+      margin-left: auto; align-self: center; flex-shrink: 0;
+      border: 0; background: var(--accent); color: #fff;
+      border-radius: 99px; padding: 6px 12px;
+      font-size: 13px; font-weight: 700;
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .add-pill:active { transform: scale(.96); filter: brightness(.94); }
+    .add-pill:disabled { opacity: .45; }
+    .add-box .field { margin-bottom: 8px; }
+    .ebtn, .xbtn {
+      flex-shrink: 0; border: 0; background: #f3f4f6; color: #6b7280;
+      border-radius: 8px; min-width: 28px; height: 28px; padding: 0 7px; margin-top: 1px;
+      font-size: 12px; font-weight: 700; line-height: 1;
+    }
+    .xbtn { color: #dc2626; background: #fef2f2; }
+    .ebtn:active, .xbtn:active { transform: scale(.94); }
+    .check-main { display: flex; gap: 10px; align-items: flex-start; flex: 1; min-width: 0; }
+    .pack-row {
+      display: flex; align-items: center; gap: 6px;
+      border-top: 1px solid #f3f4f6;
+    }
+    .pack-row:first-of-type { border-top: none; }
+    .pack-row .pack-st { border-top: none; padding-left: 10px; flex: 1; width: auto; min-width: 0; }
     .page-head.c-teal { color: var(--accent); }
     .page-head.c-purple { color: #9040b2; }
     .page-head.c-orange { color: var(--orange); }
@@ -182,7 +206,7 @@
       0%, 100% { background: #fff; }
       25% { background: #ccfbf1; }
     }
-    .check { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-top: 1px solid #f3f4f6; }
+    .check { display: flex; gap: 8px; align-items: flex-start; padding: 11px 0; border-top: 1px solid #f3f4f6; }
     .check:first-of-type { border-top: none; }
     .check input {
       appearance: none; -webkit-appearance: none;
@@ -448,7 +472,7 @@ const KEY_WHO = "trip2026-who";
 const KEY_SID = "trip2026-sid";
 const KEY_UNLOCK = "trip2026-unlock";
 
-let cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "" };
+let cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: null };
 let canEdit = false;
 let syncing = false;
 let saveTimer = null;
@@ -608,6 +632,9 @@ const days = [
   ]}
 ];
 
+// Built-in packing catalog only. Couple add/edit/delete is in cloud.lists
+// (extraPack / gonePack / editPack). Do not copy those user items into this
+// array, and do not reset cloud.lists when changing this list.
 const bags = [
   { id:"b-pass", g:"证件类", t:"护照", st:"have" },
   { id:"b-id", g:"证件类", t:"身份证", st:"have" },
@@ -713,6 +740,9 @@ const boatDay = [
   { name:"海龟湾", lat:-8.5260, lng:119.6167 }
 ];
 
+// Built-in todo catalog only. Couple add/edit/delete is in cloud.lists
+// (extraPrep / gonePrep / editPrep). Do not copy those user items into this
+// array, and do not reset cloud.lists when changing this list.
 const prep = [
   { id:"pre-evoa", g:"行前必办", t:"办理印尼 e-VOA 电子落地签（2人，约 IDR 500,000/人，molina.imigrasi.go.id）", done:false },
   { id:"pre-akbag", g:"行前必办", t:"购买 AK310 亚航托运行李额（2人）", done:true },
@@ -773,6 +803,103 @@ function seedDefaults() {
   prep.forEach(p => { if (p.done) prepSt[p.id] = true; });
   bags.forEach(p => { packSt[p.id] = p.st || "none"; });
   return { prep: prepSt, pack: packSt };
+}
+
+function emptyLists() {
+  return { extraPrep: [], extraPack: [], gonePrep: [], gonePack: [], editPrep: {}, editPack: {} };
+}
+function ensureLists() {
+  const cur = cloud.lists && typeof cloud.lists === "object" ? cloud.lists : {};
+  cloud.lists = {
+    extraPrep: Array.isArray(cur.extraPrep) ? cur.extraPrep : [],
+    extraPack: Array.isArray(cur.extraPack) ? cur.extraPack : [],
+    gonePrep: Array.isArray(cur.gonePrep) ? cur.gonePrep : [],
+    gonePack: Array.isArray(cur.gonePack) ? cur.gonePack : [],
+    editPrep: cur.editPrep && typeof cur.editPrep === "object" ? cur.editPrep : {},
+    editPack: cur.editPack && typeof cur.editPack === "object" ? cur.editPack : {}
+  };
+  return cloud.lists;
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+}
+function newItemId(prefix) {
+  const bytes = new Uint8Array(4);
+  crypto.getRandomValues(bytes);
+  return prefix + [...bytes].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function mergeList(base, extra, gone, edits) {
+  const hide = new Set(gone || []);
+  const patch = edits || {};
+  const out = [];
+  const put = p => {
+    if (!p || hide.has(p.id)) return;
+    const e = patch[p.id];
+    out.push(e ? Object.assign({}, p, e) : Object.assign({}, p));
+  };
+  (base || []).forEach(put);
+  (extra || []).forEach(put);
+  return out;
+}
+function livePrep() {
+  const L = ensureLists();
+  return mergeList(prep, L.extraPrep, L.gonePrep, L.editPrep);
+}
+function liveBags() {
+  const L = ensureLists();
+  return mergeList(bags, L.extraPack, L.gonePack, L.editPack);
+}
+function addListItem(kind, t, g) {
+  t = (t || "").trim();
+  if (!t) return;
+  const L = ensureLists();
+  if (kind === "prep") L.extraPrep.push({ id: newItemId("up-"), g: (g || "自加").trim() || "自加", t });
+  else L.extraPack.push({ id: newItemId("ub-"), g: (g || "其他").trim() || "其他", t, st: "none" });
+}
+function renameListItem(kind, id, t, g) {
+  t = (t || "").trim();
+  if (!id || !t) return;
+  const L = ensureLists();
+  const extras = kind === "prep" ? L.extraPrep : L.extraPack;
+  const extra = extras.find(p => p.id === id);
+  const patch = { t };
+  if (g && g.trim()) patch.g = g.trim();
+  if (extra) Object.assign(extra, patch);
+  else if (kind === "prep") L.editPrep[id] = Object.assign({}, L.editPrep[id], patch);
+  else L.editPack[id] = Object.assign({}, L.editPack[id], patch);
+}
+function removeListItem(kind, id) {
+  if (!id) return;
+  const L = ensureLists();
+  if (kind === "prep") {
+    L.gonePrep = Array.from(new Set(L.gonePrep.concat(id)));
+    L.extraPrep = L.extraPrep.filter(p => p.id !== id);
+    delete L.editPrep[id];
+    if (cloud.prep) delete cloud.prep[id];
+  } else {
+    L.gonePack = Array.from(new Set(L.gonePack.concat(id)));
+    L.extraPack = L.extraPack.filter(p => p.id !== id);
+    delete L.editPack[id];
+    if (cloud.pack) delete cloud.pack[id];
+  }
+}
+function itemActions(kind, id) {
+  if (!canEdit) return "";
+  return `<button type="button" class="ebtn" data-edit-${kind}="${id}" aria-label="改">改</button><button type="button" class="xbtn" data-del-${kind}="${id}" aria-label="删除">×</button>`;
+}
+function addComposer(kind, groups, defaultGroup) {
+  const opts = groups.map(g => `<option value="${esc(g)}"></option>`).join("");
+  return `
+    <div class="card add-box" data-composer="${kind}" hidden>
+      <div class="kicker">${kind === "prep" ? "添加待办" : "添加行李"}</div>
+      <input class="field" data-add-text maxlength="120" placeholder="${kind === "prep" ? "要做的事" : "要带的东西"}">
+      <input class="field" data-add-group maxlength="20" list="${kind}-groups" placeholder="分组" value="${esc(defaultGroup)}">
+      <datalist id="${kind}-groups">${opts}</datalist>
+      <div class="bar">
+        <button type="button" class="btn" data-add-save>添加</button>
+        <button type="button" class="btn sec" data-add-cancel>取消</button>
+      </div>
+    </div>`;
 }
 
 function todayISO() {
@@ -949,7 +1076,7 @@ function renderToday() {
   const st = currentDay();
   const box = document.getElementById("page-today");
   if (st.mode === "before") {
-    const leftPrep = prep.filter(p => !isChecked("prep", p)).length;
+    const leftPrep = livePrep().filter(p => !isChecked("prep", p)).length;
     box.innerHTML = `
       <div class="card">
         <div class="kicker">出发倒计时</div>
@@ -1320,7 +1447,7 @@ function clearSid() {
   localStorage.removeItem(KEY_SID);
   sessionStorage.removeItem(KEY_UNLOCK);
   canEdit = false;
-  cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "" };
+  cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() };
   const u = new URL(location.href);
   u.searchParams.delete("sid");
   history.replaceState({}, "", u);
@@ -1357,7 +1484,8 @@ async function pullCloud() {
   let data;
   try { data = JSON.parse(text); }
   catch (e) { throw new Error("云端数据损坏 @ " + CLOUD_API); }
-  cloud = Object.assign({ prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "" }, data);
+  cloud = Object.assign({ prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() }, data);
+  ensureLists();
   return true;
 }
 
@@ -1373,7 +1501,7 @@ async function pushCloud() {
 async function createCloud() {
   const seeded = seedDefaults();
   const id = newCloudKey();
-  const data = { prep: seeded.prep, pack: seeded.pack, notes: "", pinHash: "", updatedAt: "", by: "" };
+  const data = { prep: seeded.prep, pack: seeded.pack, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() };
   await writeCloud(id, data);
   setSid(id);
   cloud = data;
@@ -1404,7 +1532,7 @@ function gateCard() {
   const id = sid();
   const legacy = id && !isTextDbSid(id);
   const connected = id && !legacy;
-  const unlocked = canEdit ? `<p class="okline">已解锁，勾选会同步给对方。</p>` : "";
+  const unlocked = canEdit ? `<p class="okline">已解锁，勾选和增删会同步给对方。</p>` : "";
   const title = legacy ? "旧通道失效" : (connected ? "已连接" : "未创建共享");
   return `
     <div class="card gate-card">
@@ -1464,23 +1592,104 @@ function bindGate(box) {
   renderSyncBits();
 }
 
+function openComposer(box, kind, item) {
+  const form = box.querySelector("[data-composer='" + kind + "']");
+  if (!form) return;
+  form.hidden = false;
+  form.dataset.mode = item ? "edit" : "add";
+  form.dataset.id = item ? item.id : "";
+  form.querySelector(".kicker").textContent = item
+    ? (kind === "prep" ? "改待办" : "改行李")
+    : (kind === "prep" ? "添加待办" : "添加行李");
+  form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
+  form.querySelector("[data-add-text]").value = item ? item.t : "";
+  form.querySelector("[data-add-group]").value = item ? item.g : (kind === "prep" ? "自加" : "其他");
+  form.querySelector("[data-add-text]").focus();
+  form.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function bindPrepActions(box) {
+  box.querySelectorAll("[data-open-add]").forEach(btn => btn.onclick = () => {
+    if (!canEdit) {
+      box.querySelector("#pinBox")?.focus();
+      return;
+    }
+    openComposer(box, btn.dataset.openAdd);
+  });
+  box.querySelectorAll("[data-add-cancel]").forEach(btn => btn.onclick = () => {
+    const form = btn.closest("[data-composer]");
+    if (form) form.hidden = true;
+  });
+  box.querySelectorAll("[data-add-save]").forEach(btn => btn.onclick = () => {
+    if (!canEdit) return;
+    const form = btn.closest("[data-composer]");
+    const kind = form.dataset.composer;
+    const t = form.querySelector("[data-add-text]").value;
+    const g = form.querySelector("[data-add-group]").value;
+    if (!(t || "").trim()) {
+      form.querySelector("[data-add-text]").focus();
+      return;
+    }
+    if (form.dataset.mode === "edit") renameListItem(kind, form.dataset.id, t, g);
+    else addListItem(kind, t, g);
+    renderPrep();
+    schedulePush();
+  });
+  box.querySelectorAll("[data-add-text]").forEach(inp => inp.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      inp.closest("[data-composer]")?.querySelector("[data-add-save]")?.click();
+    }
+  }));
+  box.querySelectorAll("[data-edit-prep]").forEach(btn => btn.onclick = e => {
+    e.preventDefault();
+    const item = livePrep().find(p => p.id === btn.dataset.editPrep);
+    if (item) openComposer(box, "prep", item);
+  });
+  box.querySelectorAll("[data-edit-pack]").forEach(btn => btn.onclick = e => {
+    e.preventDefault();
+    const item = liveBags().find(p => p.id === btn.dataset.editPack);
+    if (item) openComposer(box, "pack", item);
+  });
+  box.querySelectorAll("[data-del-prep]").forEach(btn => btn.onclick = e => {
+    e.preventDefault();
+    if (!confirm("删除这条待办？")) return;
+    removeListItem("prep", btn.dataset.delPrep);
+    renderPrep();
+    schedulePush();
+  });
+  box.querySelectorAll("[data-del-pack]").forEach(btn => btn.onclick = e => {
+    e.preventDefault();
+    if (!confirm("删除这件行李？")) return;
+    removeListItem("pack", btn.dataset.delPack);
+    renderPrep();
+    schedulePush();
+  });
+}
+
 function renderPrep() {
-  const groups = [...new Set(prep.map(p=>p.g))];
-  const bgroups = [...new Set(bags.map(p=>p.g))];
+  const todos = livePrep();
+  const packedItems = liveBags();
+  const groups = [...new Set(todos.map(p=>p.g))];
+  const bgroups = [...new Set(packedItems.map(p=>p.g))];
   const box = document.getElementById("page-prep");
-  const left = prep.filter(p=>!isChecked("prep", p)).length;
-  const noneN = bags.filter(p => packState(p) === "none").length;
-  const packedN = bags.filter(p => packState(p) === "packed").length;
+  const left = todos.filter(p=>!isChecked("prep", p)).length;
+  const noneN = packedItems.filter(p => packState(p) === "none").length;
+  const packedN = packedItems.filter(p => packState(p) === "packed").length;
+  const pct = todos.length ? Math.round((todos.length-left)/todos.length*100) : 0;
   paintSubnav("prep");
   const todoBody = `
-    <div class="page-head c-blue">待办事项 <span>${prep.length} 条任务</span></div>
+    <div class="page-head c-blue">待办事项 <span>${todos.length} 条任务</span>
+      <button type="button" class="add-pill" data-open-add="prep">＋ 添加</button>
+    </div>
+    ${addComposer("prep", groups.length ? groups : ["行前必办","按日期","自加"], "自加")}
     <div class="card">
       <div class="kicker">行前进度</div>
       <div class="prog">
-        <div class="prog-top"><span>已完成 ${prep.length - left} / ${prep.length}</span><b>${Math.round((prep.length-left)/prep.length*100)}%</b></div>
-        <div class="prog-bar"><i style="width:${Math.round((prep.length-left)/prep.length*100)}%"></i></div>
+        <div class="prog-top"><span>已完成 ${todos.length - left} / ${todos.length}</span><b>${pct}%</b></div>
+        <div class="prog-bar"><i style="width:${pct}%"></i></div>
       </div>
-      <p class="hint">${canEdit ? "勾选会立刻同步到云端。已完成项已预勾。" : "先解锁才能勾选。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
+      <p class="hint">${canEdit ? "勾选、添加、删除会立刻同步到云端。点「改」可改文字。" : "先解锁才能勾选、添加或删除。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
     </div>
     <div class="card">
       <div class="kicker">签证与入境</div>
@@ -1490,30 +1699,39 @@ function renderPrep() {
     </div>
     ${groups.map(g=>`
       <div class="card">
-        <div class="kicker ${g==="行前必办"?"urgent":""}">${g}</div>
-        ${prep.filter(p=>p.g===g).map(p=>`
-          <label class="check ${isChecked("prep",p)?"done":""}">
-            <input type="checkbox" data-list="prep" data-id="${p.id}" ${isChecked("prep",p)?"checked":""} ${canEdit?"":"disabled"}>
-            <span class="lab">${p.t}</span>
-          </label>`).join("")}
+        <div class="kicker ${g==="行前必办"?"urgent":""}">${esc(g)}</div>
+        ${todos.filter(p=>p.g===g).map(p=>`
+          <div class="check ${isChecked("prep",p)?"done":""}">
+            <label class="check-main">
+              <input type="checkbox" data-list="prep" data-id="${p.id}" ${isChecked("prep",p)?"checked":""} ${canEdit?"":"disabled"}>
+              <span class="lab">${esc(p.t)}</span>
+            </label>
+            ${itemActions("prep", p.id)}
+          </div>`).join("")}
       </div>`).join("")}`;
   const packBody = `
-    <div class="page-head c-teal">行李整理 <span>${bags.length} 件</span></div>
+    <div class="page-head c-teal">行李整理 <span>${packedItems.length} 件</span>
+      <button type="button" class="add-pill" data-open-add="pack">＋ 添加</button>
+    </div>
+    ${addComposer("pack", bgroups.length ? bgroups : ["其他"], "其他")}
     <div class="stats">
-      <div class="stat"><b>${bags.length}</b><span>全部</span></div>
+      <div class="stat"><b>${packedItems.length}</b><span>全部</span></div>
       <div class="stat ok"><b>${packedN}</b><span>已装包</span></div>
       <div class="stat miss"><b>${noneN}</b><span>尚无</span></div>
     </div>
-    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。待购买项目前是尚无。" : "先解锁才能改状态。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
+    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点「改」改名字，点 × 删除。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
     ${bgroups.map(g=>`
       <div class="card">
-        <div class="kicker">${g} · ${bags.filter(p=>p.g===g).length}</div>
-        ${bags.filter(p=>p.g===g).map(p => {
+        <div class="kicker">${esc(g)} · ${packedItems.filter(p=>p.g===g).length}</div>
+        ${packedItems.filter(p=>p.g===g).map(p => {
           const st = packState(p);
-          return `<button type="button" class="pack-st st-${st}" data-pack="${p.id}" ${canEdit?"":"disabled"}>
-            <span class="lab">${p.t}</span>
-            <span class="st-pill">${PACK_LABEL[st]}</span>
-          </button>`;
+          return `<div class="pack-row">
+            <button type="button" class="pack-st st-${st}" data-pack="${p.id}" ${canEdit?"":"disabled"}>
+              <span class="lab">${esc(p.t)}</span>
+              <span class="st-pill">${PACK_LABEL[st]}</span>
+            </button>
+            ${itemActions("pack", p.id)}
+          </div>`;
         }).join("")}
       </div>`).join("")}`;
   const noteBody = `
@@ -1531,6 +1749,7 @@ function renderPrep() {
   const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
   fillPane(box, gateCard() + body);
   bindGate(box);
+  bindPrepActions(box);
   box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
     cloud.prep = cloud.prep || {};
     cloud.prep[inp.dataset.id] = inp.checked;
@@ -1540,9 +1759,9 @@ function renderPrep() {
   box.querySelectorAll("[data-pack]").forEach(btn => btn.onclick = () => {
     if (!canEdit) return;
     const id = btn.dataset.pack;
-    const item = bags.find(p => p.id === id);
+    const item = liveBags().find(p => p.id === id);
     cloud.pack = cloud.pack || {};
-    cloud.pack[id] = nextPackState(packState(item));
+    cloud.pack[id] = nextPackState(packState(item || { id, st: "none" }));
     renderPrep();
     schedulePush();
   });
@@ -1578,7 +1797,7 @@ function bindSwipe() {
   };
   wrap.addEventListener("touchstart", e => {
     if (paneBusy || e.touches.length !== 1) return;
-    if (e.target.closest("textarea, input, .map-box, .filters")) return;
+    if (e.target.closest("textarea, input, select, .map-box, .filters, .add-box, .ebtn, .xbtn, .add-pill")) return;
     const on = document.querySelector(".page.on")?.id;
     if (on !== "page-trip" && on !== "page-prep") return;
     x0 = e.touches[0].clientX;
