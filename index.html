@@ -367,6 +367,24 @@
     .ticket-foot .bag { display: inline-flex; align-items: center; gap: 4px; }
     .stay-name { font-size: 16px; font-weight: 800; margin: 6px 0 4px; }
     .stay-meta { font-size: 13px; color: #4b5563; }
+    .act-card { isolation: isolate; }
+    .act-card::before { z-index: 2; }
+    .act-photo {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 54%; height: 100%;
+      object-fit: cover; object-position: center;
+      pointer-events: none; z-index: 0;
+      -webkit-mask-image: linear-gradient(to top right, transparent 0%, transparent 18%, rgba(0,0,0,.45) 52%, #000 82%);
+      mask-image: linear-gradient(to top right, transparent 0%, transparent 18%, rgba(0,0,0,.45) 52%, #000 82%);
+    }
+    .act-card .stay-top,
+    .act-card .stay-name,
+    .act-card .stay-meta,
+    .act-card .note,
+    .act-card .callout { position: relative; z-index: 1; }
+    .act-card .stay-name { max-width: 66%; }
+    .act-card .stay-meta,
+    .act-card .note { max-width: 78%; }
     .map-box {
       height: 42vh; min-height: 220px; max-height: 380px;
       border-radius: 14px; overflow: hidden; border: 1px solid var(--line);
@@ -514,11 +532,11 @@ const hotels = [
 ];
 
 const acts = [
-  { date:"9.27", name:"科莫多半日游", aka:["半日游"], who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船" },
-  { date:"9.28", name:"科莫多一日跳岛", aka:["一日跳岛"], who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000" },
-  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","库塔海滩冲浪练习","冲浪练习","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397", klook:true },
-  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707", klook:true },
-  { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认" }
+  { date:"9.27", name:"科莫多半日游", aka:["半日游"], who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船", img:"img/acts/act-komodo-half.webp" },
+  { date:"9.28", name:"科莫多一日跳岛", aka:["一日跳岛"], who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000", img:"img/acts/act-komodo-day.webp" },
+  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","库塔海滩冲浪练习","冲浪练习","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397", klook:true, img:"img/acts/act-kuta-surf.webp" },
+  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707", klook:true, img:"img/acts/act-cooking.webp" },
+  { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认", img:"img/acts/act-ow-dive.webp" }
 ];
 
 const days = [
@@ -1098,7 +1116,11 @@ function hotelBlock(h, i) {
 
 function actBlock(a, i) {
   const ph = phaseForDate(a.date);
-  return `<div class="item ph-${ph}" id="a-${i}">
+  const photo = a.img
+    ? `<img class="act-photo" src="${a.img}" alt="" width="720" height="480" loading="lazy" decoding="async">`
+    : "";
+  return `<div class="item ph-${ph} act-card" id="a-${i}">
+    ${photo}
     <div class="stay-top">
       <div>${ICO.cal} ${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))}</div>
       ${a.klook ? extBtn(KLOOK_ORDERS, "Klook") : ""}
