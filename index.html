@@ -130,12 +130,21 @@
       border-radius: 99px; padding: 6px 14px; font-size: 12px; font-weight: 650; white-space: nowrap;
     }
     .filters button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .subchrome {
+      position: sticky;
+      top: var(--header-h, 72px);
+      z-index: 1900;
+      margin: -14px -14px 12px;
+      padding: 8px 14px 10px;
+      background: rgba(245,246,248,.96);
+      backdrop-filter: blur(12px);
+    }
+    .subchrome[hidden] { display: none !important; }
     .subnav {
       display: grid; gap: 6px;
-      margin: -14px -14px 12px; padding: 10px 14px 10px;
-      position: sticky; top: 64px; z-index: 1500;
-      background: rgba(245,246,248,.94);
-      backdrop-filter: blur(12px);
+      margin: 0; padding: 0;
+      position: static;
+      background: none;
     }
     .subnav.n4 { grid-template-columns: repeat(4, 1fr); }
     .subnav.n3 { grid-template-columns: repeat(3, 1fr); }
@@ -148,14 +157,18 @@
     .subnav button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
     .jumps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .tap {
-      color: var(--accent);
+      color: inherit;
       cursor: pointer;
       text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
       text-underline-offset: 3px;
       text-decoration-thickness: 1px;
       -webkit-tap-highlight-color: transparent;
     }
     .hl-flash { animation: hlflash 1.4s ease; }
+    #page-trip .item, #page-trip .card {
+      scroll-margin-top: calc(var(--header-h, 72px) + 58px);
+    }
     @keyframes hlflash {
       0%, 100% { background: #fff; }
       25% { background: #ccfbf1; }
@@ -348,7 +361,7 @@
         padding-bottom: 8px;
       }
       nav button { font-size: 12px; }
-      .subnav { top: 0; }
+      .subchrome { top: 0; }
     }
   </style>
 </head>
@@ -380,6 +393,7 @@
   </nav>
 
   <main class="wrap">
+    <div id="subchrome" class="subchrome" hidden></div>
     <section id="page-today" class="page on">
       <div class="card">
         <div class="kicker">出发倒计时</div>
@@ -421,26 +435,26 @@ const flights = [
 ];
 
 const hotels = [
-  { inn:"9.25", out:"9.26", nights:1, name:"吉隆坡市区酒店（T2附近）", room:"待定", status:"wait", platform:"", note:"待预订；次日 AK310 从 T2 起飞" },
-  { inn:"9.26", out:"9.27", nights:1, name:"Katamaran Hotel & Resort Komodo", room:"豪华海景特大床房", status:"ok", platform:"去哪儿", note:"卡塔马兰；酒店桨板 / 浮潜" },
-  { inn:"9.27", out:"9.29", nights:2, name:"Seaesta Komodo Hostel & Hotel", room:"双人房", status:"ok", platform:"去哪儿", note:"西亚斯塔；不含早餐" },
-  { inn:"9.29", out:"9.30", nights:1, name:"The Kuta Beach Heritage Hotel", room:"经典传统特大床房", status:"ok", platform:"去哪儿", note:"库塔海滩遗产酒店，雅高管理" },
-  { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店" },
-  { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本" },
-  { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住" },
-  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", room:"—", status:"canceling", platform:"Booking", note:"待退订，勿入住" },
-  { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村" },
-  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅" },
-  { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋" },
-  { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机" }
+  { inn:"9.25", out:"9.26", nights:1, name:"吉隆坡市区酒店（T2附近）", aka:["吉隆坡市区酒店","T2 附近酒店","T2附近酒店","吉隆坡酒店"], room:"待定", status:"wait", platform:"", note:"待预订；次日 AK310 从 T2 起飞" },
+  { inn:"9.26", out:"9.27", nights:1, name:"Katamaran Hotel & Resort Komodo", aka:["Katamaran","卡塔马兰酒店及度假村","卡塔马兰"], room:"豪华海景特大床房", status:"ok", platform:"去哪儿", note:"卡塔马兰；酒店桨板 / 浮潜" },
+  { inn:"9.27", out:"9.29", nights:2, name:"Seaesta Komodo Hostel & Hotel", aka:["Seaesta Komodo","Seaesta","西亚斯塔"], room:"双人房", status:"ok", platform:"去哪儿", note:"西亚斯塔；不含早餐" },
+  { inn:"9.29", out:"9.30", nights:1, name:"The Kuta Beach Heritage Hotel", aka:["库塔海滩遗产酒店","库塔酒店"], room:"经典传统特大床房", status:"ok", platform:"去哪儿", note:"库塔海滩遗产酒店，雅高管理" },
+  { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", aka:["Meruhdani","梅鲁达尼精品酒店","梅鲁达尼"], room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", aka:["Habitat"], room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"canceling", platform:"Booking", note:"待退订，勿入住" },
+  { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村" },
+  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅" },
+  { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋" },
+  { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", aka:["Premier Place","泗水机场酒店","机场酒店"], room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机" }
 ];
 
 const acts = [
-  { date:"9.27", name:"科莫多半日游", who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船" },
-  { date:"9.28", name:"科莫多一日跳岛", who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000" },
-  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397" },
-  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707" },
-  { date:"10.2–10.3", name:"OW 潜水考证", who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认" }
+  { date:"9.27", name:"科莫多半日游", aka:["半日游"], who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船" },
+  { date:"9.28", name:"科莫多一日跳岛", aka:["一日跳岛"], who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000" },
+  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","库塔海滩冲浪练习","冲浪练习","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397" },
+  { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707" },
+  { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认" }
 ];
 
 const days = [
@@ -759,36 +773,58 @@ function nextEvent(day) {
 }
 
 function dayMeta(d) {
-  let stay = d.stay || "";
-  hotels.filter(h => !["cancel","canceling"].includes(h.status) && hotelOnDay(h, d)).forEach(h => {
-    const short = h.name.replace(/（.*）/, "").trim();
-    const id = "h-" + hotels.indexOf(h);
-    if (short && stay.includes(short)) stay = stay.split(short).join(tap(short, "hotels", id));
-  });
-  acts.filter(a => actOnDay(a, d)).forEach(a => {
-    if (stay.includes(a.name)) stay = stay.split(a.name).join(tap(a.name, "acts", "a-"+acts.indexOf(a)));
-  });
   return `
-    <div class="kv"><b>住</b>${stay}</div>
-    <div class="kv"><b>早</b>${d.breakfast || ""}</div>
-    <div class="kv"><b>交通</b>${linkFlights(d.flight || "")}</div>`;
+    <div class="kv"><b>住</b>${linkText(d.stay || "")}</div>
+    <div class="kv"><b>早</b>${linkText(d.breakfast || "")}</div>
+    <div class="kv"><b>交通</b>${linkText(d.flight || "")}</div>`;
 }
 
 function tap(text, jump, id) {
   return `<span class="tap" data-jump="${jump}" data-id="${id || ""}">${text}</span>`;
 }
-function linkFlights(s) {
-  let out = s || "";
-  flights.forEach(f => { out = out.split(f.no).join(tap(f.no, "flights", "f-"+f.no)); });
-  return out;
-}
-function linkActs(s) {
-  let out = s || "";
-  [...acts].sort((a,b) => b.name.length - a.name.length).forEach(a => {
-    if (out.includes(a.name)) out = out.split(a.name).join(tap(a.name, "acts", "a-"+acts.indexOf(a)));
+function linkKeys() {
+  const pairs = [];
+  flights.forEach(f => pairs.push({ key: f.no, jump: "flights", id: "f-"+f.no }));
+  acts.forEach((a,i) => {
+    [a.name, ...(a.aka || [])].forEach(key => pairs.push({ key, jump: "acts", id: "a-"+i }));
   });
-  return out;
+  hotels.forEach((h,i) => {
+    const short = h.name.replace(/（.*）/, "").trim();
+    [h.name, short, ...(h.aka || [])].forEach(key => pairs.push({ key, jump: "hotels", id: "h-"+i }));
+  });
+  const seen = new Set();
+  return pairs
+    .filter(p => p.key && !seen.has(p.key) && seen.add(p.key))
+    .sort((a,b) => b.key.length - a.key.length);
 }
+function linkText(s) {
+  const out = s || "";
+  const hits = [];
+  linkKeys().forEach(p => {
+    let from = 0;
+    while (from < out.length) {
+      const i = out.indexOf(p.key, from);
+      if (i < 0) break;
+      hits.push({ i, j: i + p.key.length, p, len: p.key.length });
+      from = i + p.key.length;
+    }
+  });
+  hits.sort((a,b) => b.len - a.len || a.i - b.i);
+  const used = [];
+  hits.forEach(h => {
+    if (used.some(u => h.i < u.j && u.i < h.j)) return;
+    used.push(h);
+  });
+  used.sort((a,b) => a.i - b.i);
+  let res = "", cur = 0;
+  used.forEach(h => {
+    res += out.slice(cur, h.i) + tap(out.slice(h.i, h.j), h.p.jump, h.p.id);
+    cur = h.j;
+  });
+  return res + out.slice(cur);
+}
+function linkFlights(s) { return linkText(s); }
+function linkActs(s) { return linkText(s); }
 
 function md(s) {
   const m = String(s).match(/(\d{1,2})\.(\d{1,2})/);
@@ -815,8 +851,8 @@ function eventRows(events) {
     <div class="row">
       <div class="t">${e.t}</div>
       <div>
-        <div class="title">${linkActs(linkFlights(e.title))} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
-        ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${linkActs(linkFlights(e.note))}</div>`:""}
+        <div class="title">${linkText(e.title)} ${e.kind==="skip"?'<span class="chip chip-skip">可放弃</span>':''}</div>
+        ${e.note?`<div class="note ${e.kind==="hl"?"hl":e.kind==="must"?"memo":""}">${linkText(e.note)}</div>`:""}
       </div>
     </div>`).join("");
 }
@@ -886,7 +922,7 @@ function renderToday() {
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">还有 ${st.left} 天</div>
-        <p class="hint">${linkFlights("9.25 VN517 北京大兴 08:30")}。科莫多海底 · 巴厘文化海岛 · 泗水火山反穿。行前待办还剩 ${leftPrep} 项。</p>
+        <p class="hint">${linkText("9.25 VN517 北京大兴 08:30")}。科莫多海底 · 巴厘文化海岛 · 泗水火山反穿。行前待办还剩 ${leftPrep} 项。</p>
         ${phaseChip("transit")}${phaseChip("komodo")}${phaseChip("bali")}${phaseChip("java")}
       </div>
       <div class="card">
@@ -916,16 +952,28 @@ function renderToday() {
     </div>
     <div class="card">
       <div class="kicker">下一步</div>
-      <div class="next" style="font-size:18px">${nx.t} ${linkActs(linkFlights(nx.title))}</div>
-      ${nx.note?`<div class="note">${linkActs(linkFlights(nx.note))}</div>`:""}
+      <div class="next" style="font-size:18px">${nx.t} ${linkText(nx.title)}</div>
+      ${nx.note?`<div class="note">${linkText(nx.note)}</div>`:""}
     </div>
     <div class="card">
       <div class="kicker">当天安排</div>
       ${eventRows(d.events)}
     </div>
-    ${tomorrow?`<div class="card"><div class="kicker">明天早起</div><div class="title">${tomorrow.date} ${tomorrow.title}</div><div class="note" style="margin-top:6px">${tomorrow.events[0].t} ${tomorrow.events[0].title} · ${tomorrow.events[0].note||""}</div></div>`:""}`;
+    ${tomorrow?`<div class="card"><div class="kicker">明天早起</div><div class="title">${tomorrow.date} ${tomorrow.title}</div><div class="note" style="margin-top:6px">${linkText(tomorrow.events[0].t + " " + tomorrow.events[0].title + " · " + (tomorrow.events[0].note||""))}</div></div>`:""}`;
   bindJumps(box);
 }
+
+const TRIP_TABS = [
+  { id:"days", label:"日程" },
+  { id:"flights", label:"航班" },
+  { id:"hotels", label:"酒店" },
+  { id:"acts", label:"活动" }
+];
+const PREP_TABS = [
+  { id:"todo", label:"待办" },
+  { id:"pack", label:"行李" },
+  { id:"note", label:"备忘" }
+];
 
 function subTabBar(tabs, current, extraClass) {
   return `<div class="subnav ${extraClass}">${tabs.map(t =>
@@ -933,9 +981,37 @@ function subTabBar(tabs, current, extraClass) {
   ).join("")}</div>`;
 }
 
+function paintSubnav(which) {
+  const chrome = document.getElementById("subchrome");
+  if (!chrome) return;
+  const on = document.querySelector(".page.on")?.id;
+  if (which === "trip") {
+    if (on && on !== "page-trip") return;
+    chrome.hidden = false;
+    chrome.innerHTML = subTabBar(TRIP_TABS, tripTab, "n4");
+    chrome.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => {
+      tripTab = b.dataset.sub;
+      window.scrollTo(0,0);
+      renderTrip();
+    });
+  } else if (which === "prep") {
+    if (on && on !== "page-prep") return;
+    chrome.hidden = false;
+    chrome.innerHTML = subTabBar(PREP_TABS, prepTab, "n3");
+    chrome.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => {
+      prepTab = b.dataset.sub;
+      window.scrollTo(0,0);
+      renderPrep();
+    });
+  } else {
+    chrome.hidden = true;
+  }
+}
+
 function showPage(name) {
   document.querySelectorAll("nav > button").forEach(b => b.classList.toggle("on", b.dataset.page === name));
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "page-" + name));
+  paintSubnav(name === "trip" || name === "prep" ? name : "");
   if (name === "map") renderMap();
 }
 
@@ -960,12 +1036,7 @@ function openTrip(tab, id) {
 function renderTrip(filter, highlightId) {
   if (filter) tripFilter = filter;
   const box = document.getElementById("page-trip");
-  const tabs = [
-    { id:"days", label:"日程" },
-    { id:"flights", label:"航班" },
-    { id:"hotels", label:"酒店" },
-    { id:"acts", label:"活动" }
-  ];
+  paintSubnav("trip");
   let body = "";
   if (tripTab === "flights") {
     body = `
@@ -1000,8 +1071,7 @@ function renderTrip(filter, highlightId) {
         </div>
       `).join("")}`;
   }
-  box.innerHTML = subTabBar(tabs, tripTab, "n4") + body;
-  box.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { tripTab = b.dataset.sub; window.scrollTo(0,0); renderTrip(); });
+  box.innerHTML = body;
   box.querySelectorAll("[data-f]").forEach(b => b.onclick = () => renderTrip(b.dataset.f));
   box.querySelectorAll(".day-btn").forEach(b => b.onclick = () => {
     const el = document.getElementById("day-"+b.dataset.i);
@@ -1292,11 +1362,7 @@ function renderPrep() {
   const left = prep.filter(p=>!isChecked("prep", p)).length;
   const noneN = bags.filter(p => packState(p) === "none").length;
   const packedN = bags.filter(p => packState(p) === "packed").length;
-  const tabs = [
-    { id:"todo", label:"待办" },
-    { id:"pack", label:"行李" },
-    { id:"note", label:"备忘" }
-  ];
+  paintSubnav("prep");
   const todoBody = `
     <div class="page-head c-blue">待办事项 <span>${prep.length} 条任务</span></div>
     <div class="card">
@@ -1354,8 +1420,7 @@ function renderPrep() {
       <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
     </div>`;
   const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
-  box.innerHTML = subTabBar(tabs, prepTab, "n3") + gateCard() + body;
-  box.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { prepTab = b.dataset.sub; window.scrollTo(0,0); renderPrep(); });
+  box.innerHTML = gateCard() + body;
   bindGate(box);
   box.querySelectorAll("input[type=checkbox]").forEach(inp => inp.onchange = () => {
     cloud.prep = cloud.prep || {};
@@ -1385,6 +1450,52 @@ document.querySelectorAll("nav > button").forEach(btn => {
     window.scrollTo(0,0);
   };
 });
+
+function syncHeaderH() {
+  const h = document.querySelector("header")?.offsetHeight || 72;
+  document.documentElement.style.setProperty("--header-h", h + "px");
+}
+function bindSwipe() {
+  const wrap = document.querySelector("main.wrap");
+  if (!wrap) return;
+  let x0 = 0, y0 = 0, t0 = 0, tracking = false;
+  wrap.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1) return;
+    if (e.target.closest("textarea, input, .map-box, .filters")) return;
+    const on = document.querySelector(".page.on")?.id;
+    if (on !== "page-trip" && on !== "page-prep") return;
+    x0 = e.touches[0].clientX;
+    y0 = e.touches[0].clientY;
+    t0 = Date.now();
+    tracking = true;
+  }, { passive: true });
+  wrap.addEventListener("touchend", e => {
+    if (!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    if (Date.now() - t0 > 700) return;
+    if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.35) return;
+    const on = document.querySelector(".page.on")?.id;
+    const tabs = on === "page-trip" ? TRIP_TABS : (on === "page-prep" ? PREP_TABS : []);
+    const cur = on === "page-trip" ? tripTab : prepTab;
+    const i = tabs.findIndex(x => x.id === cur);
+    const n = i + (dx < 0 ? 1 : -1);
+    if (n < 0 || n >= tabs.length) return;
+    if (on === "page-trip") {
+      tripTab = tabs[n].id;
+      window.scrollTo(0,0);
+      renderTrip();
+    } else {
+      prepTab = tabs[n].id;
+      window.scrollTo(0,0);
+      renderPrep();
+    }
+  }, { passive: true });
+}
+syncHeaderH();
+window.addEventListener("resize", syncHeaderH);
+bindSwipe();
 
 try { renderToday(); } catch (e) { document.getElementById("page-today").innerHTML = '<div class="card">今日页加载失败，请点「行程」查看。</div>'; }
 try { renderTrip(); } catch (e) {}
