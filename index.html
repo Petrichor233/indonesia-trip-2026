@@ -1577,7 +1577,7 @@ function gateCard() {
       <div class="kicker">同伴同步 · ${title}</div>
       <input class="field" id="pinBox" type="password" placeholder="同伴口令">
       <div class="bar">
-        ${legacy ? `<button class="btn" id="btnReset">重新创建</button>` : (connected ? `<button class="btn" id="btnUnlock">解锁编辑</button>` : `<button class="btn" id="btnCreate">创建并解锁</button>`)}
+        ${legacy ? `<button class="btn" id="btnReset">重新创建</button>` : (connected ? `<button class="btn" id="${canEdit ? "btnLock" : "btnUnlock"}">${canEdit ? "改为只读" : "解锁编辑"}</button>` : `<button class="btn" id="btnCreate">创建并解锁</button>`)}
         ${connected ? `<button class="btn sec" id="btnCopy">复制链接</button>` : ""}
       </div>
       ${unlocked}
@@ -1621,6 +1621,12 @@ function bindGate(box) {
       if (!cloud.pinHash) { cloud.pinHash = h; await pushCloud(); }
       await afterUnlock();
     } catch (e) { err(syncFailHint(e)); }
+  };
+  const btnLock = box.querySelector("#btnLock");
+  if (btnLock) btnLock.onclick = () => {
+    sessionStorage.removeItem(KEY_UNLOCK);
+    canEdit = false;
+    renderPrep();
   };
   const btnCopy = box.querySelector("#btnCopy");
   if (btnCopy) btnCopy.onclick = async () => {
@@ -1729,12 +1735,6 @@ function renderPrep() {
       </div>
       <p class="hint">${canEdit ? "勾选、添加、删除会立刻同步到云端。点铅笔可改文字。" : "先解锁才能勾选、添加或删除。已买行李额、已退 Seamount、已订烹饪课会显示完成。"}</p>
     </div>
-    <div class="card">
-      <div class="kicker">签证与入境</div>
-      <p class="note">印尼：需 e-VOA（2025年11月起对中国不免签），约 IDR 500,000/人，官网 molina.imigrasi.go.id</p>
-      <p class="note" style="margin-top:6px">马来西亚：免签，出发前 72 小时内填 MDAC。</p>
-      <p class="note" style="margin-top:6px">越南：胡志明中转不出机场无需签证；联程行李直挂。</p>
-    </div>
     ${groups.map(g=>`
       <div class="card">
         <div class="kicker ${g==="行前必办"?"urgent":""}">${esc(g)}</div>
@@ -1780,9 +1780,10 @@ function renderPrep() {
       <textarea id="noteBox" placeholder="花费分摊、潜店 WhatsApp、明早谁带口罩……" ${canEdit?"":"disabled"}></textarea>
     </div>
     <div class="card">
-      <div class="kicker">行程亮点</div>
-      <p class="note">科莫多龙零距离 · 粉红沙滩跳岛 · 图蓝本自由号 OW 考证 · 宜珍蓝火 · 布罗莫日出</p>
-      <p class="note" style="margin-top:8px">体力瓶颈：10.04–10.06。赛武瀑布已取消。不要去已退的 Seamount Amed / 待退的 Ocean Villa。</p>
+      <div class="kicker">签证与入境</div>
+      <p class="note">印尼：需 e-VOA（2025年11月起对中国不免签），约 IDR 500,000/人，官网 molina.imigrasi.go.id</p>
+      <p class="note" style="margin-top:6px">马来西亚：免签，出发前 72 小时内填 MDAC。</p>
+      <p class="note" style="margin-top:6px">越南：胡志明中转不出机场无需签证；联程行李直挂。</p>
     </div>`;
   const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
   fillPane(box, gateCard() + body);
