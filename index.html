@@ -343,8 +343,9 @@
     .item.ph-bali::before { background: var(--bali); }
     .item.ph-java::before { background: var(--java); }
     .ticket-top, .stay-top {
-      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
+    .stay-actions { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .ticket-no { font-size: 13px; font-weight: 700; }
     .ticket-al { color: var(--muted); font-weight: 500; }
     .ticket-route {
@@ -729,6 +730,7 @@ const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:
 const VF_MP = "https://feeyo-4gavslyd9088a553-1258220651.tcloudbaseapp.com/jump-mp.html";
 const VF_SIGN = "6962cb8406913270c49eb62f06d9240e";
 const KLOOK_ORDERS = "https://www.klook.cn/zh-CN/bookings/";
+const QUNAR_HOTEL_ORDERS = "https://touch.qunar.com/mordercenter/index.html?hybridid=mob_ordercenter#orderlist.list?businessType=hotel&filterBusiness=true&source=touch";
 const ICO = {
   plane: '<svg class="ico" viewBox="0 0 24 24"><path d="M2.5 16.5 10 13l3.2-8.2 1.8 1.4-.8 6.4 6.8 3.1-1 1.8-6.6-1.2-3.5 4.6H8.2l1.8-4.6-7.5-2z"/></svg>',
   bag: '<svg class="ico" viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="2"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>',
@@ -1083,7 +1085,10 @@ function hotelBlock(h, i) {
   return `<div class="item ph-${ph}" id="h-${i}">
     <div class="stay-top">
       <div>${tap(h.inn+"–"+h.out, "days", "day-"+dayIndexForDate(h.inn))}</div>
-      ${statusChip(h.status)}
+      <span class="stay-actions">
+        ${statusChip(h.status)}
+        ${h.platform==="去哪儿" ? extBtn(QUNAR_HOTEL_ORDERS, "去哪儿") : ""}
+      </span>
     </div>
     <div class="stay-name">${tap(h.name, "hotels", "h-"+i)}</div>
     <div class="stay-meta">${ICO.bed} ${h.nights} 晚 · ${h.room}${h.platform?" · "+h.platform:""}</div>
@@ -1315,7 +1320,7 @@ function renderTrip(filter, highlightId) {
   } else if (tripTab === "hotels") {
     body = `
       <div class="page-head c-teal">酒店 <span>${hotels.length} 家</span></div>
-      <p class="hint">点入住日期看当天日程，点酒店名定位该条。已退订的仍列出以免走错。</p>
+      <p class="hint">点入住日期看当天日程。「去哪儿」打开酒店订单。已退订的仍列出以免走错。</p>
       ${hotels.map(hotelBlock).join("")}`;
   } else if (tripTab === "acts") {
     body = `
