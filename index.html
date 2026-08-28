@@ -327,8 +327,15 @@
     .day-card { display: none; }
     .day-card.open { display: block; animation: dayOpen .22s ease; }
     @keyframes dayOpen { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
-    .kv { font-size: 13px; margin-top: 6px; color: var(--text); }
-    .kv b { color: var(--muted); font-weight: 600; margin-right: 6px; }
+    .fx-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+    .fx-row:last-of-type { border-bottom: 0; }
+    .fx-row span { color: var(--muted); }
+    .fx-row b { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+    #fx-card a { color: var(--muted); }
     .item {
       position: relative; overflow: hidden;
       background: #fff; border: 1px solid var(--line); border-radius: 16px;
@@ -520,6 +527,8 @@ const END = new Date(2026, 9, 8);
 const KEY_WHO = "trip2026-who";
 const KEY_SID = "trip2026-sid";
 const KEY_UNLOCK = "trip2026-unlock";
+const KEY_FX = "trip2026-fx";
+const FX_API = "https://open.er-api.com/v6/latest/CNY";
 
 let cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: null };
 let canEdit = false;
@@ -960,6 +969,70 @@ function todayISO() {
   const n = new Date();
   return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
 }
+function readFxCache() {
+  try { return JSON.parse(localStorage.getItem(KEY_FX) || "null"); }
+  catch (e) { return null; }
+}
+function fxFresh(cache) {
+  return !!(cache && cache.date === todayISO() && Number.isFinite(cache.cnyToIdr) && cache.cnyToIdr > 0);
+}
+async function fetchFx() {
+  const r = await fetch(FX_API);
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const j = await r.json();
+  const idr = j && j.rates ? Number(j.rates.IDR) : NaN;
+  if (!j || j.result !== "success" || !Number.isFinite(idr) || idr <= 0) throw new Error("bad rates");
+  const data = { date: todayISO(), cnyToIdr: idr, updated: j.time_last_update_utc || "" };
+  localStorage.setItem(KEY_FX, JSON.stringify(data));
+  return data;
+}
+async function loadFx() {
+  const cached = readFxCache();
+  if (fxFresh(cached)) return cached;
+  try {
+    return await fetchFx();
+  } catch (e) {
+    if (cached && Number.isFinite(cached.cnyToIdr) && cached.cnyToIdr > 0) {
+      cached.stale = true;
+      return cached;
+    }
+    throw e;
+  }
+}
+function fmtIdr(n) {
+  return Math.round(n).toLocaleString("zh-CN");
+}
+function fmtYuan(n) {
+  return n.toLocaleString("zh-CN", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+}
+function paintFx(el, data) {
+  if (!el || !data || !Number.isFinite(data.cnyToIdr)) return;
+  const idr = data.cnyToIdr;
+  const when = String(data.date || "").replace(/^\d{4}-/, "").replace("-", ".");
+  const note = data.stale
+    ? "用的是上次缓存，连上网络后会再更新。"
+    : (when ? when + " 已更新。" : "今日已更新。");
+  el.innerHTML = `
+    <div class="kicker">汇率速算</div>
+    <div class="fx-row"><span>1 人民币</span><b>≈ ${fmtIdr(idr)} 盾</b></div>
+    <div class="fx-row"><span>10 万盾</span><b>≈ ${fmtYuan(100000 / idr)} 元</b></div>
+    <div class="fx-row"><span>50 万盾</span><b>≈ ${fmtYuan(500000 / idr)} 元</b></div>
+    <p class="hint">中间价仅供参考，${note}来源 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a></p>`;
+}
+function mountFx(root) {
+  if (!root) return;
+  root.insertAdjacentHTML("beforeend", `<div class="card" id="fx-card"><div class="kicker">汇率速算</div><p class="hint">正在取今日汇率…</p></div>`);
+  const el = root.querySelector("#fx-card");
+  const cached = readFxCache();
+  if (cached && Number.isFinite(cached.cnyToIdr) && cached.cnyToIdr > 0) {
+    paintFx(el, Object.assign({}, cached, { stale: !fxFresh(cached) }));
+  }
+  loadFx().then(d => paintFx(el, d)).catch(() => {
+    if (!cached || !Number.isFinite(cached.cnyToIdr)) {
+      el.innerHTML = `<div class="kicker">汇率速算</div><p class="hint">今日汇率暂时取不到，稍后再看。</p>`;
+    }
+  });
+}
 function parseISO(iso){ const [y,m,d]=iso.split("-").map(Number); return new Date(y,m-1,d); }
 function diffDays(a,b){ return Math.round((parseISO(b)-parseISO(a))/86400000); }
 
@@ -1173,10 +1246,12 @@ function renderToday() {
         ${eventRows(st.day.events)}
       </div>`;
     bindJumps(box);
+    mountFx(box);
     return;
   }
   if (st.mode === "after") {
     box.innerHTML = `<div class="card"><div class="kicker">行程已结束</div><div class="next">到北京了</div><p class="hint">需要回顾时去「行程」翻天看。</p></div>`;
+    mountFx(box);
     return;
   }
   const d = st.day;
@@ -1203,6 +1278,7 @@ function renderToday() {
     </div>
     ${tomorrow?`<div class="card"><div class="kicker">明天早起</div><div class="title">${tomorrow.date} ${tomorrow.title}</div><div class="note" style="margin-top:6px">${linkText(tomorrow.events[0].t + " " + tomorrow.events[0].title + " · " + (tomorrow.events[0].note||""))}</div></div>`:""}`;
   bindJumps(box);
+  mountFx(box);
 }
 
 const TRIP_TABS = [
