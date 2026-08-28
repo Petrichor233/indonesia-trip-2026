@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1b5e4a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>印尼双节旅行 · 2026.9.25–10.8</title>
+  <title>印尼中秋国庆旅行助手 · 2026.9.25–10.8</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -115,6 +115,7 @@
     .chip-must { background: #d1fae5; color: var(--ok); }
     .chip-ok { background: #d1fae5; color: #047857; }
     .chip-wait { background: #fff7ed; color: #c2410c; }
+    .chip-canceling { background: #ffe4e6; color: #be123c; }
     .chip-off { background: #f3f4f6; color: #6b7280; }
     .warn {
       background: #fff7ed; color: #9a3412; border-radius: 10px;
@@ -271,7 +272,8 @@
     .prog-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s ease; }
     textarea {
       width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 12px;
-      padding: 10px; font: inherit; resize: vertical; background: #fafafa;
+      padding: 10px; font: inherit; resize: none; background: #fafafa;
+      overflow: hidden; field-sizing: content;
     }
     .hint { font-size: 12px; color: var(--muted); margin: 6px 0 10px; }
     .btn {
@@ -349,6 +351,15 @@
     .item.ph-komodo::before { background: var(--komodo); }
     .item.ph-bali::before { background: var(--bali); }
     .item.ph-java::before { background: var(--java); }
+    .item.st-cancel { color: #9ca3af; }
+    .item.st-cancel::before { background: #9ca3af; }
+    .item.st-cancel .stay-name,
+    .item.st-cancel .stay-meta,
+    .item.st-cancel .note,
+    .item.st-cancel .stay-top,
+    .item.st-cancel .ico { color: #9ca3af; }
+    .item.st-cancel .ghost { border-color: #d1d5db; color: #9ca3af; }
+    .item.st-canceling { background: #fff1f2; }
     .ticket-top, .stay-top {
       display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
@@ -401,7 +412,8 @@
     .act-card .stay-name,
     .act-card .stay-meta,
     .act-card .note,
-    .act-card .callout { position: relative; z-index: 2; }
+    .act-card .callout,
+    .act-card .act-foot { position: relative; z-index: 2; }
     .act-card .callout {
       background: linear-gradient(
         to right,
@@ -415,6 +427,12 @@
     .act-card .stay-name { max-width: 62%; }
     .act-card .stay-meta,
     .act-card .note { max-width: 72%; }
+    .act-card .act-foot {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      gap: 8px; margin-top: 8px; position: relative; z-index: 3;
+    }
+    .act-card .act-foot .callout { margin-top: 0; flex: 1; min-width: 0; }
+    .act-card .act-foot .ghost { margin-left: auto; }
     .map-box {
       height: 42vh; min-height: 220px; max-height: 380px;
       border-radius: 14px; overflow: hidden; border: 1px solid var(--line);
@@ -434,6 +452,10 @@
     .map-focus .f-java { background: var(--java); }
     .marker-dot {
       width: 10px; height: 10px; border-radius: 50%;
+      border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+    .marker-hotel {
+      width: 8px; height: 8px; border-radius: 50%;
       border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
     }
     .map-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; font-size: 12px; color: var(--muted); margin: 8px 0 12px; }
@@ -481,7 +503,7 @@
 <div class="app">
   <header>
     <p class="eyebrow">Indonesia Adventure · 2026 Autumn</p>
-    <h1>印尼双节旅行</h1>
+    <h1>印尼中秋国庆旅行助手</h1>
     <p class="dates">2026.9.25–10.8 · 14 天</p>
   </header>
 
@@ -549,18 +571,18 @@ const flights = [
 ];
 
 const hotels = [
-  { inn:"9.25", out:"9.26", nights:1, name:"吉隆坡市区酒店（T2附近）", aka:["吉隆坡市区酒店","T2 附近酒店","T2附近酒店","吉隆坡酒店"], room:"待定", status:"wait", platform:"", note:"待预订；次日 AK310 从 T2 起飞" },
-  { inn:"9.26", out:"9.27", nights:1, name:"Katamaran Hotel & Resort Komodo", aka:["Katamaran","卡塔马兰酒店及度假村","卡塔马兰"], room:"豪华海景特大床房", status:"ok", platform:"去哪儿", note:"卡塔马兰；酒店桨板 / 浮潜" },
-  { inn:"9.27", out:"9.29", nights:2, name:"Seaesta Komodo Hostel & Hotel", aka:["Seaesta Komodo","Seaesta","西亚斯塔"], room:"双人房", status:"ok", platform:"去哪儿", note:"西亚斯塔；不含早餐" },
-  { inn:"9.29", out:"9.30", nights:1, name:"The Kuta Beach Heritage Hotel", aka:["库塔海滩遗产酒店","库塔酒店"], room:"经典传统特大床房", status:"ok", platform:"去哪儿", note:"库塔海滩遗产酒店，雅高管理" },
-  { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", aka:["Meruhdani","梅鲁达尼精品酒店","梅鲁达尼"], room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店" },
-  { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", aka:["Habitat"], room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本" },
-  { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住" },
+  { inn:"9.25", out:"9.26", nights:1, name:"吉隆坡市区酒店（T2附近）", aka:["吉隆坡市区酒店","T2 附近酒店","T2附近酒店","吉隆坡酒店"], room:"待定", status:"wait", platform:"", note:"待预订；次日 AK310 从 T2 起飞", lat:2.7449, lng:101.6828 },
+  { inn:"9.26", out:"9.27", nights:1, name:"Katamaran Hotel & Resort Komodo", aka:["Katamaran","卡塔马兰酒店及度假村","卡塔马兰"], room:"豪华海景特大床房", status:"ok", platform:"去哪儿", note:"卡塔马兰；酒店桨板 / 浮潜", lat:-8.4716, lng:119.8768 },
+  { inn:"9.27", out:"9.29", nights:2, name:"Seaesta Komodo Hostel & Hotel", aka:["Seaesta Komodo","Seaesta","西亚斯塔"], room:"双人房", status:"ok", platform:"去哪儿", note:"西亚斯塔；不含早餐", lat:-8.4894, lng:119.8778 },
+  { inn:"9.29", out:"9.30", nights:1, name:"The Kuta Beach Heritage Hotel", aka:["库塔海滩遗产酒店","库塔酒店"], room:"经典传统特大床房", status:"ok", platform:"去哪儿", note:"库塔海滩遗产酒店，雅高管理", lat:-8.7206, lng:115.1699 },
+  { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", aka:["Meruhdani","梅鲁达尼精品酒店","梅鲁达尼"], room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店", lat:-8.5062, lng:115.2587 },
+  { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", aka:["Habitat"], room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本", lat:-8.2758, lng:115.5915 },
+  { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住", lat:-8.3352, lng:115.6467 },
   { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"canceling", platform:"Booking", note:"待退订，勿入住" },
-  { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村" },
-  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅" },
-  { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋" },
-  { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", aka:["Premier Place","泗水机场酒店","机场酒店"], room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机" }
+  { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村", lat:-8.1542, lng:115.0346 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅", lat:-8.1780, lng:114.2512 },
+  { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋", lat:-7.9175, lng:113.0273 },
+  { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", aka:["Premier Place","泗水机场酒店","机场酒店"], room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机", lat:-7.3804, lng:112.7459 }
 ];
 
 const acts = [
@@ -767,6 +789,7 @@ const stops = [
   { id:4,  name:"库塔", lat:-8.7183, lng:115.1686, phase:"bali", date:"9.29–30", desc:"Kuta Beach Heritage · 冲浪课" },
   { id:5,  name:"乌布", lat:-8.5069, lng:115.2625, phase:"bali", date:"9.30–10.1", desc:"Meruhdani · Ketut's 烹饪课" },
   { id:6,  name:"图蓝本", lat:-8.2767, lng:115.5928, phase:"bali", date:"10.1–03", desc:"Habitat · OW 考证" },
+  { id:13, name:"艾湄", lat:-8.3381, lng:115.6603, phase:"bali", date:"10.3", desc:"海湾停留，回 Habitat 住，不连路线" },
   { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 追海豚" },
   { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4", desc:"巴厘西端轮渡" },
   { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"爪哇登陆" },
@@ -843,7 +866,7 @@ function statusChip(s) {
   if (s==="ok") return '<span class="chip chip-ok">已确认</span>';
   if (s==="wait") return '<span class="chip chip-wait">待预订</span>';
   if (s==="cancel") return '<span class="chip chip-off">已退订</span>';
-  if (s==="canceling") return '<span class="chip chip-wait">待退订</span>';
+  if (s==="canceling") return '<span class="chip chip-canceling">待退订</span>';
   return "";
 }
 function isChecked(list, item) {
@@ -1196,7 +1219,8 @@ function flightBlock(f) {
 
 function hotelBlock(h, i) {
   const ph = phaseForDate(h.inn);
-  return `<div class="item ph-${ph}" id="h-${i}">
+  const stClass = h.status === "cancel" ? " st-cancel" : (h.status === "canceling" ? " st-canceling" : "");
+  return `<div class="item ph-${ph}${stClass}" id="h-${i}">
     <div class="stay-top">
       <div>${tap(h.inn+"–"+h.out, "days", "day-"+dayIndexForDate(h.inn))}</div>
       <span class="stay-actions">
@@ -1215,16 +1239,19 @@ function actBlock(a, i) {
   const photo = a.img
     ? `<img class="act-photo" src="${a.img}" alt="" width="675" height="450" loading="lazy" decoding="async">`
     : "";
+  const jump = a.klook ? extBtn(KLOOK_ORDERS, "Klook") : "";
+  const foot = (a.note || jump)
+    ? `<div class="act-foot">${a.note ? `<div class="callout">${a.note}</div>` : ""}${jump}</div>`
+    : "";
   return `<div class="item ph-${ph} act-card" id="a-${i}">
     ${photo}
     <div class="stay-top">
       <div>${ICO.cal} ${tap(String(a.date).replace(/\s.*/, ""), "days", "day-"+dayIndexForDate(a.date))}</div>
-      ${a.klook ? extBtn(KLOOK_ORDERS, "Klook") : ""}
     </div>
     <div class="stay-name">${tap(a.name, "acts", "a-"+i)}</div>
     <div class="stay-meta">${a.who}</div>
     <div class="note">${a.detail}</div>
-    ${a.note ? `<div class="callout">${a.note}</div>` : ""}
+    ${foot}
   </div>`;
 }
 
@@ -1500,6 +1527,7 @@ function renderMap() {
           <span><i class="legend-line" style="background:#8b5cf6;background-image:repeating-linear-gradient(90deg,#8b5cf6 0 6px,transparent 6px 10px)"></i>虚线航班</span>
           <span><i class="legend-line" style="background:#0f766e"></i>实线陆路/轮渡</span>
           <span><i class="legend-line" style="background:#0f766e;background-image:repeating-linear-gradient(90deg,#0f766e 0 3px,transparent 3px 6px);height:2px"></i>细虚线船游</span>
+          <span><i class="marker-hotel" style="display:inline-block;background:#e67e22;vertical-align:middle;margin-right:4px"></i>小点酒店</span>
         </div>
         <div id="map" class="map-box"></div>
       </div>
@@ -1515,6 +1543,21 @@ function renderMap() {
 function boatIcon(color) {
   return L.divIcon({ className:"", html:`<div class="marker-dot" style="background:${color}"></div>`, iconSize:[10,10], iconAnchor:[5,5] });
 }
+function hotelIcon(color) {
+  return L.divIcon({ className:"", html:`<div class="marker-hotel" style="background:${color}"></div>`, iconSize:[8,8], iconAnchor:[4,4] });
+}
+function mappedHotels() {
+  return hotels.filter(h => h.status !== "cancel" && h.status !== "canceling" && h.lat != null && h.lng != null);
+}
+function addHotelMarkers() {
+  mappedHotels().forEach(h => {
+    const ph = phaseForDate(h.inn);
+    L.marker([h.lat, h.lng], {
+      icon: hotelIcon(PHASE_COLOR[ph] || "#0f766e"),
+      zIndexOffset: -50
+    }).addTo(mapObj).bindPopup(`<b>${h.name}</b><br>${h.inn}–${h.out} · ${h.nights} 晚<br>${h.note || ""}`);
+  });
+}
 function addBoatRoute(pts, color, title) {
   pts.forEach(p => {
     L.marker([p.lat, p.lng], { icon: boatIcon(color), zIndexOffset: -100 })
@@ -1526,14 +1569,15 @@ function addBoatRoute(pts, color, title) {
   }).addTo(mapObj);
 }
 function regionPoints(key) {
+  const hs = ph => mappedHotels().filter(h => phaseForDate(h.inn) === ph).map(h => [h.lat, h.lng]);
   if (key === "komodo") {
     return [
       stops.find(s => s.id === 3),
       ...boatHalf, ...boatDay
-    ].map(p => [p.lat, p.lng]);
+    ].map(p => [p.lat, p.lng]).concat(hs("komodo"));
   }
-  if (key === "bali") return stops.filter(s => s.phase === "bali" || s.name === "Gilimanuk").map(s => [s.lat, s.lng]);
-  if (key === "java") return stops.filter(s => s.phase === "java").map(s => [s.lat, s.lng]);
+  if (key === "bali") return stops.filter(s => s.phase === "bali" || s.name === "Gilimanuk").map(s => [s.lat, s.lng]).concat(hs("bali"));
+  if (key === "java") return stops.filter(s => s.phase === "java").map(s => [s.lat, s.lng]).concat(hs("java"));
   return [];
 }
 function focusRegion(key) {
@@ -1569,6 +1613,7 @@ function initMap() {
   groundSegs.forEach(([f,t]) => draw(f,t,"ground"));
   addBoatRoute(boatHalf, "#0f766e", "9.27 科莫多半日游");
   addBoatRoute(boatDay, "#14b8a6", "9.28 科莫多一日跳岛");
+  addHotelMarkers();
   mapObj.fitBounds(L.latLngBounds(stops.filter(s=>s.phase!=="transit"||s.name==="Gilimanuk").map(s=>[s.lat,s.lng])).pad(.12));
 }
 
@@ -1928,7 +1973,12 @@ function renderPrep() {
   const ta = document.getElementById("noteBox");
   if (ta) {
     ta.value = cloud.notes || "";
-    ta.oninput = () => { cloud.notes = ta.value; schedulePush(); };
+    const fitNote = () => {
+      ta.style.height = "auto";
+      ta.style.height = Math.max(88, ta.scrollHeight) + "px";
+    };
+    ta.oninput = () => { cloud.notes = ta.value; fitNote(); schedulePush(); };
+    requestAnimationFrame(fitNote);
   }
 }
 
