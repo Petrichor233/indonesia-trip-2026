@@ -617,9 +617,11 @@ const hotels = [
   { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", aka:["Meruhdani","梅鲁达尼精品酒店","梅鲁达尼"], room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店", lat:-8.5062, lng:115.2587 },
   { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", aka:["Habitat"], room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本", lat:-8.2758, lng:115.5915 },
   { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住", lat:-8.3352, lng:115.6467 },
-  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"canceling", platform:"Booking", note:"待退订，勿入住" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"canceling", platform:"携程", note:"携程已确认 ¥303；与 Habitat 重复，待退订，勿入住" },
   { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村", lat:-8.1542, lng:115.0346 },
-  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅", lat:-8.1780, lng:114.2512 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"ok", platform:"去哪儿", note:"伊真·大丰收度假村和别墅；行程住这里", lat:-8.1780, lng:114.2512 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Ijen Backpacker", aka:["Ijen Backpacker"], room:"—", status:"ok", platform:"携程", note:"重复预订，¥76；行程住大丰收，勿入住", lat:-8.1404, lng:114.3986 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"重复预订，¥184.78，编码 1767788834；行程住大丰收，勿入住" },
   { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋", lat:-7.9175, lng:113.0273 },
   { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", aka:["Premier Place","泗水机场酒店","机场酒店"], room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机", lat:-7.3804, lng:112.7459 }
 ];
@@ -720,7 +722,7 @@ const days = [
     { t:"上午", title:"罗威纳追海豚，海上日出", note:"船待预订", kind:"hl" },
     { t:"午前", title:"追海豚后去 Gilimanuk 轮渡", note:"罗威纳 → 轮渡仍待预订；赶 13:00 前到外南梦 Ketapang", kind:"must" },
     { t:"13:00", title:"Ketapang Andre 接往宜珍酒店", note:"Andre 泗水包车已定；IDR 3,800,000，当天付一半", kind:"must", tz:"慢 1 小时" },
-    { t:"晚上", title:"入住大丰收度假村，补觉", note:"02:00 出发爬宜珍；头灯、登山杖、口罩", kind:"must" }
+    { t:"晚上", title:"入住大丰收度假村，补觉", note:"02:00 出发爬宜珍；勿去 Ijen Backpacker / Purwa Ijen（重复预订）", kind:"must" }
   ]},
   { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java",
     stay:"Omah Kayu Bromo（已确认）", breakfast:"夜爬后回酒店补觉",
@@ -884,7 +886,8 @@ const prep = [
   { id:"pre-ins", g:"行前必办", t:"购买境外旅行保险（含潜水、火山徒步）", done:false },
   { id:"pre-mdac", g:"行前必办", t:"填写吉隆坡 MDAC 电子入境卡（出发前 72 小时内）", done:false },
   { id:"pre-seamount", g:"行前必办", t:"退订 Seamount Amed 艾湄海山酒店", done:true },
-  { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（Booking）", done:false },
+  { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（Booking / 携程 ¥303）", done:false },
+  { id:"pre-ijendup", g:"行前必办", t:"确认退订宜珍重复酒店：Ijen Backpacker、Purwa Ijen（行程住大丰收）", done:false },
   { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
   { id:"pre-ow", g:"行前必办", t:"OW 潜水课提前学理论课", done:false },
   { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡市区酒店（1晚，T2附近）", done:false },
@@ -923,10 +926,11 @@ const spends = [
   { id:"sp-h-kuta", cat:"酒店", date:"9.29", name:"The Kuta Beach Heritage Hotel", cny:491.15, note:"去哪儿 · 1 晚" },
   { id:"sp-h-meru", cat:"酒店", date:"9.30", name:"Meruhdani Boutique Ubud", cny:344.95, note:"去哪儿 · 1 晚" },
   { id:"sp-h-hab", cat:"酒店", date:"10.1", name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补" },
-  { id:"sp-h-ocean", cat:"酒店", date:"10.1", name:"Ocean Villa Dive Resort Tulamben", cny:303, note:"携程已确认；行程待退订，退成后删这条" },
+  { id:"sp-h-ocean", cat:"酒店", date:"10.1", name:"Ocean Villa Dive Resort Tulamben", cny:303, note:"携程已确认；与 Habitat 重复，行程待退订" },
   { id:"sp-h-lov", cat:"酒店", date:"10.3", name:"New Sunari Lovina Beach Resort", cny:283.02, note:"去哪儿 · 1 晚" },
-  { id:"sp-h-gh", cat:"酒店", date:"10.4", name:"Grand Harvest Resort & Villas Ijen", cny:307.9, note:"去哪儿 · 1 晚" },
-  { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；行程住大丰收，如退订请删" },
+  { id:"sp-h-gh", cat:"酒店", date:"10.4", name:"Grand Harvest Resort & Villas Ijen", cny:307.9, note:"去哪儿 · 1 晚 · 行程入住" },
+  { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；与大丰收重复预订" },
+  { id:"sp-h-purwa", cat:"酒店", date:"10.4", name:"Purwa Ijen", cny:184.78, note:"携程 1767788834 · 花园景双人；与大丰收重复预订" },
   { id:"sp-h-omah", cat:"酒店", date:"10.5", name:"Omah Kayu Bromo", cny:154, note:"携程 · 1 晚" },
   { id:"sp-h-prem", cat:"酒店", date:"10.6", name:"Premier Place Surabaya Airport", cny:270.12, note:"去哪儿 · 1 晚" },
   { id:"sp-a-komodo", cat:"活动", date:"9.27", name:"科莫多半日游 + 一日跳岛", idr:1400000, note:"两日两人共价，GP Travel" },
@@ -1729,7 +1733,7 @@ function renderTrip(filter, highlightId) {
   } else if (tripTab === "hotels") {
     body = `
       <div class="page-head c-teal">酒店 <span>${hotels.length} 家</span></div>
-      <p class="hint">点入住日期看当天日程。「去哪儿」打开酒店订单。已退订的仍列出以免走错。</p>
+      <p class="hint">点入住日期看当天日程。「去哪儿」打开酒店订单。已退订、待退订和重复预订都列出，以免走错。</p>
       ${hotels.map(hotelBlock).join("")}`;
   } else if (tripTab === "acts") {
     body = `
