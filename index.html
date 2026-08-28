@@ -686,28 +686,31 @@ const days = [
   ]},
   { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java",
     stay:"Grand Harvest Resort & Villas Ijen（花园景豪华双人，已确认）", breakfast:"追海豚后简餐",
-    flight:"无飞机；Gilimanuk 轮渡去爪哇",
+    flight:"轮渡去爪哇；13:00 Ketapang Andre 接",
     tz:"过海去爪哇，慢 1 小时",
     events:[
     { t:"上午", title:"罗威纳追海豚，海上日出", note:"船待预订", kind:"hl" },
-    { t:"下午", title:"包车 → Gilimanuk 轮渡 → 外南梦 → 宜珍", note:"跨岛全程待预订（包车+轮渡+包车）", kind:"must", tz:"慢 1 小时" },
-    { t:"晚上", title:"入住大丰收度假村，补觉", note:"准备凌晨夜爬；头灯、登山杖、口罩", kind:"must" }
+    { t:"午前", title:"追海豚后去 Gilimanuk 轮渡", note:"罗威纳 → 轮渡仍待预订；赶 13:00 前到外南梦 Ketapang", kind:"must" },
+    { t:"13:00", title:"Ketapang Andre 接往宜珍酒店", note:"Andre 泗水包车已定；IDR 3,800,000，当天付一半", kind:"must", tz:"慢 1 小时" },
+    { t:"晚上", title:"入住大丰收度假村，补觉", note:"02:00 出发爬宜珍；头灯、登山杖、口罩", kind:"must" }
   ]},
   { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java",
     stay:"Omah Kayu Bromo（已确认）", breakfast:"夜爬后回酒店补觉",
-    flight:"无航班，下午包车去布罗莫",
+    flight:"Andre 包车 12:00 出发，约 18:00 到布罗莫",
     events:[
-    { t:"凌晨", title:"宜珍火山夜爬：蓝火 + 硫磺湖", note:"向导+门票+装备待预订", kind:"hl" },
-    { t:"上午", title:"返回酒店休整补觉", note:"冲洗硫磺味", kind:"must" },
-    { t:"下午", title:"包车前往布罗莫，入住 Omah Kayu", note:"包车待预订", kind:"must" }
+    { t:"02:00", title:"宜珍火山夜爬：蓝火 + 硫磺湖", note:"Andre 行程", kind:"hl" },
+    { t:"07:00", title:"回大丰收酒店休整", note:"冲洗硫磺味", kind:"must" },
+    { t:"12:00", title:"出发去布罗莫", note:"Andre 包车", kind:"must" },
+    { t:"18:00", title:"入住 Omah Kayu，休整", note:"02:00 出发看日出", kind:"must" }
   ]},
   { date:"10.06", iso:"2026-10-06", title:"布罗莫日出 → 泗水", phase:"java",
-    stay:"Premier Place Surabaya Airport（经典大床，已确认）", breakfast:"日出后酒店简餐",
-    flight:"无航班，下午包车去泗水机场酒店",
+    stay:"Premier Place Surabaya Airport（经典大床，已确认）", breakfast:"10:00 回酒店早餐",
+    flight:"Andre 包车 11:00 出发，13:30 到泗水",
     events:[
-    { t:"凌晨", title:"吉普车布罗莫观景台", note:"日出 + 云海 + 火山口徒步；吉普待预订", kind:"hl" },
-    { t:"下午", title:"包车前往泗水机场酒店", note:"赛武瀑布已取消；包车待预订", kind:"must" },
-    { t:"晚上", title:"入住 Premier Place，休整", note:"确认免费送机", kind:"must" }
+    { t:"02:00", title:"布罗莫日出", note:"Andre 行程；观景台 + 云海", kind:"hl" },
+    { t:"10:00", title:"回酒店早餐", note:"", kind:"must" },
+    { t:"11:00", title:"退房出发去泗水", note:"Andre 包车；赛武瀑布已取消", kind:"must" },
+    { t:"13:30", title:"抵达泗水，入住 Premier Place", note:"付清余款；确认免费送机", kind:"must" }
   ]},
   { date:"10.07", iso:"2026-10-07", title:"泗水 → 吉隆坡 → 胡志明", phase:"transit",
     stay:"胡志明新山一中转（不出机场）", breakfast:"机场酒店早餐",
@@ -810,10 +813,10 @@ const stops = [
   { id:13, name:"艾湄", lat:-8.3381, lng:115.6603, phase:"bali", date:"10.3", desc:"海湾停留，回 Habitat 住，不连路线" },
   { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 追海豚" },
   { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4", desc:"巴厘西端轮渡" },
-  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"爪哇登陆" },
-  { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Grand Harvest · 蓝火" },
-  { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · 日出" },
-  { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place 机场酒店" }
+  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"Ketapang 港，13:00 Andre 接" },
+  { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Grand Harvest · Andre 蓝火" },
+  { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · Andre 日出" },
+  { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place · 13:30 到" }
 ];
 const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
 const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
@@ -866,11 +869,12 @@ const prep = [
   { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车", done:false },
   { id:"d-lovcar", g:"按日期", t:"10.3 预订图蓝本 → 罗威纳包车", done:false },
   { id:"d-dol", g:"按日期", t:"10.4 预订罗威纳追海豚船", done:false },
-  { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → 宜珍跨岛全程（包车+轮渡+包车）", done:false },
-  { id:"d-ijenh", g:"按日期", t:"10.5 预订宜珍火山夜爬（向导+门票+装备）", done:false },
-  { id:"d-bromocar", g:"按日期", t:"10.5 预订宜珍 → 布罗莫包车", done:false },
-  { id:"d-jeep", g:"按日期", t:"10.6 预订布罗莫吉普车日出游", done:false },
-  { id:"d-subcar", g:"按日期", t:"10.6 预订布罗莫 → 泗水包车", done:false },
+  { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → Gilimanuk 轮渡（Ketapang 起 Andre 已接）", done:false },
+  { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（Andre 已含行程）", done:true },
+  { id:"d-bromocar", g:"按日期", t:"10.5 宜珍 → 布罗莫包车（Andre 已定）", done:true },
+  { id:"d-jeep", g:"按日期", t:"10.6 布罗莫日出（Andre 已含行程）", done:true },
+  { id:"d-subcar", g:"按日期", t:"10.6 布罗莫 → 泗水包车（Andre 已定）", done:true },
+  { id:"d-andrepay", g:"按日期", t:"10.4 / 10.6 付 Andre：当天一半、最后一天一半，共 IDR 3,800,000", done:false },
   { id:"d-shuttle", g:"按日期", t:"10.7 确认泗水机场酒店免费送机", done:false }
 ];
 
