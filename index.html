@@ -381,10 +381,14 @@
     .ticket-time { font-size: 22px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
     .ticket-city { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .ticket-end.right { text-align: right; }
-    .ticket-mid { color: var(--accent); text-align: center; min-width: 52px; }
+    .ticket-mid { color: var(--accent); text-align: center; min-width: 72px; }
     .ticket-mid svg { width: 18px; height: 18px; }
     .ticket-mid .dash {
       height: 0; border-top: 1.5px dashed #cbd5e1; margin-top: 4px;
+    }
+    .ticket-dur {
+      font-size: 10px; color: var(--muted); font-weight: 500;
+      margin-top: 4px; line-height: 1.2; white-space: nowrap;
     }
     .ticket-foot {
       display: flex; justify-content: space-between; align-items: center;
@@ -1192,6 +1196,20 @@ function vfUrl(f) {
     + "&date=" + encodeURIComponent(f.iso)
     + "&sign=" + VF_SIGN;
 }
+const AIRPORT_UTC = { PKX:8, SGN:7, KUL:8, LBJ:8, DPS:8, SUB:7 };
+function hmToMin(s) {
+  const [h, m] = String(s).split(":").map(Number);
+  return h * 60 + m;
+}
+function flightDur(f) {
+  const depOff = AIRPORT_UTC[f.from];
+  const arrOff = AIRPORT_UTC[f.to];
+  if (depOff == null || arrOff == null) return "";
+  let mins = (hmToMin(f.arr) - arrOff * 60) - (hmToMin(f.dep) - depOff * 60);
+  if (mins <= 0) mins += 24 * 60;
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return m ? h + "小时" + m + "分" : h + "小时";
+}
 function extBtn(href, label) {
   return `<a class="ghost jump-ext" href="${href}" target="_blank" rel="noopener" draggable="false">${label}${ICO.ext}</a>`;
 }
@@ -1233,7 +1251,7 @@ function flightBlock(f) {
         <div class="ticket-time">${f.dep}</div>
         <div class="ticket-city">${from}</div>
       </div>
-      <div class="ticket-mid">${ICO.plane}<div class="dash"></div></div>
+      <div class="ticket-mid">${ICO.plane}<div class="dash"></div><div class="ticket-dur">${flightDur(f)}</div></div>
       <div class="ticket-end right">
         <div class="ticket-time">${f.arr}</div>
         <div class="ticket-city">${to}</div>
