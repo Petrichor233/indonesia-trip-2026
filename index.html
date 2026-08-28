@@ -569,13 +569,13 @@ let tripFilter = "all";
 let prepTab = "todo";
 
 const flights = [
-  { date:"9.25", iso:"2026-09-25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", from:"PKX", to:"SGN", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段", tz:"落地胡志明后调表：钟慢 1 小时。机票时刻均为当地时间。" },
-  { date:"9.25", iso:"2026-09-25", no:"VN679", al:"越南航空", route:"胡志明新山一 T2 → 吉隆坡 T1", from:"SGN", to:"KUL", dep:"15:25", arr:"18:25", bag:"托运 23KG", book:"去哪儿", note:"同机场 T2 中转；当晚住 T2 附近方便次日亚航", tz:"落地吉隆坡后调表：钟快 1 小时，与北京对齐。" },
+  { date:"9.25", iso:"2026-09-25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", from:"PKX", to:"SGN", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段", tz:"到胡志明，慢 1 小时" },
+  { date:"9.25", iso:"2026-09-25", no:"VN679", al:"越南航空", route:"胡志明新山一 T2 → 吉隆坡 T1", from:"SGN", to:"KUL", dep:"15:25", arr:"18:25", bag:"托运 23KG", book:"去哪儿", note:"同机场 T2 中转；当晚住 T2 附近方便次日亚航", tz:"到吉隆坡，快 1 小时" },
   { date:"9.26", iso:"2026-09-26", no:"AK310", al:"亚洲航空", route:"吉隆坡 T2 → 科莫多", from:"KUL", to:"LBJ", dep:"10:45", arr:"14:25", bag:"无免费托运（已加购）", book:"去哪儿", note:"两人分单；从 T1 酒店转到 T2" },
   { date:"9.29", iso:"2026-09-29", no:"QZ647", al:"印尼亚航", route:"科莫多 → 巴厘岛登巴萨 D", from:"LBJ", to:"DPS", dep:"13:05", arr:"14:20", bag:"以机票为准", book:"去哪儿", note:"抵登巴萨后接机去库塔" },
-  { date:"10.7", iso:"2026-10-07", no:"QZ322", al:"印尼亚航", route:"泗水朱安达 T2 → 吉隆坡 T2", from:"SUB", to:"KUL", dep:"11:20", arr:"15:00", bag:"以机票为准", book:"去哪儿", note:"无餐食；机场酒店出发", tz:"落地吉隆坡后调表：钟快 1 小时（爪哇慢时区 → 吉隆坡）。" },
-  { date:"10.7", iso:"2026-10-07", no:"VN678", al:"越南航空", route:"吉隆坡 T1 → 胡志明新山一 T2", from:"KUL", to:"SGN", dep:"19:25", arr:"20:15", bag:"托运 23KG", book:"去哪儿", note:"KUL T2 转到 T1，预留 4 小时", tz:"落地胡志明后调表：钟慢 1 小时。" },
-  { date:"10.8", iso:"2026-10-08", no:"VN516", al:"越南航空", route:"胡志明新山一 T2 → 北京大兴", from:"SGN", to:"PKX", dep:"00:35", arr:"06:30", bag:"托运 23KG", book:"去哪儿", note:"时刻已变更（原 00:45）；SGN 过夜中转不出机场", tz:"落地北京后调表：钟快 1 小时，回到北京时间。" }
+  { date:"10.7", iso:"2026-10-07", no:"QZ322", al:"印尼亚航", route:"泗水朱安达 T2 → 吉隆坡 T2", from:"SUB", to:"KUL", dep:"11:20", arr:"15:00", bag:"以机票为准", book:"去哪儿", note:"无餐食；机场酒店出发", tz:"到吉隆坡，快 1 小时" },
+  { date:"10.7", iso:"2026-10-07", no:"VN678", al:"越南航空", route:"吉隆坡 T1 → 胡志明新山一 T2", from:"KUL", to:"SGN", dep:"19:25", arr:"20:15", bag:"托运 23KG", book:"去哪儿", note:"KUL T2 转到 T1，预留 4 小时", tz:"到胡志明，慢 1 小时" },
+  { date:"10.8", iso:"2026-10-08", no:"VN516", al:"越南航空", route:"胡志明新山一 T2 → 北京大兴", from:"SGN", to:"PKX", dep:"00:35", arr:"06:30", bag:"托运 23KG", book:"去哪儿", note:"时刻已变更（原 00:45）；SGN 过夜中转不出机场", tz:"到北京，快 1 小时" }
 ];
 
 const hotels = [
@@ -605,13 +605,13 @@ const days = [
   { date:"9.25", iso:"2026-09-25", title:"北京 → 胡志明 → 吉隆坡", phase:"transit",
     stay:"吉隆坡市区酒店（T2附近，待预订）", breakfast:"机上 / 抵达后晚餐",
     flight:"VN517 08:30–12:25；VN679 15:25–18:25",
-    tz:"当天两次调表：落地胡志明钟慢 1 小时；再飞吉隆坡钟快 1 小时，与北京对齐。",
+    tz:"到胡志明慢 1 小时；再飞吉隆坡快 1 小时",
     events:[
     { t:"05:30", title:"出发去北京大兴机场", note:"护照、e-VOA、行程单；VN517 提前 3 小时到场", kind:"must" },
     { t:"08:30", title:"VN517 飞胡志明", note:"越南航空，大兴 → 新山一 T2，托运 23KG", kind:"hl" },
-    { t:"12:25", title:"抵达胡志明 T2", note:"不出海关，同航站楼转 VN679", kind:"must", tz:"落地后调表：钟慢 1 小时。" },
+    { t:"12:25", title:"抵达胡志明 T2", note:"不出海关，同航站楼转 VN679", kind:"must", tz:"慢 1 小时" },
     { t:"15:25", title:"VN679 飞吉隆坡", note:"新山一 T2 → 吉隆坡 T1，托运 23KG", kind:"hl" },
-    { t:"18:25", title:"抵达吉隆坡 T1，入住 T2 附近酒店", note:"酒店待预订；次日亚航在 T2", kind:"must", tz:"落地后调表：钟快 1 小时，与北京对齐。" }
+    { t:"18:25", title:"抵达吉隆坡 T1，入住 T2 附近酒店", note:"酒店待预订；次日亚航在 T2", kind:"must", tz:"快 1 小时" }
   ]},
   { date:"9.26", iso:"2026-09-26", title:"吉隆坡 → 科莫多", phase:"komodo",
     stay:"Katamaran Hotel & Resort Komodo（豪华海景大床，已确认）", breakfast:"吉隆坡酒店后退房",
@@ -681,10 +681,10 @@ const days = [
   { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java",
     stay:"Grand Harvest Resort & Villas Ijen（花园景豪华双人，已确认）", breakfast:"追海豚后简餐",
     flight:"无飞机；Gilimanuk 轮渡去爪哇",
-    tz:"巴厘轮渡到爪哇后调表：钟慢 1 小时。宜珍叫早按爪哇时间。",
+    tz:"过海去爪哇，慢 1 小时",
     events:[
     { t:"上午", title:"罗威纳追海豚，海上日出", note:"船待预订", kind:"hl" },
-    { t:"下午", title:"包车 → Gilimanuk 轮渡 → 外南梦 → 宜珍", note:"跨岛全程待预订（包车+轮渡+包车）", kind:"must", tz:"过海到爪哇后调表：钟慢 1 小时。" },
+    { t:"下午", title:"包车 → Gilimanuk 轮渡 → 外南梦 → 宜珍", note:"跨岛全程待预订（包车+轮渡+包车）", kind:"must", tz:"慢 1 小时" },
     { t:"晚上", title:"入住大丰收度假村，补觉", note:"准备凌晨夜爬；头灯、登山杖、口罩", kind:"must" }
   ]},
   { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java",
@@ -706,21 +706,21 @@ const days = [
   { date:"10.07", iso:"2026-10-07", title:"泗水 → 吉隆坡 → 胡志明", phase:"transit",
     stay:"胡志明新山一中转（不出机场）", breakfast:"机场酒店早餐",
     flight:"QZ322 11:20–15:00；VN678 19:25–20:15",
-    tz:"当天两次调表：泗水飞吉隆坡钟快 1 小时；再飞胡志明钟慢 1 小时。",
+    tz:"到吉隆坡快 1 小时；再飞胡志明慢 1 小时",
     events:[
     { t:"09:00", title:"机场酒店退房，送机", note:"确认 Premier Place 免费送机；QZ322 无餐食", kind:"must" },
     { t:"11:20", title:"QZ322 飞吉隆坡 T2", note:"泗水朱安达 T2 → 吉隆坡 T2", kind:"hl" },
-    { t:"15:00", title:"抵达吉隆坡 T2，转到 T1", note:"VN678 在 T1，预留 4 小时", kind:"must", tz:"从爪哇到吉隆坡，落地后调表：钟快 1 小时。" },
+    { t:"15:00", title:"抵达吉隆坡 T2，转到 T1", note:"VN678 在 T1，预留 4 小时", kind:"must", tz:"快 1 小时" },
     { t:"19:25", title:"VN678 飞胡志明", note:"吉隆坡 T1 → 新山一 T2，托运 23KG", kind:"hl" },
-    { t:"20:15", title:"抵达胡志明 T2，过夜中转", note:"不出机场；联程行李直挂", kind:"must", tz:"落地后调表：钟慢 1 小时。" }
+    { t:"20:15", title:"抵达胡志明 T2，过夜中转", note:"不出机场；联程行李直挂", kind:"must", tz:"慢 1 小时" }
   ]},
   { date:"10.08", iso:"2026-10-08", title:"胡志明 → 北京", phase:"transit",
     stay:"返程无酒店", breakfast:"机上",
     flight:"VN516 00:35 新山一 T2 → 06:30 北京大兴",
-    tz:"落地北京后调表：钟快 1 小时，回到北京时间。",
+    tz:"到北京，快 1 小时",
     events:[
     { t:"00:35", title:"VN516 飞北京大兴", note:"时刻已变更（原 00:45）；托运 23KG", kind:"hl" },
-    { t:"06:30", title:"抵达北京大兴，行程结束", note:"检查行李", kind:"must", tz:"落地后调表：钟快 1 小时，回到北京时间。" }
+    { t:"06:30", title:"抵达北京大兴，行程结束", note:"检查行李", kind:"must", tz:"快 1 小时" }
   ]}
 ];
 
@@ -1055,20 +1055,20 @@ function paintFx(el, data) {
     <p class="hint">中间价仅供参考，${note}来源 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a></p>`;
 }
 function tzNote(text) {
-  return text ? `<div class="callout tz-note">调表 · ${text}</div>` : "";
+  return text ? `<div class="callout tz-note">时差 · ${text}</div>` : "";
 }
 function tzCard() {
   const dayTap = (label, s) => tap(label, "days", "day-" + dayIndexForDate(s));
   return `
     <div class="card" id="tz-card">
       <div class="kicker">时差提醒</div>
-      <div class="fx-row"><span>胡志明 · 爪哇</span><b>比北京慢 1 小时</b></div>
-      <div class="fx-row"><span>吉隆坡 · 科莫多 · 巴厘岛</span><b>与北京一致</b></div>
-      <p class="hint">机票时刻都是当地时间。手机一般会自动改。下面这几天要调表：</p>
-      <div class="tz-shift">${dayTap("9.25", "9.25")} 北京→胡志明，钟慢 1 小时；当天再飞吉隆坡，钟快 1 小时</div>
-      <div class="tz-shift">${dayTap("10.4", "10.04")} 巴厘轮渡去爪哇，钟慢 1 小时。宜珍叫早按爪哇时间</div>
-      <div class="tz-shift">${dayTap("10.7", "10.07")} 泗水→吉隆坡，钟快 1 小时；当晚再飞胡志明，钟慢 1 小时</div>
-      <div class="tz-shift">${dayTap("10.8", "10.08")} 胡志明→北京，钟快 1 小时</div>
+      <div class="fx-row"><span>胡志明 · 爪哇</span><b>慢 1 小时</b></div>
+      <div class="fx-row"><span>吉隆坡 · 科莫多 · 巴厘岛</span><b>同北京</b></div>
+      <p class="hint">机票是当地时间</p>
+      <div class="tz-shift">${dayTap("9.25", "9.25")} 到胡志明慢 1 小时，再飞吉隆坡快 1 小时</div>
+      <div class="tz-shift">${dayTap("10.4", "10.04")} 轮渡去爪哇慢 1 小时</div>
+      <div class="tz-shift">${dayTap("10.7", "10.07")} 到吉隆坡快 1 小时，再飞胡志明慢 1 小时</div>
+      <div class="tz-shift">${dayTap("10.8", "10.08")} 回北京快 1 小时</div>
     </div>`;
 }
 function mountFx(root) {
@@ -1499,7 +1499,7 @@ function renderTrip(filter, highlightId) {
   if (tripTab === "flights") {
     body = `
       <div class="page-head c-purple">机票 <span>7 段 · 去哪儿</span></div>
-      <p class="hint">点日期看当天日程。「飞常准」查航班动态。返程 VN516 已改为 00:35。跨时区航班有调表备注。</p>
+      <p class="hint">点日期看当天日程。「飞常准」查航班动态。返程 VN516 已改为 00:35。</p>
       ${flights.map(flightBlock).join("")}`;
   } else if (tripTab === "hotels") {
     body = `
