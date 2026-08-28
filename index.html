@@ -270,6 +270,31 @@
     .prog-top b { color: var(--accent); }
     .prog-bar { height: 8px; background: #d1fae5; border-radius: 99px; overflow: hidden; }
     .prog-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s ease; }
+    .add-box .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .add-box .pair .field { margin-bottom: 8px; }
+    .spend-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 11px 0; border-top: 1px solid #f3f4f6;
+    }
+    .spend-row:first-of-type { border-top: none; }
+    .spend-row .lab { flex: 1; min-width: 0; }
+    .spend-row .lab b { display: block; font-size: 14px; font-weight: 700; }
+    .spend-amt { font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; text-align: right; }
+    .spend-amt.wait { color: var(--orange); font-weight: 700; font-size: 13px; }
+    .spend-sum {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 10px; padding: 8px 0 2px; font-size: 13px;
+    }
+    .spend-sum span { color: var(--muted); }
+    .spend-bar {
+      height: 6px; background: #eef2f1; border-radius: 99px; overflow: hidden; margin-top: 6px;
+    }
+    .spend-bar i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+    .spend-bar.cat-机票 i { background: var(--purple); }
+    .spend-bar.cat-酒店 i { background: var(--accent); }
+    .spend-bar.cat-活动 i { background: var(--orange); }
+    .spend-bar.cat-交通 i { background: var(--blue); }
+    .spend-bar.cat-其他 i { background: #64748b; }
     textarea {
       width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 12px;
       padding: 10px; font: inherit; resize: none; background: #fafafa;
@@ -546,7 +571,7 @@
       <div class="card">
         <div class="kicker">出发倒计时</div>
         <div class="next">2026.9.25 北京出发</div>
-        <p class="hint">点「行程」看日程/航班，「准备」看待办、行李和备忘。</p>
+        <p class="hint">点「行程」看日程/航班，「准备」看待办、行李和花费。</p>
       </div>
     </section>
     <section id="page-trip" class="page"></section>
@@ -602,7 +627,8 @@ const hotels = [
 const acts = [
   { date:"9.27", name:"科莫多半日游", aka:["半日游"], who:"GP Travel & Rentals（Jordy）", detail:"Kelor 岛 → Menjerite → Kalong 蝙蝠岛落日", note:"英文向导，12人船", img:"img/acts/act-komodo-half.webp?v=2" },
   { date:"9.28", name:"科莫多一日跳岛", aka:["一日跳岛"], who:"GP Travel & Rentals", detail:"帕达尔岛 → 粉红沙滩 → 科莫多龙 → 月牙湾 → Manta Point → 海龟湾", note:"英文向导，18–25座船；两日两人共 IDR 1,400,000", img:"img/acts/act-komodo-day.webp?v=2" },
-  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","库塔海滩冲浪练习","冲浪练习","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 订单 REJ355397", klook:true, img:"img/acts/act-kuta-surf.webp?v=2" },
+  { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 已确认 ¥66.5", klook:true, img:"img/acts/act-kuta-surf.webp?v=2" },
+  { date:"9.30", name:"库塔冲浪私人课 2 小时（第二天）", aka:["库塔海滩冲浪练习","冲浪练习"], who:"Daddy and Mom Surfing School", detail:"私人课 2 小时", note:"Klook 已确认 ¥70", klook:true, img:"img/acts/act-kuta-surf.webp?v=2" },
   { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707", klook:true, img:"img/acts/act-cooking.webp?v=2" },
   { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认", img:"img/acts/act-ow-dive.webp?v=2" },
   { date:"10.5 02:00", name:"宜珍火山夜爬", aka:["宜珍火山夜爬","宜珍蓝火"], who:"Andre 泗水包车", detail:"02:00 出发，蓝火 + 硫磺湖；07:00 回大丰收休息", note:"已定，含在 Andre 行程", img:"img/acts/act-ijen-bluefire.webp?v=1" },
@@ -659,7 +685,7 @@ const days = [
     stay:"Meruhdani Boutique Ubud（园景高级豪华房，已确认）", breakfast:"库塔酒店早餐",
     flight:"无航班，包车去乌布",
     events:[
-    { t:"上午", title:"库塔海滩冲浪练习", note:"待预订", kind:"hl" },
+    { t:"上午", title:"库塔海滩冲浪练习", note:"Daddy and Mom Surfing School；Klook 已确认", kind:"hl" },
     { t:"下午", title:"包车前往乌布，入住 Meruhdani", note:"包车待预订；梅鲁达尼精品酒店", kind:"must" },
     { t:"傍晚", title:"乌布 SPA + 手工体验", note:"待预订", kind:"hl" }
   ]},
@@ -864,7 +890,7 @@ const prep = [
   { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡市区酒店（1晚，T2附近）", done:false },
   { id:"d-kata", g:"按日期", t:"9.26 Katamaran 酒店预约活动", done:false },
   { id:"d-pick", g:"按日期", t:"9.29 预订登巴萨机场 → 库塔酒店接机", done:false },
-  { id:"d-surf", g:"按日期", t:"9.30 预订库塔冲浪练习", done:false },
+  { id:"d-surf", g:"按日期", t:"9.30 库塔冲浪练习（Klook 已订）", done:true },
   { id:"d-ubudcar", g:"按日期", t:"9.30 预订库塔 → 乌布包车", done:false },
   { id:"d-spa", g:"按日期", t:"9.30 预订乌布 SPA + 手工体验", done:false },
   { id:"d-cook", g:"按日期", t:"10.1 预订乌布农场烹饪课（已订 Ketut's Bali）", done:true },
@@ -878,6 +904,39 @@ const prep = [
   { id:"d-subcar", g:"按日期", t:"10.6 布罗莫 → 泗水包车（Andre 已定）", done:true },
   { id:"d-andrepay", g:"按日期", t:"10.4 / 10.6 付 Andre：当天一半、最后一天一半，共 IDR 3,800,000", done:false },
   { id:"d-shuttle", g:"按日期", t:"10.7 确认泗水机场酒店免费送机", done:false }
+];
+
+// Built-in spend catalog only. Couple add/edit/delete is in cloud.lists
+// (extraSpend / goneSpend / editSpend). Do not copy those user items into this
+// array, and do not reset cloud.lists when changing this list.
+// Seamount 已退订、Oryza 已取消不列入；西双版纳酒店不是这次行程。
+const SPEND_CATS = ["机票","酒店","活动","交通","其他"];
+const spends = [
+  { id:"sp-vn", cat:"机票", date:"9.25", name:"越南航空往返 VN517/679/678/516", cny:3150, note:"去哪儿一整单，含去程两段和回程两段" },
+  { id:"sp-ak310a", cat:"机票", date:"9.26", name:"AK310 吉隆坡 → 科莫多", cny:773, note:"两人分单" },
+  { id:"sp-ak310b", cat:"机票", date:"9.26", name:"AK310 吉隆坡 → 科莫多", cny:712, note:"两人分单" },
+  { id:"sp-qz647", cat:"机票", date:"9.29", name:"QZ647 科莫多 → 巴厘岛", cny:816, note:"去哪儿" },
+  { id:"sp-qz322", cat:"机票", date:"10.7", name:"QZ322 泗水 → 吉隆坡", cny:666, note:"去哪儿" },
+  { id:"sp-h-kl", cat:"酒店", date:"9.25", name:"吉隆坡市区酒店（T2附近）", cny:null, note:"待预订" },
+  { id:"sp-h-kata", cat:"酒店", date:"9.26", name:"Katamaran Hotel & Resort Komodo", cny:1162.47, note:"去哪儿 · 1 晚" },
+  { id:"sp-h-sea", cat:"酒店", date:"9.27", name:"Seaesta Komodo Hostel & Hotel", cny:963.74, note:"去哪儿 · 2 晚" },
+  { id:"sp-h-kuta", cat:"酒店", date:"9.29", name:"The Kuta Beach Heritage Hotel", cny:491.15, note:"去哪儿 · 1 晚" },
+  { id:"sp-h-meru", cat:"酒店", date:"9.30", name:"Meruhdani Boutique Ubud", cny:344.95, note:"去哪儿 · 1 晚" },
+  { id:"sp-h-hab", cat:"酒店", date:"10.1", name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补" },
+  { id:"sp-h-ocean", cat:"酒店", date:"10.1", name:"Ocean Villa Dive Resort Tulamben", cny:303, note:"携程已确认；行程待退订，退成后删这条" },
+  { id:"sp-h-lov", cat:"酒店", date:"10.3", name:"New Sunari Lovina Beach Resort", cny:283.02, note:"去哪儿 · 1 晚" },
+  { id:"sp-h-gh", cat:"酒店", date:"10.4", name:"Grand Harvest Resort & Villas Ijen", cny:307.9, note:"去哪儿 · 1 晚" },
+  { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；行程住大丰收，如退订请删" },
+  { id:"sp-h-omah", cat:"酒店", date:"10.5", name:"Omah Kayu Bromo", cny:154, note:"携程 · 1 晚" },
+  { id:"sp-h-prem", cat:"酒店", date:"10.6", name:"Premier Place Surabaya Airport", cny:270.12, note:"去哪儿 · 1 晚" },
+  { id:"sp-a-komodo", cat:"活动", date:"9.27", name:"科莫多半日游 + 一日跳岛", idr:1400000, note:"两日两人共价，GP Travel" },
+  { id:"sp-a-surf1", cat:"活动", date:"9.29", name:"库塔冲浪私人课（第一天）", cny:66.5, note:"Klook" },
+  { id:"sp-a-surf2", cat:"活动", date:"9.30", name:"库塔冲浪私人课（第二天）", cny:70, note:"Klook" },
+  { id:"sp-a-cook", cat:"活动", date:"10.1", name:"Ketut's Bali 美食烹饪教室", cny:264, note:"Klook · 2 人" },
+  { id:"sp-a-ow", cat:"活动", date:"10.2", name:"OW 潜水考证", cny:null, note:"微信已确认，金额待补" },
+  { id:"sp-a-ijen", cat:"活动", date:"10.5", name:"宜珍火山夜爬", cny:null, note:"含在 Andre 行程，门票若另付再补" },
+  { id:"sp-a-bromo", cat:"活动", date:"10.6", name:"布罗莫日出", cny:null, note:"含在 Andre 行程，门票若另付再补" },
+  { id:"sp-andre", cat:"交通", date:"10.4", name:"Andre 泗水包车（宜珍→布罗莫→泗水）", idr:3800000, note:"当天一半、最后一天一半" }
 ];
 
 const phaseName = { komodo:"科莫多", bali:"巴厘", java:"爪哇", transit:"中转" };
@@ -916,17 +975,24 @@ function seedDefaults() {
 }
 
 function emptyLists() {
-  return { extraPrep: [], extraPack: [], gonePrep: [], gonePack: [], editPrep: {}, editPack: {} };
+  return {
+    extraPrep: [], extraPack: [], extraSpend: [],
+    gonePrep: [], gonePack: [], goneSpend: [],
+    editPrep: {}, editPack: {}, editSpend: {}
+  };
 }
 function ensureLists() {
   const cur = cloud.lists && typeof cloud.lists === "object" ? cloud.lists : {};
   cloud.lists = {
     extraPrep: Array.isArray(cur.extraPrep) ? cur.extraPrep : [],
     extraPack: Array.isArray(cur.extraPack) ? cur.extraPack : [],
+    extraSpend: Array.isArray(cur.extraSpend) ? cur.extraSpend : [],
     gonePrep: Array.isArray(cur.gonePrep) ? cur.gonePrep : [],
     gonePack: Array.isArray(cur.gonePack) ? cur.gonePack : [],
+    goneSpend: Array.isArray(cur.goneSpend) ? cur.goneSpend : [],
     editPrep: cur.editPrep && typeof cur.editPrep === "object" ? cur.editPrep : {},
-    editPack: cur.editPack && typeof cur.editPack === "object" ? cur.editPack : {}
+    editPack: cur.editPack && typeof cur.editPack === "object" ? cur.editPack : {},
+    editSpend: cur.editSpend && typeof cur.editSpend === "object" ? cur.editSpend : {}
   };
   return cloud.lists;
 }
@@ -959,12 +1025,82 @@ function liveBags() {
   const L = ensureLists();
   return mergeList(bags, L.extraPack, L.gonePack, L.editPack);
 }
+function liveSpend() {
+  const L = ensureLists();
+  return mergeList(spends, L.extraSpend, L.goneSpend, L.editSpend);
+}
+function parseAmt(s) {
+  const t = String(s ?? "").trim().replace(/,/g, "");
+  if (!t) return null;
+  const n = Number(t);
+  return Number.isFinite(n) ? n : null;
+}
+function spendNum(v) {
+  if (v == null || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+function spendPending(item) {
+  return spendNum(item.cny) == null && spendNum(item.idr) == null;
+}
+function spendCny(item, fx) {
+  const cny = spendNum(item.cny);
+  if (cny != null) return cny;
+  const idr = spendNum(item.idr);
+  if (idr != null && fx && Number.isFinite(fx.cnyToIdr) && fx.cnyToIdr > 0) return idr / fx.cnyToIdr;
+  return null;
+}
+function spendDateKey(s) {
+  const m = String(s || "").match(/(\d{1,2})\.(\d{1,2})/);
+  if (m) return Number(m[1]) * 100 + Number(m[2]);
+  const iso = String(s || "").match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso) return Number(iso[2]) * 100 + Number(iso[3]);
+  return 9999;
+}
+function spendDateLabel(s) {
+  const m = String(s || "").match(/(\d{1,2})\.(\d{1,2})/);
+  if (m) return Number(m[1]) + "." + Number(m[2]);
+  const iso = String(s || "").match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso) return Number(iso[2]) + "." + Number(iso[3]);
+  return (s || "日期待定");
+}
+function fmtCny(n) {
+  if (!Number.isFinite(n)) return "—";
+  const d = Math.abs(n - Math.round(n)) < 1e-6 ? 0 : 2;
+  return n.toLocaleString("zh-CN", { minimumFractionDigits: d, maximumFractionDigits: 2 });
+}
+function spendFieldsFromForm(form) {
+  const name = (form.querySelector("[data-add-text]").value || "").trim();
+  const cat = (form.querySelector("[data-add-cat]").value || "").trim() || "其他";
+  const date = (form.querySelector("[data-add-date]").value || "").trim();
+  const note = (form.querySelector("[data-add-note]").value || "").trim();
+  const cur = form.querySelector("[data-add-cur]").value === "IDR" ? "IDR" : "CNY";
+  const amt = parseAmt(form.querySelector("[data-add-amt]").value);
+  return {
+    name, cat, date, note,
+    cny: cur === "CNY" ? amt : null,
+    idr: cur === "IDR" ? amt : null
+  };
+}
 function addListItem(kind, t, g) {
   t = (t || "").trim();
   if (!t) return;
   const L = ensureLists();
   if (kind === "prep") L.extraPrep.push({ id: newItemId("up-"), g: (g || "自加").trim() || "自加", t });
   else L.extraPack.push({ id: newItemId("ub-"), g: (g || "其他").trim() || "其他", t, st: "none" });
+}
+function addSpendItem(fields) {
+  const name = (fields.name || "").trim();
+  if (!name) return;
+  ensureLists().extraSpend.push({
+    id: newItemId("us-"),
+    cat: (fields.cat || "其他").trim() || "其他",
+    date: (fields.date || "").trim(),
+    name,
+    cny: spendNum(fields.cny),
+    idr: spendNum(fields.idr),
+    note: (fields.note || "").trim()
+  });
 }
 function renameListItem(kind, id, t, g) {
   t = (t || "").trim();
@@ -978,6 +1114,21 @@ function renameListItem(kind, id, t, g) {
   else if (kind === "prep") L.editPrep[id] = Object.assign({}, L.editPrep[id], patch);
   else L.editPack[id] = Object.assign({}, L.editPack[id], patch);
 }
+function patchSpendItem(id, fields) {
+  if (!id || !(fields.name || "").trim()) return;
+  const L = ensureLists();
+  const patch = {
+    name: fields.name.trim(),
+    cat: (fields.cat || "其他").trim() || "其他",
+    date: (fields.date || "").trim(),
+    note: (fields.note || "").trim(),
+    cny: spendNum(fields.cny),
+    idr: spendNum(fields.idr)
+  };
+  const extra = L.extraSpend.find(p => p.id === id);
+  if (extra) Object.assign(extra, patch);
+  else L.editSpend[id] = Object.assign({}, L.editSpend[id], patch);
+}
 function removeListItem(kind, id) {
   if (!id) return;
   const L = ensureLists();
@@ -986,11 +1137,15 @@ function removeListItem(kind, id) {
     L.extraPrep = L.extraPrep.filter(p => p.id !== id);
     delete L.editPrep[id];
     if (cloud.prep) delete cloud.prep[id];
-  } else {
+  } else if (kind === "pack") {
     L.gonePack = Array.from(new Set(L.gonePack.concat(id)));
     L.extraPack = L.extraPack.filter(p => p.id !== id);
     delete L.editPack[id];
     if (cloud.pack) delete cloud.pack[id];
+  } else if (kind === "spend") {
+    L.goneSpend = Array.from(new Set(L.goneSpend.concat(id)));
+    L.extraSpend = L.extraSpend.filter(p => p.id !== id);
+    delete L.editSpend[id];
   }
 }
 function itemActions(kind, id) {
@@ -1005,6 +1160,33 @@ function addComposer(kind, groups, defaultGroup) {
       <input class="field" data-add-text maxlength="120" placeholder="${kind === "prep" ? "要做的事" : "要带的东西"}">
       <input class="field" data-add-group maxlength="20" list="${kind}-groups" placeholder="分组" value="${esc(defaultGroup)}">
       <datalist id="${kind}-groups">${opts}</datalist>
+      <div class="bar">
+        <button type="button" class="btn" data-add-save>添加</button>
+        <button type="button" class="btn sec" data-add-cancel>取消</button>
+      </div>
+    </div>`;
+}
+function spendComposer() {
+  const cats = SPEND_CATS.map(c => `<option value="${esc(c)}"></option>`).join("");
+  const dates = days.map(d => `<option value="${esc(d.date)}"></option>`).join("");
+  return `
+    <div class="card add-box" data-composer="spend" hidden>
+      <div class="kicker">添加花费</div>
+      <input class="field" data-add-text maxlength="80" placeholder="项目名称">
+      <div class="pair">
+        <input class="field" data-add-cat maxlength="12" list="spend-cats" placeholder="类目" value="其他">
+        <input class="field" data-add-date maxlength="12" list="spend-dates" placeholder="日期 如 10.5">
+      </div>
+      <datalist id="spend-cats">${cats}</datalist>
+      <datalist id="spend-dates">${dates}</datalist>
+      <div class="pair">
+        <input class="field" data-add-amt inputmode="decimal" placeholder="金额，空着=待补">
+        <select class="field" data-add-cur>
+          <option value="CNY">人民币</option>
+          <option value="IDR">印尼盾</option>
+        </select>
+      </div>
+      <input class="field" data-add-note maxlength="80" placeholder="备注（可选）">
       <div class="bar">
         <button type="button" class="btn" data-add-save>添加</button>
         <button type="button" class="btn sec" data-add-cancel>取消</button>
@@ -1396,7 +1578,7 @@ const TRIP_TABS = [
 const PREP_TABS = [
   { id:"todo", label:"待办" },
   { id:"pack", label:"行李" },
-  { id:"note", label:"备忘" }
+  { id:"spend", label:"花费" }
 ];
 
 function subTabBar(tabs, current, extraClass) {
@@ -1889,12 +2071,30 @@ function openComposer(box, kind, item) {
   form.hidden = false;
   form.dataset.mode = item ? "edit" : "add";
   form.dataset.id = item ? item.id : "";
-  form.querySelector(".kicker").textContent = item
-    ? (kind === "prep" ? "改待办" : "改行李")
-    : (kind === "prep" ? "添加待办" : "添加行李");
-  form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
-  form.querySelector("[data-add-text]").value = item ? item.t : "";
-  form.querySelector("[data-add-group]").value = item ? item.g : (kind === "prep" ? "自加" : "其他");
+  if (kind === "spend") {
+    form.querySelector(".kicker").textContent = item ? "改花费" : "添加花费";
+    form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
+    form.querySelector("[data-add-text]").value = item ? (item.name || "") : "";
+    form.querySelector("[data-add-cat]").value = item ? (item.cat || "其他") : "其他";
+    form.querySelector("[data-add-date]").value = item ? (item.date || "") : "";
+    form.querySelector("[data-add-note]").value = item ? (item.note || "") : "";
+    const idr = spendNum(item && item.idr);
+    const cny = spendNum(item && item.cny);
+    if (idr != null && cny == null) {
+      form.querySelector("[data-add-cur]").value = "IDR";
+      form.querySelector("[data-add-amt]").value = String(idr);
+    } else {
+      form.querySelector("[data-add-cur]").value = "CNY";
+      form.querySelector("[data-add-amt]").value = cny != null ? String(cny) : "";
+    }
+  } else {
+    form.querySelector(".kicker").textContent = item
+      ? (kind === "prep" ? "改待办" : "改行李")
+      : (kind === "prep" ? "添加待办" : "添加行李");
+    form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
+    form.querySelector("[data-add-text]").value = item ? item.t : "";
+    form.querySelector("[data-add-group]").value = item ? item.g : (kind === "prep" ? "自加" : "其他");
+  }
   form.querySelector("[data-add-text]").focus();
   form.scrollIntoView({ behavior: "smooth", block: "center" });
 }
@@ -1915,6 +2115,18 @@ function bindPrepActions(box) {
     if (!canEdit) return;
     const form = btn.closest("[data-composer]");
     const kind = form.dataset.composer;
+    if (kind === "spend") {
+      const fields = spendFieldsFromForm(form);
+      if (!fields.name) {
+        form.querySelector("[data-add-text]").focus();
+        return;
+      }
+      if (form.dataset.mode === "edit") patchSpendItem(form.dataset.id, fields);
+      else addSpendItem(fields);
+      renderPrep();
+      schedulePush();
+      return;
+    }
     const t = form.querySelector("[data-add-text]").value;
     const g = form.querySelector("[data-add-group]").value;
     if (!(t || "").trim()) {
@@ -1956,6 +2168,111 @@ function bindPrepActions(box) {
     renderPrep();
     schedulePush();
   });
+  box.querySelectorAll("[data-edit-spend]").forEach(btn => btn.onclick = e => {
+    e.preventDefault();
+    const item = liveSpend().find(p => p.id === btn.dataset.editSpend);
+    if (item) openComposer(box, "spend", item);
+  });
+  box.querySelectorAll("[data-del-spend]").forEach(btn => btn.onclick = e => {
+    e.preventDefault();
+    if (!confirm("删除这条花费？统计会一起更新。")) return;
+    removeListItem("spend", btn.dataset.delSpend);
+    renderPrep();
+    schedulePush();
+  });
+}
+
+function fxUsedCnyToIdr(fx) {
+  return fx && Number.isFinite(fx.cnyToIdr) && fx.cnyToIdr > 0 ? fx.cnyToIdr : 0;
+}
+function spendAmtHtml(item, fx) {
+  if (spendPending(item)) return `<div class="spend-amt wait">待补</div>`;
+  const cny = spendCny(item, fx);
+  const idr = spendNum(item.idr);
+  const paidCny = spendNum(item.cny);
+  if (paidCny != null) return `<div class="spend-amt">¥${fmtCny(paidCny)}</div>`;
+  const approx = cny != null ? `约 ¥${fmtCny(cny)}` : "待折合";
+  return `<div class="spend-amt">IDR ${fmtIdr(idr)}<div class="note">${approx}</div></div>`;
+}
+function spendStatRows(groups, max) {
+  return groups.map(g => {
+    const pct = max > 0 ? Math.round(g.cny / max * 100) : 0;
+    const wait = g.wait ? ` · 待补 ${g.wait}` : "";
+    const catClass = SPEND_CATS.includes(g.key) ? " cat-" + g.key : "";
+    return `<div class="spend-sum"><span>${esc(g.label)}${wait}</span><b>¥${fmtCny(g.cny)}</b></div>
+      <div class="spend-bar${catClass}"><i style="width:${pct}%"></i></div>`;
+  }).join("");
+}
+function spendBodyHtml(fx) {
+  const items = liveSpend();
+  const known = items.filter(p => !spendPending(p));
+  const waitN = items.length - known.length;
+  const total = known.reduce((s, p) => s + (spendCny(p, fx) || 0), 0);
+  const idrOnly = known.filter(p => spendNum(p.cny) == null && spendNum(p.idr) != null);
+  const catOrder = [...SPEND_CATS, ...[...new Set(items.map(p => p.cat || "其他"))].filter(c => !SPEND_CATS.includes(c))];
+  const byCat = catOrder.map(cat => {
+    const rows = items.filter(p => (p.cat || "其他") === cat);
+    if (!rows.length) return null;
+    return {
+      key: cat, label: cat,
+      cny: rows.reduce((s, p) => s + (spendCny(p, fx) || 0), 0),
+      wait: rows.filter(spendPending).length,
+      n: rows.length
+    };
+  }).filter(Boolean);
+  const dateMap = new Map();
+  items.forEach(p => {
+    const label = spendDateLabel(p.date);
+    const key = spendDateKey(p.date);
+    const cur = dateMap.get(label) || { key, label, cny: 0, wait: 0, n: 0 };
+    cur.cny += spendCny(p, fx) || 0;
+    if (spendPending(p)) cur.wait += 1;
+    cur.n += 1;
+    dateMap.set(label, cur);
+  });
+  const byDate = [...dateMap.values()].sort((a, b) => a.key - b.key);
+  const maxCat = Math.max(0, ...byCat.map(g => g.cny));
+  const maxDate = Math.max(0, ...byDate.map(g => g.cny));
+  const detail = catOrder.map(cat => {
+    const rows = items.filter(p => (p.cat || "其他") === cat);
+    if (!rows.length) return "";
+    const sorted = rows.slice().sort((a, b) => spendDateKey(a.date) - spendDateKey(b.date));
+    return `<div class="card">
+      <div class="kicker">${esc(cat)} · ${rows.length}</div>
+      ${sorted.map(p => `
+        <div class="spend-row">
+          <div class="lab">
+            <b>${esc(p.name)}</b>
+            <div class="note">${esc(spendDateLabel(p.date))}${p.note ? " · " + esc(p.note) : ""}</div>
+          </div>
+          ${spendAmtHtml(p, fx)}
+          ${itemActions("spend", p.id)}
+        </div>`).join("")}
+    </div>`;
+  }).join("");
+  const fxHint = idrOnly.length
+    ? (fx && fx.cnyToIdr ? `印尼盾按今日中间价折合（1 元 ≈ ${fmtIdr(fx.cnyToIdr)} 盾）。` : "印尼盾还没折上人民币，连上网络后会更新。")
+    : "";
+  return `
+    <div class="page-head c-orange">花费 <span>${items.length} 笔</span>
+      <button type="button" class="add-pill" data-open-add="spend">＋ 添加</button>
+    </div>
+    ${spendComposer()}
+    <div class="stats">
+      <div class="stat ok"><b>¥${fmtCny(total)}</b><span>已记账</span></div>
+      <div class="stat miss"><b>${waitN}</b><span>待补</span></div>
+      <div class="stat"><b>${items.length}</b><span>全部</span></div>
+    </div>
+    <p class="hint">${canEdit ? "点铅笔改类目、日期、金额，点 × 删除。改完统计立刻更新，并同步给对方。" : "先解锁才能增删改。"} 已退订的不列入。${fxHint}</p>
+    <div class="card">
+      <div class="kicker">按类目</div>
+      ${spendStatRows(byCat, maxCat)}
+    </div>
+    <div class="card">
+      <div class="kicker">按日期</div>
+      ${spendStatRows(byDate, maxDate)}
+    </div>
+    ${detail}`;
 }
 
 function renderPrep() {
@@ -1993,7 +2310,18 @@ function renderPrep() {
             </label>
             ${itemActions("prep", p.id)}
           </div>`).join("")}
-      </div>`).join("")}`;
+      </div>`).join("")}
+    <div class="card">
+      <div class="kicker">共享备忘</div>
+      <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
+      <textarea id="noteBox" placeholder="潜店 WhatsApp、明早谁带口罩……" ${canEdit?"":"disabled"}></textarea>
+    </div>
+    <div class="card">
+      <div class="kicker">签证与入境</div>
+      <p class="note">印尼：需 e-VOA（2025年11月起对中国不免签），约 IDR 500,000/人，官网 molina.imigrasi.go.id</p>
+      <p class="note" style="margin-top:6px">马来西亚：免签，出发前 72 小时内填 MDAC。</p>
+      <p class="note" style="margin-top:6px">越南：胡志明中转不出机场无需签证；联程行李直挂。</p>
+    </div>`;
   const packBody = `
     <div class="page-head c-teal">行李整理 <span>${packedItems.length} 件</span>
       <button type="button" class="add-pill" data-open-add="pack">＋ 添加</button>
@@ -2019,20 +2347,8 @@ function renderPrep() {
           </div>`;
         }).join("")}
       </div>`).join("")}`;
-  const noteBody = `
-    <div class="page-head c-teal">备忘</div>
-    <div class="card">
-      <div class="kicker">共享备忘</div>
-      <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
-      <textarea id="noteBox" placeholder="花费分摊、潜店 WhatsApp、明早谁带口罩……" ${canEdit?"":"disabled"}></textarea>
-    </div>
-    <div class="card">
-      <div class="kicker">签证与入境</div>
-      <p class="note">印尼：需 e-VOA（2025年11月起对中国不免签），约 IDR 500,000/人，官网 molina.imigrasi.go.id</p>
-      <p class="note" style="margin-top:6px">马来西亚：免签，出发前 72 小时内填 MDAC。</p>
-      <p class="note" style="margin-top:6px">越南：胡志明中转不出机场无需签证；联程行李直挂。</p>
-    </div>`;
-  const body = prepTab === "pack" ? packBody : (prepTab === "note" ? noteBody : todoBody);
+  const spendBody = spendBodyHtml(readFxCache());
+  const body = prepTab === "pack" ? packBody : (prepTab === "spend" ? spendBody : todoBody);
   fillPane(box, gateCard() + body);
   bindGate(box);
   bindPrepActions(box);
@@ -2060,6 +2376,14 @@ function renderPrep() {
     };
     ta.oninput = () => { cloud.notes = ta.value; fitNote(); schedulePush(); };
     requestAnimationFrame(fitNote);
+  }
+  if (prepTab === "spend") {
+    const used = fxUsedCnyToIdr(readFxCache());
+    loadFx().then(d => {
+      if (prepTab !== "spend") return;
+      if (document.activeElement && document.activeElement.closest("[data-composer]")) return;
+      if (fxUsedCnyToIdr(d) !== used) renderPrep();
+    }).catch(() => {});
   }
 }
 
@@ -2183,7 +2507,8 @@ requestAnimationFrame(preloadActPhotos);
   try { renderPrep(); } catch (e) {}
   setInterval(async () => {
     if (syncing || document.hidden || !isTextDbSid(sid())) return;
-    if (document.activeElement && document.activeElement.id === "noteBox") return;
+    const ae = document.activeElement;
+    if (ae && (ae.id === "noteBox" || ae.closest("[data-composer]"))) return;
     syncing = true;
     try {
       const prev = JSON.stringify(cloud);
