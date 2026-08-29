@@ -1987,12 +1987,11 @@ function clearSid() {
 
 async function cloudFetch(url, opts) {
   const next = Object.assign({ cache: "no-store" }, opts || {});
-  next.headers = Object.assign({ "Cache-Control": "no-cache", Pragma: "no-cache" }, next.headers || {});
   try {
     return await fetch(url, next);
   } catch (e) {
     const raw = (e && e.message) ? e.message : String(e);
-    throw new Error(raw + " @ " + CLOUD_API);
+    throw new Error(raw + " @ " + url.split("?")[0]);
   }
 }
 
