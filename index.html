@@ -1933,6 +1933,17 @@ function stampOf(c) {
   const t = Date.parse(c && c.updatedAt ? c.updatedAt : "");
   return Number.isFinite(t) ? t : 0;
 }
+function fmtSyncTime(iso) {
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return "";
+  const parts = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric", month: "numeric", day: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: false
+  }).formatToParts(new Date(t));
+  const g = Object.fromEntries(parts.filter(p => p.type !== "literal").map(p => [p.type, p.value]));
+  return `${g.year}.${Number(g.month)}.${Number(g.day)} ${String(g.hour).padStart(2,"0")}:${String(g.minute).padStart(2,"0")}`;
+}
 function saveDraft() {
   try {
     localStorage.setItem(KEY_DRAFT, JSON.stringify({
@@ -2110,7 +2121,7 @@ function renderSyncBits() {
     else if (dirty && sid()) el.textContent = "有改动待保存";
     else if (!sid()) el.textContent = "仅本机，换浏览器或清缓存会丢失";
     else if (cloud.updatedAt)
-      el.textContent = `已同步 · ${cloud.by || "?"} ${cloud.updatedAt.replace("T", " ").slice(0, 16)}`;
+      el.textContent = `已同步 · ${cloud.by || "?"} ${fmtSyncTime(cloud.updatedAt)}`;
     else el.textContent = "还没有云端记录";
   });
 }
