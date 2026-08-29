@@ -287,14 +287,19 @@
     }
     .spend-sum span { color: var(--muted); }
     .spend-bar {
-      height: 6px; background: #eef2f1; border-radius: 99px; overflow: hidden; margin-top: 6px;
+      display: flex; height: 8px; background: #eef2f1; border-radius: 99px;
+      overflow: hidden; margin-top: 6px;
     }
-    .spend-bar i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
-    .spend-bar.cat-机票 i { background: var(--purple); }
-    .spend-bar.cat-酒店 i { background: var(--accent); }
-    .spend-bar.cat-活动 i { background: var(--orange); }
-    .spend-bar.cat-交通 i { background: var(--blue); }
-    .spend-bar.cat-其他 i { background: #64748b; }
+    .spend-bar i { display: block; height: 100%; flex: none; background: var(--accent); }
+    .spend-dot {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      margin-right: 5px; vertical-align: 1px;
+    }
+    .spend-legend {
+      display: flex; flex-wrap: wrap; gap: 6px 12px;
+      margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line);
+      font-size: 11px; color: var(--muted);
+    }
     textarea {
       width: 100%; min-height: 88px; border: 1px solid var(--line); border-radius: 12px;
       padding: 10px; font: inherit; resize: none; background: #fafafa;
@@ -918,6 +923,14 @@ const prep = [
 // array, and do not reset cloud.lists when changing this list.
 // Seamount 已退订、Oryza 已取消不列入；西双版纳酒店不是这次行程。
 const SPEND_CATS = ["机票","酒店","活动","交通","其他"];
+const SPEND_CAT_COLOR = {
+  "机票": "#8b5cf6",
+  "酒店": "#0d9b86",
+  "活动": "#e67e22",
+  "交通": "#3b82f6",
+  "其他": "#64748b"
+};
+const SPEND_CUSTOM_COLORS = ["#e11d48","#65a30d","#0891b2","#c026d3","#92400e","#4f46e5","#f59e0b","#155e75"];
 const spends = [
   { id:"sp-vn", cat:"机票", date:"9.25", name:"越南航空往返 VN517/679/678/516", cny:3150, note:"去哪儿一整单，含去程两段和回程两段" },
   { id:"sp-ak310a", cat:"机票", date:"9.26", name:"AK310 吉隆坡 → 科莫多", cny:773, note:"两人分单" },
@@ -2339,14 +2352,45 @@ function spendAmtHtml(item, fx) {
   const approx = cny != null ? `约 ¥${fmtCny(cny)}` : "待折合";
   return `<div class="spend-amt">IDR ${fmtIdr(idr)}<div class="note">${approx}</div></div>`;
 }
-function spendStatRows(groups, max) {
+function spendColorMap(cats) {
+  const map = {};
+  let i = 0;
+  (cats || []).forEach(cat => {
+    if (SPEND_CAT_COLOR[cat]) map[cat] = SPEND_CAT_COLOR[cat];
+    else map[cat] = SPEND_CUSTOM_COLORS[i++ % SPEND_CUSTOM_COLORS.length];
+  });
+  return map;
+}
+function spendDot(color) {
+  return `<i class="spend-dot" style="background:${color}"></i>`;
+}
+function spendStatRows(groups, max, colorMap) {
   return groups.map(g => {
     const pct = max > 0 ? Math.round(g.cny / max * 100) : 0;
     const wait = g.wait ? ` · 待补 ${g.wait}` : "";
-    const catClass = SPEND_CATS.includes(g.key) ? " cat-" + g.key : "";
-    return `<div class="spend-sum"><span>${esc(g.label)}${wait}</span><b>¥${fmtCny(g.cny)}</b></div>
-      <div class="spend-bar${catClass}"><i style="width:${pct}%"></i></div>`;
+    const color = (colorMap && colorMap[g.key]) || SPEND_CAT_COLOR[g.key] || SPEND_CUSTOM_COLORS[0];
+    return `<div class="spend-sum"><span>${spendDot(color)}${esc(g.label)}${wait}</span><b>¥${fmtCny(g.cny)}</b></div>
+      <div class="spend-bar"><i style="width:${pct}%;background:${color}"></i></div>`;
   }).join("");
+}
+function spendDateRows(groups, max, colorMap, catOrder) {
+  return groups.map(g => {
+    const wait = g.wait ? ` · 待补 ${g.wait}` : "";
+    const segs = catOrder.map(cat => {
+      const amt = (g.parts && g.parts[cat]) || 0;
+      if (amt <= 0 || max <= 0) return "";
+      const color = colorMap[cat] || SPEND_CUSTOM_COLORS[0];
+      return `<i style="width:${(amt / max * 100).toFixed(2)}%;background:${color}" title="${esc(cat)} ¥${fmtCny(amt)}"></i>`;
+    }).join("");
+    return `<div class="spend-sum"><span>${esc(g.label)}${wait}</span><b>¥${fmtCny(g.cny)}</b></div>
+      <div class="spend-bar">${segs}</div>`;
+  }).join("");
+}
+function spendLegend(cats, colorMap) {
+  if (!cats.length) return "";
+  return `<div class="spend-legend">${cats.map(cat =>
+    `<span>${spendDot(colorMap[cat] || SPEND_CUSTOM_COLORS[0])}${esc(cat)}</span>`
+  ).join("")}</div>`;
 }
 function spendBodyHtml(fx) {
   const items = liveSpend();
@@ -2365,12 +2409,16 @@ function spendBodyHtml(fx) {
       n: rows.length
     };
   }).filter(Boolean);
+  const colorMap = spendColorMap(catOrder);
   const dateMap = new Map();
   items.forEach(p => {
     const label = spendDateLabel(p.date);
     const key = spendDateKey(p.date);
-    const cur = dateMap.get(label) || { key, label, cny: 0, wait: 0, n: 0 };
-    cur.cny += spendCny(p, fx) || 0;
+    const cat = p.cat || "其他";
+    const cur = dateMap.get(label) || { key, label, cny: 0, wait: 0, n: 0, parts: {} };
+    const amt = spendCny(p, fx) || 0;
+    cur.cny += amt;
+    cur.parts[cat] = (cur.parts[cat] || 0) + amt;
     if (spendPending(p)) cur.wait += 1;
     cur.n += 1;
     dateMap.set(label, cur);
@@ -2378,6 +2426,7 @@ function spendBodyHtml(fx) {
   const byDate = [...dateMap.values()].sort((a, b) => a.key - b.key);
   const maxCat = Math.max(0, ...byCat.map(g => g.cny));
   const maxDate = Math.max(0, ...byDate.map(g => g.cny));
+  const dateCats = catOrder.filter(cat => byDate.some(d => (d.parts[cat] || 0) > 0));
   const detail = catOrder.map(cat => {
     const rows = items.filter(p => (p.cat || "其他") === cat);
     if (!rows.length) return "";
@@ -2411,11 +2460,12 @@ function spendBodyHtml(fx) {
     <p class="hint">${canEdit ? "点铅笔改类目、日期、金额，点 × 删除。改完统计立刻更新，并同步给对方。" : "先解锁才能增删改。"} 已退订的不列入。${fxHint}</p>
     <div class="card">
       <div class="kicker">按类目</div>
-      ${spendStatRows(byCat, maxCat)}
+      ${spendStatRows(byCat, maxCat, colorMap)}
     </div>
     <div class="card">
       <div class="kicker">按日期</div>
-      ${spendStatRows(byDate, maxDate)}
+      ${spendDateRows(byDate, maxDate, colorMap, catOrder)}
+      ${spendLegend(dateCats, colorMap)}
     </div>
     ${detail}`;
 }
