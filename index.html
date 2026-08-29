@@ -589,12 +589,16 @@ const KEY_WHO = "trip2026-who";
 const KEY_SID = "trip2026-sid";
 const KEY_UNLOCK = "trip2026-unlock";
 const KEY_FX = "trip2026-fx";
+const KEY_DRAFT = "trip2026-draft";
 const FX_API = "https://open.er-api.com/v6/latest/CNY";
 
 let cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: null };
 let canEdit = false;
 let syncing = false;
 let saveTimer = null;
+let dirty = false;
+let pushing = false;
+let bootError = "";
 let tripTab = "days";
 let tripFilter = "all";
 let prepTab = "todo";
@@ -970,6 +974,14 @@ function packState(item) {
 }
 function nextPackState(cur) {
   return PACK_CYCLE[(PACK_CYCLE.indexOf(cur) + 1) % PACK_CYCLE.length];
+}
+function setPackState(id, st) {
+  cloud.pack = cloud.pack || {};
+  cloud.pack[id] = st;
+  const L = ensureLists();
+  const extra = L.extraPack.find(p => p.id === id);
+  if (extra) extra.st = st;
+  else L.editPack[id] = Object.assign({}, L.editPack[id], { st });
 }
 function seedDefaults() {
   const prepSt = {}, packSt = {};
@@ -1885,6 +1897,7 @@ function initMap() {
 }
 
 const CLOUD_API = "https://api.textdb.online";
+const CLOUD_READ = "https://textdb.online";
 
 function sid() {
   const q = new URLSearchParams(location.search).get("sid");
@@ -1900,6 +1913,52 @@ function newCloudKey() {
 function syncFailHint(e) {
   const raw = (e && e.message) ? e.message : String(e);
   return raw + "。若仍打不开，把这句原样发给我换存储。";
+}
+function emptyCloud() {
+  return { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() };
+}
+function cloudPayload() {
+  ensureLists();
+  return {
+    prep: cloud.prep && typeof cloud.prep === "object" ? cloud.prep : {},
+    pack: cloud.pack && typeof cloud.pack === "object" ? cloud.pack : {},
+    notes: cloud.notes || "",
+    pinHash: cloud.pinHash || "",
+    updatedAt: cloud.updatedAt || "",
+    by: cloud.by || "",
+    lists: cloud.lists
+  };
+}
+function stampOf(c) {
+  const t = Date.parse(c && c.updatedAt ? c.updatedAt : "");
+  return Number.isFinite(t) ? t : 0;
+}
+function saveDraft() {
+  try {
+    localStorage.setItem(KEY_DRAFT, JSON.stringify({
+      sid: sid() || "",
+      savedAt: Date.now(),
+      cloud: cloudPayload()
+    }));
+  } catch (e) {}
+}
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(KEY_DRAFT) || "null"); }
+  catch (e) { return null; }
+}
+function applyCloud(data) {
+  const base = emptyCloud();
+  const src = data && typeof data === "object" ? data : {};
+  cloud = {
+    prep: src.prep && typeof src.prep === "object" ? src.prep : base.prep,
+    pack: src.pack && typeof src.pack === "object" ? src.pack : base.pack,
+    notes: typeof src.notes === "string" ? src.notes : "",
+    pinHash: src.pinHash || "",
+    updatedAt: src.updatedAt || "",
+    by: src.by || "",
+    lists: src.lists && typeof src.lists === "object" ? src.lists : base.lists
+  };
+  ensureLists();
 }
 
 async function hashPin(pin) {
@@ -1918,15 +1977,19 @@ function clearSid() {
   localStorage.removeItem(KEY_SID);
   sessionStorage.removeItem(KEY_UNLOCK);
   canEdit = false;
-  cloud = { prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() };
+  applyCloud(emptyCloud());
+  dirty = false;
+  try { localStorage.removeItem(KEY_DRAFT); } catch (e) {}
   const u = new URL(location.href);
   u.searchParams.delete("sid");
   history.replaceState({}, "", u);
 }
 
 async function cloudFetch(url, opts) {
+  const next = Object.assign({ cache: "no-store" }, opts || {});
+  next.headers = Object.assign({ "Cache-Control": "no-cache", Pragma: "no-cache" }, next.headers || {});
   try {
-    return await fetch(url, opts);
+    return await fetch(url, next);
   } catch (e) {
     const raw = (e && e.message) ? e.message : String(e);
     throw new Error(raw + " @ " + CLOUD_API);
@@ -1944,38 +2007,64 @@ async function writeCloud(id, data) {
   if (!j || j.status !== 1) throw new Error("保存失败 " + ((j && (j.info || j.msg)) || JSON.stringify(j)) + " @ " + CLOUD_API);
 }
 
+async function readCloudText(id) {
+  const urls = [
+    CLOUD_READ + "/" + encodeURIComponent(id) + "?_=" + Date.now(),
+    CLOUD_API + "/" + encodeURIComponent(id) + "?_=" + Date.now()
+  ];
+  let lastErr = null;
+  for (const url of urls) {
+    try {
+      const r = await cloudFetch(url);
+      if (!r.ok) { lastErr = new Error("读取失败 HTTP " + r.status + " @ " + CLOUD_API); continue; }
+      const text = ((await r.text()) || "").trim();
+      if (text) return text;
+      lastErr = new Error("云端还没有这份数据，请重新创建共享 @ " + CLOUD_API);
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error("读取失败 @ " + CLOUD_API);
+}
+
 async function pullCloud() {
   const id = sid();
   if (!id) return false;
   if (!isTextDbSid(id)) throw new Error("旧同步通道 jsonblob 国内打不开，请点「重新创建共享」");
-  const r = await cloudFetch(CLOUD_API + "/" + encodeURIComponent(id));
-  if (!r.ok) throw new Error("读取失败 HTTP " + r.status + " @ " + CLOUD_API);
-  const text = ((await r.text()) || "").trim();
-  if (!text) throw new Error("云端还没有这份数据，请重新创建共享 @ " + CLOUD_API);
+  const text = await readCloudText(id);
   let data;
   try { data = JSON.parse(text); }
   catch (e) { throw new Error("云端数据损坏 @ " + CLOUD_API); }
-  cloud = Object.assign({ prep: {}, pack: {}, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() }, data);
-  ensureLists();
+  if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("云端数据损坏 @ " + CLOUD_API);
+  applyCloud(data);
   return true;
 }
 
 async function pushCloud() {
   const id = sid();
-  if (!id) return;
+  if (!id) return false;
   if (!isTextDbSid(id)) throw new Error("旧同步通道 jsonblob 国内打不开，请点「重新创建共享」");
   cloud.updatedAt = new Date().toISOString();
   cloud.by = who() || "同伴";
-  await writeCloud(id, cloud);
+  await writeCloud(id, cloudPayload());
+  return true;
 }
 
 async function createCloud() {
   const seeded = seedDefaults();
   const id = newCloudKey();
-  const data = { prep: seeded.prep, pack: seeded.pack, notes: "", pinHash: "", updatedAt: "", by: "", lists: emptyLists() };
-  await writeCloud(id, data);
+  ensureLists();
+  applyCloud({
+    prep: Object.assign({}, seeded.prep, cloud.prep || {}),
+    pack: Object.assign({}, seeded.pack, cloud.pack || {}),
+    notes: cloud.notes || "",
+    pinHash: cloud.pinHash || "",
+    updatedAt: new Date().toISOString(),
+    by: who() || "同伴",
+    lists: cloud.lists
+  });
+  await writeCloud(id, cloudPayload());
   setSid(id);
-  cloud = data;
+  dirty = false;
+  saveDraft();
 }
 
 function shareLink() {
@@ -1985,17 +2074,45 @@ function shareLink() {
 }
 
 function schedulePush() {
+  dirty = true;
+  saveDraft();
+  renderSyncBits();
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    pushCloud().then(() => renderSyncBits()).catch(err => alert(err.message));
-  }, 500);
+  saveTimer = setTimeout(runPush, 700);
+}
+
+async function runPush() {
+  if (pushing) return;
+  if (!dirty) return;
+  if (!sid()) {
+    saveDraft();
+    renderSyncBits();
+    return;
+  }
+  pushing = true;
+  dirty = false;
+  renderSyncBits();
+  try {
+    await pushCloud();
+    saveDraft();
+  } catch (err) {
+    dirty = true;
+    alert(err.message);
+  } finally {
+    pushing = false;
+    renderSyncBits();
+    if (dirty) saveTimer = setTimeout(runPush, 500);
+  }
 }
 
 function renderSyncBits() {
   document.querySelectorAll("[data-sync]").forEach(el => {
-    el.textContent = cloud.updatedAt
-      ? `上次由 ${cloud.by || "?"} 更新于 ${cloud.updatedAt.replace("T", " ").slice(0, 16)}`
-      : "还没有云端记录";
+    if (pushing) el.textContent = "正在保存到云端…";
+    else if (dirty && sid()) el.textContent = "有改动待保存";
+    else if (!sid()) el.textContent = "仅本机，换浏览器或清缓存会丢失";
+    else if (cloud.updatedAt)
+      el.textContent = `已同步 · ${cloud.by || "?"} ${cloud.updatedAt.replace("T", " ").slice(0, 16)}`;
+    else el.textContent = "还没有云端记录";
   });
 }
 
@@ -2003,8 +2120,13 @@ function gateCard() {
   const id = sid();
   const legacy = id && !isTextDbSid(id);
   const connected = id && !legacy;
-  const unlocked = canEdit ? `<p class="okline">已解锁，勾选和增删会同步给对方。</p>` : "";
+  const unlocked = canEdit
+    ? `<p class="okline">${connected ? "已解锁，行李、待办、花费和备忘会同步到云端。" : "已解锁，但还没创建共享：换浏览器会丢。"}</p>`
+    : "";
   const title = legacy ? "旧通道失效" : (connected ? "已连接" : "未创建共享");
+  const hint = connected
+    ? "换浏览器请用「复制链接」打开，不要只打开网站首页。"
+    : "未共享时改动只留在这台浏览器。创建共享后才能换设备看到。";
   return `
     <div class="card gate-card">
       <div class="kicker">同伴同步 · ${title}</div>
@@ -2014,8 +2136,9 @@ function gateCard() {
         ${connected ? `<button class="btn sec" id="btnCopy">复制链接</button>` : ""}
       </div>
       ${unlocked}
+      <p class="hint">${hint}</p>
       <p class="hint" data-sync></p>
-      <p class="err" id="syncErr">${legacy ? "旧码无法读取，请重新创建。" : ""}</p>
+      <p class="err" id="syncErr">${legacy ? "旧码无法读取，请重新创建。" : esc(bootError)}</p>
     </div>`;
 }
 
@@ -2051,7 +2174,15 @@ function bindGate(box) {
       await pullCloud();
       const h = await hashPin(pin);
       if (cloud.pinHash && cloud.pinHash !== h) return err("口令不对");
-      if (!cloud.pinHash) { cloud.pinHash = h; await pushCloud(); }
+      if (!cloud.pinHash) { cloud.pinHash = h; dirty = true; }
+      const draft = loadDraft();
+      if (draft && draft.sid === sid() && draft.cloud && stampOf(draft.cloud) > stampOf(cloud)) {
+        const pinHash = cloud.pinHash;
+        applyCloud(draft.cloud);
+        cloud.pinHash = pinHash;
+        dirty = true;
+      }
+      if (dirty) await runPush();
       await afterUnlock();
     } catch (e) { err(syncFailHint(e)); }
   };
@@ -2336,7 +2467,7 @@ function renderPrep() {
       <div class="stat ok"><b>${packedN}</b><span>已装包</span></div>
       <div class="stat miss"><b>${noneN}</b><span>尚无</span></div>
     </div>
-    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点铅笔改名字，点 × 删除。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
+    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点铅笔改名字，点 × 删除。改完会先记在本机，再写入云端。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"} 换酒店勤的日子：9.27、9.29、9.30、10.1、10.3、10.4、10.5、10.6。</p>
     ${bgroups.map(g=>`
       <div class="card">
         <div class="kicker">${esc(g)} · ${packedItems.filter(p=>p.g===g).length}</div>
@@ -2366,8 +2497,7 @@ function renderPrep() {
     if (!canEdit) return;
     const id = btn.dataset.pack;
     const item = liveBags().find(p => p.id === id);
-    cloud.pack = cloud.pack || {};
-    cloud.pack[id] = nextPackState(packState(item || { id, st: "none" }));
+    setPackState(id, nextPackState(packState(item || { id, st: "none" })));
     renderPrep();
     schedulePush();
   });
@@ -2500,28 +2630,70 @@ try { renderToday(); } catch (e) { document.getElementById("page-today").innerHT
 try { renderTrip(); } catch (e) {}
 requestAnimationFrame(preloadActPhotos);
 
-(async () => {
-  try {
-    if (sid() && isTextDbSid(sid())) {
-      localStorage.setItem(KEY_SID, sid());
+async function bootSync() {
+  bootError = "";
+  const draft = loadDraft();
+  const id = sid();
+  if (id && isTextDbSid(id)) {
+    localStorage.setItem(KEY_SID, id);
+    try {
       await pullCloud();
-      if (sessionStorage.getItem(KEY_UNLOCK) === "1") canEdit = true;
+      if (draft && (draft.sid || "") === id && draft.cloud && stampOf(draft.cloud) > stampOf(cloud)) {
+        const pinHash = cloud.pinHash;
+        applyCloud(draft.cloud);
+        if (pinHash) cloud.pinHash = pinHash;
+        dirty = true;
+        schedulePush();
+      } else {
+        saveDraft();
+      }
+    } catch (e) {
+      bootError = syncFailHint(e);
+      if (draft && (draft.sid || "") === id && draft.cloud) applyCloud(draft.cloud);
     }
-  } catch (e) { console.warn(e); }
+    if (sessionStorage.getItem(KEY_UNLOCK) === "1") canEdit = true;
+  } else if (draft && !draft.sid && draft.cloud) {
+    applyCloud(draft.cloud);
+  }
+}
+
+(async () => {
+  await bootSync();
   try { renderPrep(); } catch (e) {}
   setInterval(async () => {
-    if (syncing || document.hidden || !isTextDbSid(sid())) return;
+    if (syncing || pushing || dirty || document.hidden || !isTextDbSid(sid())) return;
     const ae = document.activeElement;
     if (ae && (ae.id === "noteBox" || ae.closest("[data-composer]"))) return;
     syncing = true;
     try {
-      const prev = JSON.stringify(cloud);
+      const prev = JSON.stringify(cloudPayload());
+      const prevStamp = stampOf(cloud);
       await pullCloud();
-      if (JSON.stringify(cloud) !== prev) { renderPrep(); }
+      if (dirty) {
+        /* a local edit landed while we were reading; keep local */
+      } else if (stampOf(cloud) !== prevStamp || JSON.stringify(cloudPayload()) !== prev) {
+        saveDraft();
+        renderPrep();
+      }
     } catch (e) {}
     syncing = false;
   }, 8000);
 })();
+
+window.addEventListener("pagehide", () => {
+  saveDraft();
+  const id = sid();
+  if (!id || !isTextDbSid(id) || !dirty || typeof navigator.sendBeacon !== "function") return;
+  cloud.updatedAt = new Date().toISOString();
+  cloud.by = who() || "同伴";
+  const body = new URLSearchParams();
+  body.set("key", id);
+  body.set("value", JSON.stringify(cloudPayload()));
+  try {
+    navigator.sendBeacon(CLOUD_API + "/update/", new Blob([body.toString()], { type: "application/x-www-form-urlencoded" }));
+    dirty = false;
+  } catch (e) {}
+});
 </script>
 </body>
 </html>
