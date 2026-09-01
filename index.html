@@ -259,7 +259,12 @@
     .stat {
       background: #fff; border: 1px solid var(--line); border-radius: 14px;
       padding: 12px 8px; text-align: center;
+      font: inherit; color: inherit; width: 100%;
     }
+    button.stat { cursor: pointer; }
+    button.stat:active { transform: scale(.98); }
+    .stat.on { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(13,155,134,.18); }
+    .stat.miss.on { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(234,88,12,.16); }
     .stat b { display: block; font-size: 22px; font-weight: 800; line-height: 1.1; }
     .stat span { font-size: 11px; color: var(--muted); }
     .stat.miss b { color: var(--orange); }
@@ -625,6 +630,7 @@ let bootError = "";
 let tripTab = "days";
 let tripFilter = "all";
 let prepTab = "todo";
+let packFilter = "all";
 
 const flights = [
   { date:"9.25", iso:"2026-09-25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", from:"PKX", to:"SGN", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段", tz:"到胡志明，慢 1 小时" },
@@ -878,14 +884,14 @@ const stops = [
 const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
 const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const GROUND_LEGS = [
-  { date:"9.30", from:"库塔", to:"乌布", kind:"包车", km:35, dur:"1.5 小时" },
-  { date:"10.1", from:"乌布", to:"图蓝本", kind:"包车", km:85, dur:"2.5 小时" },
-  { date:"10.3", from:"图蓝本", to:"罗威纳", kind:"包车", km:90, dur:"2.5 小时" },
-  { date:"10.4", from:"罗威纳", to:"Gilimanuk", kind:"包车", km:90, dur:"2 小时" },
-  { date:"10.4", from:"Gilimanuk", to:"外南梦", kind:"轮渡", km:6, dur:"45 分钟" },
-  { date:"10.4", from:"外南梦", to:"宜珍", kind:"包车", km:40, dur:"1.5 小时" },
-  { date:"10.5", from:"宜珍", to:"布罗莫", kind:"包车", km:250, dur:"6 小时" },
-  { date:"10.6", from:"布罗莫", to:"泗水", kind:"包车", km:110, dur:"2.5 小时" }
+  { date:"9.30", from:"库塔", to:"乌布", kind:"包车", km:35, dur:"1.5 小时", fare:"Grab 约 180 000–300 000盾" },
+  { date:"10.1", from:"乌布", to:"图蓝本", kind:"包车", km:85, dur:"2.5 小时", fare:"包车约 550 000–750 000盾（东线 Grab 常叫不到）" },
+  { date:"10.3", from:"图蓝本", to:"罗威纳", kind:"包车", km:90, dur:"2.5 小时", fare:"包车约 550 000–800 000盾" },
+  { date:"10.4", from:"罗威纳", to:"Gilimanuk", kind:"包车", km:90, dur:"2 小时", fare:"包车约 400 000–650 000盾" },
+  { date:"10.4", from:"Gilimanuk", to:"外南梦", kind:"轮渡", km:6, dur:"45 分钟", fare:"船票约 8 500–11 000盾/人；小车约 213 000盾" },
+  { date:"10.4", from:"外南梦", to:"宜珍", kind:"包车", km:40, dur:"1.5 小时", fare:"当地车约 200 000–400 000盾" },
+  { date:"10.5", from:"宜珍", to:"布罗莫", kind:"包车", km:250, dur:"6 小时", fare:"包车约 1 200 000–1 800 000盾（无 Grab）" },
+  { date:"10.6", from:"布罗莫", to:"泗水", kind:"包车", km:110, dur:"2.5 小时", fare:"包车约 450 000–750 000盾" }
 ];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:"#8b5cf6" };
 const VF_MP = "https://feeyo-4gavslyd9088a553-1258220651.tcloudbaseapp.com/jump-mp.html";
@@ -1870,7 +1876,11 @@ function renderTrip(filter, highlightId) {
 let mapObj = null;
 function renderMap() {
   const box = document.getElementById("page-map");
-  if (!box.dataset.ready) {
+  if (box.dataset.ready !== "legs3") {
+    if (mapObj) {
+      try { mapObj.remove(); } catch (e) {}
+      mapObj = null;
+    }
     box.innerHTML = `
       <div class="page-head c-teal">路线</div>
       <div class="card">
@@ -1889,21 +1899,18 @@ function renderMap() {
       </div>
       <div class="card">
         <div class="kicker">包车 / 轮渡</div>
-        <p class="hint">巴厘岛和爪哇各点之间的车程、船程，按路况约估。</p>
+        <p class="hint">车程按路况约估。费用是 Grab / 当地打车或船票的公开价区间，仅供参考，不是已订包车价。</p>
         ${GROUND_LEGS.map(leg => `
           <div class="leg-row">
             <div>
               <div class="lab">${esc(leg.from)} → ${esc(leg.to)}</div>
               <div class="note">${esc(leg.date)} · ${esc(leg.kind)}</div>
+              <div class="note">${esc(leg.fare)}</div>
             </div>
             <div class="meta">约 ${leg.km} 公里<br>约 ${esc(leg.dur)}</div>
           </div>`).join("")}
-      </div>
-      <div class="card">
-        <div class="kicker">途经点（点击地图标记）</div>
-        ${stops.map((s,i)=>`<div class="row"><div class="t">${i+1}</div><div><div class="title">${s.name}</div><div class="note">${s.date} · ${s.desc}</div></div></div>`).join("")}
       </div>`;
-    box.dataset.ready = "1";
+    box.dataset.ready = "legs3";
   }
   box.querySelectorAll("[data-focus]").forEach(b => b.onclick = () => focusRegion(b.dataset.focus));
   setTimeout(initMap, 80);
@@ -2595,21 +2602,23 @@ function renderPrep() {
       <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
       <textarea id="noteBox" placeholder="潜店 WhatsApp、明早谁带口罩……" ${canEdit?"":"disabled"}></textarea>
     </div>`;
+  const shownBags = packedItems.filter(p => packFilter === "all" || packState(p) === packFilter);
+  const shownGroups = bgroups.filter(g => shownBags.some(p => p.g === g));
   const packBody = `
     <div class="page-head c-teal">行李整理 <span>${packedItems.length} 件</span>
       <button type="button" class="add-pill" data-open-add="pack">＋ 添加</button>
     </div>
     ${addComposer("pack", bgroups.length ? bgroups : ["其他"], "其他")}
     <div class="stats">
-      <div class="stat"><b>${packedItems.length}</b><span>全部</span></div>
-      <div class="stat ok"><b>${packedN}</b><span>已装包</span></div>
-      <div class="stat miss"><b>${noneN}</b><span>尚无</span></div>
+      <button type="button" class="stat ${packFilter==="all"?"on":""}" data-pack-filter="all"><b>${packedItems.length}</b><span>全部</span></button>
+      <button type="button" class="stat ok ${packFilter==="packed"?"on":""}" data-pack-filter="packed"><b>${packedN}</b><span>已装包</span></button>
+      <button type="button" class="stat miss ${packFilter==="none"?"on":""}" data-pack-filter="none"><b>${noneN}</b><span>尚无</span></button>
     </div>
-    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点铅笔改名字，点 × 删除。改完会先记在本机，再写入云端。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"}</p>
-    ${bgroups.map(g=>`
+    <p class="hint">${canEdit ? "点一行切换：尚无 → 已有 → 已装包。点铅笔改名字，点 × 删除。改完会先记在本机，再写入云端。" : "先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。"} 点上面三个数字可筛选。</p>
+    ${shownGroups.map(g=>`
       <div class="card">
-        <div class="kicker">${esc(g)} · ${packedItems.filter(p=>p.g===g).length}</div>
-        ${packedItems.filter(p=>p.g===g).map(p => {
+        <div class="kicker">${esc(g)} · ${shownBags.filter(p=>p.g===g).length}</div>
+        ${shownBags.filter(p=>p.g===g).map(p => {
           const st = packState(p);
           return `<div class="pack-row">
             <button type="button" class="pack-st st-${st}" data-pack="${p.id}" ${canEdit?"":"disabled"}>
@@ -2619,7 +2628,7 @@ function renderPrep() {
             ${itemActions("pack", p.id)}
           </div>`;
         }).join("")}
-      </div>`).join("")}`;
+      </div>`).join("")}${!shownBags.length ? `<p class="empty">这一栏是空的。</p>` : ""}`;
   const spendBody = spendBodyHtml(readFxCache());
   const body = prepTab === "pack" ? packBody : (prepTab === "spend" ? spendBody : todoBody);
   fillPane(box, gateCard() + body);
@@ -2638,6 +2647,12 @@ function renderPrep() {
     setPackState(id, nextPackState(packState(item || { id, st: "none" })));
     renderPrep();
     schedulePush();
+  });
+  box.querySelectorAll("[data-pack-filter]").forEach(btn => {
+    btn.onclick = () => {
+      packFilter = btn.dataset.packFilter;
+      renderPrep();
+    };
   });
   const ta = document.getElementById("noteBox");
   if (ta) {
