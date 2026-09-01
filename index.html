@@ -272,6 +272,17 @@
     .prog-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s ease; }
     .add-box .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .add-box .pair .field { margin-bottom: 8px; }
+    .date-picks {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 0 0 8px;
+    }
+    .date-pick {
+      border: 1px solid var(--line); background: #fff; color: #4b5563;
+      border-radius: 99px; padding: 6px 10px; font-size: 12px; font-weight: 650;
+      transition: background .15s ease, color .15s ease, border-color .15s ease, transform .12s ease;
+    }
+    .date-pick:active { transform: scale(.96); }
+    .date-pick.on { background: var(--accent); color: #fff; border-color: var(--accent); }
     .spend-row {
       display: flex; align-items: flex-start; gap: 8px;
       padding: 11px 0; border-top: 1px solid #f3f4f6;
@@ -957,24 +968,24 @@ const spends = [
   { id:"sp-qz322", cat:"机票", date:"10.7", name:"QZ322 泗水 → 吉隆坡", cny:666, note:"去哪儿" },
   { id:"sp-h-kl", cat:"酒店", date:"9.25", name:"吉隆坡市区酒店（T2附近）", cny:null, note:"待预订" },
   { id:"sp-h-kata", cat:"酒店", date:"9.26", name:"Katamaran Hotel & Resort Komodo", cny:1162.47, note:"去哪儿 · 1 晚" },
-  { id:"sp-h-sea", cat:"酒店", date:"9.27", name:"Seaesta Komodo Hostel & Hotel", cny:963.74, note:"去哪儿 · 2 晚" },
+  { id:"sp-h-sea", cat:"酒店", date:"9.27", dates:["9.27","9.28"], name:"Seaesta Komodo Hostel & Hotel", cny:963.74, note:"去哪儿 · 2 晚，按天平摊" },
   { id:"sp-h-kuta", cat:"酒店", date:"9.29", name:"The Kuta Beach Heritage Hotel", cny:475.06, note:"携程 454566143239 · 豪华传统特大床 · 9.30 含 2 早" },
   { id:"sp-h-meru", cat:"酒店", date:"9.30", name:"Meruhdani Boutique Ubud", cny:344.95, note:"去哪儿 · 1 晚" },
-  { id:"sp-h-hab", cat:"酒店", date:"10.1", name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补" },
-  { id:"sp-h-ocean", cat:"酒店", date:"10.1", name:"Ocean Villa Dive Resort Tulamben", cny:303, note:"携程已确认；与 Habitat 重复，行程待退订" },
+  { id:"sp-h-hab", cat:"酒店", date:"10.1", dates:["10.1","10.2"], name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补；按天平摊" },
+  { id:"sp-h-ocean", cat:"酒店", date:"10.1", dates:["10.1","10.2"], name:"Ocean Villa Dive Resort Tulamben", cny:303, note:"携程已确认；与 Habitat 重复，待退订；2 晚按天平摊" },
   { id:"sp-h-lov", cat:"酒店", date:"10.3", name:"New Sunari Lovina Beach Resort", cny:283.02, note:"去哪儿 · 1 晚" },
   { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；与 Purwa 重复，待退订" },
   { id:"sp-h-purwa", cat:"酒店", date:"10.4", name:"Purwa Ijen", cny:184.78, note:"携程 1767788834 · 花园景双人 · 行程入住" },
   { id:"sp-h-omah", cat:"酒店", date:"10.5", name:"Omah Kayu Bromo", cny:154, note:"携程 · 1 晚" },
   { id:"sp-h-prem", cat:"酒店", date:"10.6", name:"Premier Place Surabaya Airport", cny:270.12, note:"去哪儿 · 1 晚" },
-  { id:"sp-a-komodo", cat:"活动", date:"9.27", name:"科莫多半日游 + 一日跳岛", idr:1400000, note:"两日两人共价，GP Travel" },
+  { id:"sp-a-komodo", cat:"活动", date:"9.27", dates:["9.27","9.28"], name:"科莫多半日游 + 一日跳岛", idr:1400000, note:"两日两人共价，GP Travel；按天平摊" },
   { id:"sp-a-surf1", cat:"活动", date:"9.29", name:"库塔冲浪私人课（第一天）", cny:66.5, note:"Klook" },
   { id:"sp-a-surf2", cat:"活动", date:"9.30", name:"库塔冲浪私人课（第二天）", cny:70, note:"Klook" },
   { id:"sp-a-cook", cat:"活动", date:"10.1", name:"Ketut's Bali 美食烹饪教室", cny:264, note:"Klook · 2 人" },
-  { id:"sp-a-ow", cat:"活动", date:"10.2", name:"OW 潜水考证", cny:null, note:"微信已确认，金额待补" },
+  { id:"sp-a-ow", cat:"活动", date:"10.2", dates:["10.2","10.3"], name:"OW 潜水考证", cny:null, note:"微信已确认，金额待补；两日按天平摊" },
   { id:"sp-a-ijen", cat:"活动", date:"10.5", name:"宜珍火山夜爬", cny:null, note:"含在 Andre 行程，门票若另付再补" },
   { id:"sp-a-bromo", cat:"活动", date:"10.6", name:"布罗莫日出", cny:null, note:"含在 Andre 行程，门票若另付再补" },
-  { id:"sp-andre", cat:"交通", date:"10.4", name:"Andre 泗水包车（宜珍→布罗莫→泗水）", idr:3800000, note:"当天一半、最后一天一半" }
+  { id:"sp-andre", cat:"交通", date:"10.4", dates:["10.4","10.5","10.6"], name:"Andre 泗水包车（宜珍→布罗莫→泗水）", idr:3800000, note:"10.4–10.6 按天平摊；付当天一半、最后一天一半" }
 ];
 
 const phaseName = { komodo:"科莫多", bali:"巴厘", java:"爪哇", transit:"中转" };
@@ -1110,6 +1121,41 @@ function spendDateLabel(s) {
   if (iso) return Number(iso[2]) + "." + Number(iso[3]);
   return (s || "日期待定");
 }
+function spendDayOptions() {
+  const seen = new Set();
+  return days.map(d => spendDateLabel(d.date)).filter(lab => {
+    if (lab === "日期待定" || seen.has(lab)) return false;
+    seen.add(lab);
+    return true;
+  });
+}
+function spendDates(item) {
+  const raw = Array.isArray(item && item.dates) && item.dates.length
+    ? item.dates
+    : String((item && item.date) || "").split(/[、，,;；/]/);
+  const seen = new Set();
+  const out = [];
+  raw.forEach(part => {
+    const t = String(part || "").trim();
+    if (!t) return;
+    const lab = spendDateLabel(t);
+    if (!lab || seen.has(lab)) return;
+    seen.add(lab);
+    out.push(lab);
+  });
+  if (!out.length) out.push("日期待定");
+  return out.sort((a, b) => spendDateKey(a) - spendDateKey(b));
+}
+function spendDatesLabel(item) {
+  return spendDates(item).join("、");
+}
+function spendSplitAmt(amt, n) {
+  if (!(n > 0) || !Number.isFinite(amt)) return [];
+  const share = Math.round(amt / n * 100) / 100;
+  const parts = Array(n).fill(share);
+  parts[n - 1] = Math.round((amt - share * (n - 1)) * 100) / 100;
+  return parts;
+}
 function fmtCny(n) {
   if (!Number.isFinite(n)) return "—";
   const d = Math.abs(n - Math.round(n)) < 1e-6 ? 0 : 2;
@@ -1118,12 +1164,12 @@ function fmtCny(n) {
 function spendFieldsFromForm(form) {
   const name = (form.querySelector("[data-add-text]").value || "").trim();
   const cat = (form.querySelector("[data-add-cat]").value || "").trim() || "其他";
-  const date = (form.querySelector("[data-add-date]").value || "").trim();
+  const dates = [...form.querySelectorAll("[data-day].on")].map(b => b.dataset.day);
   const note = (form.querySelector("[data-add-note]").value || "").trim();
   const cur = form.querySelector("[data-add-cur]").value === "IDR" ? "IDR" : "CNY";
   const amt = parseAmt(form.querySelector("[data-add-amt]").value);
   return {
-    name, cat, date, note,
+    name, cat, dates, date: dates[0] || "", note,
     cny: cur === "CNY" ? amt : null,
     idr: cur === "IDR" ? amt : null
   };
@@ -1141,7 +1187,8 @@ function addSpendItem(fields) {
   ensureLists().extraSpend.push({
     id: newItemId("us-"),
     cat: (fields.cat || "其他").trim() || "其他",
-    date: (fields.date || "").trim(),
+    date: (fields.date || (fields.dates && fields.dates[0]) || "").trim(),
+    dates: Array.isArray(fields.dates) ? fields.dates.slice() : [],
     name,
     cny: spendNum(fields.cny),
     idr: spendNum(fields.idr),
@@ -1166,7 +1213,8 @@ function patchSpendItem(id, fields) {
   const patch = {
     name: fields.name.trim(),
     cat: (fields.cat || "其他").trim() || "其他",
-    date: (fields.date || "").trim(),
+    date: (fields.date || (fields.dates && fields.dates[0]) || "").trim(),
+    dates: Array.isArray(fields.dates) ? fields.dates.slice() : [],
     note: (fields.note || "").trim(),
     cny: spendNum(fields.cny),
     idr: spendNum(fields.idr)
@@ -1214,17 +1262,17 @@ function addComposer(kind, groups, defaultGroup) {
 }
 function spendComposer() {
   const cats = SPEND_CATS.map(c => `<option value="${esc(c)}"></option>`).join("");
-  const dates = days.map(d => `<option value="${esc(d.date)}"></option>`).join("");
+  const picks = spendDayOptions().map(d =>
+    `<button type="button" class="date-pick" data-day="${esc(d)}">${esc(d)}</button>`
+  ).join("");
   return `
     <div class="card add-box" data-composer="spend" hidden>
       <div class="kicker">添加花费</div>
       <input class="field" data-add-text maxlength="80" placeholder="项目名称">
-      <div class="pair">
-        <input class="field" data-add-cat maxlength="12" list="spend-cats" placeholder="类目" value="其他">
-        <input class="field" data-add-date maxlength="12" list="spend-dates" placeholder="日期 如 10.5">
-      </div>
+      <input class="field" data-add-cat maxlength="12" list="spend-cats" placeholder="类目" value="其他">
       <datalist id="spend-cats">${cats}</datalist>
-      <datalist id="spend-dates">${dates}</datalist>
+      <div class="kicker" style="margin:2px 0 6px">日期（可多选，费用按天平摊）</div>
+      <div class="date-picks" data-add-dates>${picks}</div>
       <div class="pair">
         <input class="field" data-add-amt inputmode="decimal" placeholder="金额，空着=待补">
         <select class="field" data-add-cur>
@@ -2262,7 +2310,8 @@ function openComposer(box, kind, item) {
     form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
     form.querySelector("[data-add-text]").value = item ? (item.name || "") : "";
     form.querySelector("[data-add-cat]").value = item ? (item.cat || "其他") : "其他";
-    form.querySelector("[data-add-date]").value = item ? (item.date || "") : "";
+    const selected = new Set(item ? spendDates(item).filter(d => d !== "日期待定") : []);
+    form.querySelectorAll("[data-day]").forEach(b => b.classList.toggle("on", selected.has(b.dataset.day)));
     form.querySelector("[data-add-note]").value = item ? (item.note || "") : "";
     const idr = spendNum(item && item.idr);
     const cny = spendNum(item && item.cny);
@@ -2292,6 +2341,9 @@ function bindPrepActions(box) {
       return;
     }
     openComposer(box, btn.dataset.openAdd);
+  });
+  box.querySelectorAll("[data-day]").forEach(b => {
+    b.onclick = () => { if (canEdit) b.classList.toggle("on"); };
   });
   box.querySelectorAll("[data-add-cancel]").forEach(btn => btn.onclick = () => {
     const form = btn.closest("[data-composer]");
@@ -2440,16 +2492,20 @@ function spendBodyHtml(fx) {
   const colorMap = spendColorMap(catOrder);
   const dateMap = new Map();
   items.forEach(p => {
-    const label = spendDateLabel(p.date);
-    const key = spendDateKey(p.date);
+    const ds = spendDates(p);
     const cat = p.cat || "其他";
-    const cur = dateMap.get(label) || { key, label, cny: 0, wait: 0, n: 0, parts: {} };
     const amt = spendCny(p, fx) || 0;
-    cur.cny += amt;
-    cur.parts[cat] = (cur.parts[cat] || 0) + amt;
-    if (spendPending(p)) cur.wait += 1;
-    cur.n += 1;
-    dateMap.set(label, cur);
+    const shares = spendSplitAmt(amt, ds.length);
+    ds.forEach((label, i) => {
+      const key = spendDateKey(label);
+      const cur = dateMap.get(label) || { key, label, cny: 0, wait: 0, n: 0, parts: {} };
+      const share = shares[i] || 0;
+      cur.cny += share;
+      cur.parts[cat] = (cur.parts[cat] || 0) + share;
+      if (spendPending(p)) cur.wait += 1;
+      cur.n += 1;
+      dateMap.set(label, cur);
+    });
   });
   const byDate = [...dateMap.values()].sort((a, b) => a.key - b.key);
   const maxCat = Math.max(0, ...byCat.map(g => g.cny));
@@ -2458,14 +2514,14 @@ function spendBodyHtml(fx) {
   const detail = catOrder.map(cat => {
     const rows = items.filter(p => (p.cat || "其他") === cat);
     if (!rows.length) return "";
-    const sorted = rows.slice().sort((a, b) => spendDateKey(a.date) - spendDateKey(b.date));
+    const sorted = rows.slice().sort((a, b) => spendDateKey(spendDates(a)[0]) - spendDateKey(spendDates(b)[0]));
     return `<div class="card">
       <div class="kicker">${esc(cat)} · ${rows.length}</div>
       ${sorted.map(p => `
         <div class="spend-row">
           <div class="lab">
             <b>${esc(p.name)}</b>
-            <div class="note">${esc(spendDateLabel(p.date))}${p.note ? " · " + esc(p.note) : ""}</div>
+            <div class="note">${esc(spendDatesLabel(p))}${p.note ? " · " + esc(p.note) : ""}</div>
           </div>
           ${spendAmtHtml(p, fx)}
           ${itemActions("spend", p.id)}
@@ -2485,13 +2541,13 @@ function spendBodyHtml(fx) {
       <div class="stat miss"><b>${waitN}</b><span>待补</span></div>
       <div class="stat"><b>${items.length}</b><span>全部</span></div>
     </div>
-    <p class="hint">${canEdit ? "点铅笔改类目、日期、金额，点 × 删除。改完统计立刻更新，并同步给对方。" : "先解锁才能增删改。"} 已退订的不列入。${fxHint}</p>
+    <p class="hint">${canEdit ? "点铅笔改类目、日期、金额，点 × 删除。多日费用按天数平摊到「按日期」。改完统计立刻更新，并同步给对方。" : "先解锁才能增删改。"} 已退订的不列入。${fxHint}</p>
     <div class="card">
       <div class="kicker">按类目</div>
       ${spendStatRows(byCat, maxCat, colorMap)}
     </div>
     <div class="card">
-      <div class="kicker">按日期</div>
+      <div class="kicker">按日期（多日费用已平摊）</div>
       ${spendDateRows(byDate, maxDate, colorMap, catOrder)}
       ${spendLegend(dateCats, colorMap)}
     </div>
