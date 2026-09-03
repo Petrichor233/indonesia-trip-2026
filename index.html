@@ -384,6 +384,17 @@
     .fx-row span { color: var(--muted); }
     .fx-row b { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
     #fx-card a { color: var(--muted); }
+    .sun-row {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 6px 16px; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--line);
+    }
+    .sun-row:last-of-type { border-bottom: 0; }
+    .sun-place { font-weight: 800; font-size: 15px; }
+    .sun-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .sun-times { display: flex; gap: 16px; text-align: right; font-variant-numeric: tabular-nums; }
+    .sun-times .k { display: block; font-size: 11px; color: var(--muted); font-weight: 650; }
+    .sun-times b { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
     .tz-shift {
       font-size: 13px; line-height: 1.5;
       padding: 8px 0 0; margin-top: 8px; border-top: 1px solid var(--line);
@@ -666,6 +677,7 @@ const acts = [
   { date:"9.30", name:"库塔冲浪私人课 2 小时（第二天）", aka:["库塔海滩冲浪练习","冲浪练习"], who:"Daddy and Mom Surfing School", detail:"私人课 2 小时", note:"Klook 已确认 ¥70", klook:true, img:"img/acts/act-kuta-surf.webp?v=2" },
   { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707", klook:true, img:"img/acts/act-cooking.webp?v=2" },
   { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认", img:"img/acts/act-ow-dive.webp?v=2" },
+  { date:"10.3 14:00", name:"Aling-Aling 瀑布", aka:["Aling-Aling","Aling Aling","阿灵阿灵瀑布"], who:"Komang Arta 包车途经", detail:"Habitat 14:00 接，图蓝本 → Aling-Aling（停留至少 2 小时）→ 新苏纳里罗威那海滩度假村", note:"已订；2 人 IDR 600,000；乘客 RAN WEIJUN；门票另付" },
   { date:"10.5 02:00", name:"宜珍火山夜爬", aka:["宜珍火山夜爬","宜珍蓝火"], who:"Andre 泗水包车", detail:"02:00 出发，蓝火 + 硫磺湖；07:00 回 Purwa Ijen 休息", note:"已定，含在 Andre 行程", img:"img/acts/act-ijen-bluefire.webp?v=1" },
   { date:"10.6 02:00", name:"布罗莫日出", aka:["布罗莫日出","布罗莫观景台"], who:"Andre 泗水包车", detail:"02:00 出发观景台看日出和云海；10:00 回酒店早餐", note:"已定；与宜珍夜爬合计 IDR 3,800,000", img:"img/acts/act-bromo-sunrise.webp?v=1" }
 ];
@@ -739,13 +751,13 @@ const days = [
     { t:"全天", title:"OW 理论 + 平静水域技巧", note:"图蓝本自由号沉船课程；中文教练", kind:"hl" },
     { t:"傍晚", title:"下课去艾湄湾逛", note:"不住艾湄；回 Habitat", kind:"hl" }
   ]},
-  { date:"10.03", iso:"2026-10-03", title:"OW 取证 → 罗威纳", phase:"bali",
+  { date:"10.03", iso:"2026-10-03", title:"OW 取证 → Aling-Aling → 罗威纳", phase:"bali",
     stay:"New Sunari Lovina Beach Resort（高级房，已确认）", breakfast:"潜店简餐",
-    flight:"无航班，下午包车去罗威纳",
+    flight:"Komang Arta 14:00 包车，途经 Aling-Aling",
     events:[
-    { t:"上午", title:"OW 开放水域第 1、2 潜，取证", note:"自由号沉船考核", kind:"hl" },
-    { t:"下午", title:"包车前往罗威纳", note:"包车待预订；入住新苏纳里罗威那海滩度假村", kind:"must" },
-    { t:"晚上", title:"休整", note:"次日追海豚，早睡", kind:"must" }
+    { t:"上午", title:"OW 开放水域第 1、2 潜，取证", note:"自由号沉船考核；下午 14:00 要在 Habitat 等车", kind:"hl" },
+    { t:"14:00", title:"Komang 接往罗威纳，途经 Aling-Aling", note:"Habitat Boutique Dive Resort 接；2 人 IDR 600,000；瀑布停留至少 2 小时；入住新苏纳里罗威那海滩度假村；门票另付", kind:"must" },
+    { t:"晚上", title:"休整", note:"瀑布后到店偏晚；次日追海豚，早睡", kind:"must" }
   ]},
   { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java",
     stay:"Purwa Ijen（花园景双人，已确认）", breakfast:"追海豚后简餐",
@@ -879,14 +891,15 @@ const stops = [
   { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"Ketapang 港，13:00 Andre 接" },
   { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Purwa Ijen · Andre 蓝火" },
   { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · Andre 日出" },
-  { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place · 13:30 到" }
+  { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place · 13:30 到" },
+  { id:14, name:"Aling-Aling", lat:-8.1768, lng:115.1063, phase:"bali", date:"10.3", desc:"瀑布停留 ≥2 小时 · Komang 途经" }
 ];
 const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
-const groundSegs = [[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
+const groundSegs = [[4,5],[5,6],[6,14],[14,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const GROUND_LEGS = [
   { date:"9.30", from:"库塔", to:"乌布", kind:"包车", km:35, dur:"1.5 小时", fare:"Grab 约 180 000–300 000盾" },
   { date:"10.1", from:"乌布", to:"图蓝本", kind:"包车", km:85, dur:"2.5 小时", fare:"包车约 550 000–750 000盾（东线 Grab 常叫不到）" },
-  { date:"10.3", from:"图蓝本", to:"罗威纳", kind:"包车", km:90, dur:"2.5 小时", fare:"包车约 550 000–800 000盾" },
+  { date:"10.3", from:"图蓝本", to:"罗威纳", kind:"包车", km:95, dur:"含瀑布约 5 小时", fare:"已订 600 000盾 · Komang Arta", via:"Aling-Aling", booked:true },
   { date:"10.4", from:"罗威纳", to:"Gilimanuk", kind:"包车", km:90, dur:"2 小时", fare:"包车约 400 000–650 000盾" },
   { date:"10.4", from:"Gilimanuk", to:"外南梦", kind:"轮渡", km:6, dur:"45 分钟", fare:"船票约 8 500–11 000盾/人；小车约 213 000盾" },
   { date:"10.4", from:"外南梦", to:"宜珍", kind:"包车", km:40, dur:"1.5 小时", fare:"当地车约 200 000–400 000盾" },
@@ -894,6 +907,12 @@ const GROUND_LEGS = [
   { date:"10.6", from:"布罗莫", to:"泗水", kind:"包车", km:110, dur:"2.5 小时", fare:"包车约 450 000–750 000盾" }
 ];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:"#8b5cf6" };
+// Arrival-day local sun times (NOAA). Not refreshed daily.
+const SUN_SPOTS = [
+  { name:"科莫多", date:"9.26", rise:"05:48", set:"17:56", tz:"同北京", phase:"komodo" },
+  { name:"巴厘岛", date:"9.29", rise:"06:05", set:"18:15", tz:"同北京", phase:"bali" },
+  { name:"爪哇宜珍", date:"10.4", rise:"05:06", set:"17:18", tz:"慢 1 小时", phase:"java" }
+];
 const VF_MP = "https://feeyo-4gavslyd9088a553-1258220651.tcloudbaseapp.com/jump-mp.html";
 const VF_SIGN = "6962cb8406913270c49eb62f06d9240e";
 const KLOOK_ORDERS = "https://www.klook.cn/zh-CN/bookings/";
@@ -942,7 +961,7 @@ const prep = [
   { id:"d-spa", g:"按日期", t:"9.30 预订乌布 SPA + 手工体验", done:false },
   { id:"d-cook", g:"按日期", t:"10.1 预订乌布农场烹饪课（已订 Ketut's Bali）", done:true },
   { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车", done:false },
-  { id:"d-lovcar", g:"按日期", t:"10.3 预订图蓝本 → 罗威纳包车", done:false },
+  { id:"d-lovcar", g:"按日期", t:"10.3 图蓝本 → 罗威纳包车（Komang Arta 已订，IDR 600,000，途经 Aling-Aling）", done:true },
   { id:"d-dol", g:"按日期", t:"10.4 预订罗威纳追海豚船", done:false },
   { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → Gilimanuk 轮渡（Ketapang 起 Andre 已接）", done:false },
   { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（Andre 已含行程）", done:true },
@@ -991,6 +1010,7 @@ const spends = [
   { id:"sp-a-ow", cat:"活动", date:"10.2", dates:["10.2","10.3"], name:"OW 潜水考证", cny:null, note:"微信已确认，金额待补；两日按天平摊" },
   { id:"sp-a-ijen", cat:"活动", date:"10.5", name:"宜珍火山夜爬", cny:null, note:"含在 Andre 行程，门票若另付再补" },
   { id:"sp-a-bromo", cat:"活动", date:"10.6", name:"布罗莫日出", cny:null, note:"含在 Andre 行程，门票若另付再补" },
+  { id:"sp-komang", cat:"交通", date:"10.3", name:"Komang Arta 包车（图蓝本→Aling-Aling→罗威纳）", idr:600000, note:"10.3 14:00 Habitat 接；2 人；乘客 RAN WEIJUN；瀑布门票另计" },
   { id:"sp-andre", cat:"交通", date:"10.4", dates:["10.4","10.5","10.6"], name:"Andre 泗水包车（宜珍→布罗莫→泗水）", idr:3800000, note:"10.4–10.6 按天平摊；付当天一半、最后一天一半" }
 ];
 
@@ -1365,6 +1385,24 @@ function tzCard() {
       <div class="tz-shift">${dayTap("10.8", "10.08")} 回北京快 1 小时</div>
     </div>`;
 }
+function sunCard() {
+  return `
+    <div class="card" id="sun-card">
+      <div class="kicker">日出日落</div>
+      ${SUN_SPOTS.map(s => `
+        <div class="sun-row">
+          <div>
+            <div class="sun-place">${tap(s.name, "days", "day-" + dayIndexForDate(s.date))} ${phaseChip(s.phase)}</div>
+            <div class="sun-meta">${tap(s.date, "days", "day-" + dayIndexForDate(s.date))} 到达 · ${s.tz}</div>
+          </div>
+          <div class="sun-times">
+            <div><span class="k">日出</span><b>${s.rise}</b></div>
+            <div><span class="k">日落</span><b>${s.set}</b></div>
+          </div>
+        </div>`).join("")}
+      <p class="hint">当地时间，按到达当天写死，之后几天差不多。</p>
+    </div>`;
+}
 function mountFx(root) {
   if (!root) return;
   root.insertAdjacentHTML("beforeend", `<div class="card" id="fx-card"><div class="kicker">汇率速算</div><p class="hint">正在取今日汇率…</p></div>`);
@@ -1628,13 +1666,14 @@ function renderToday() {
         <div class="title" style="margin:6px 0">${tap(st.day.date, "days", "day-0")} ${st.day.title}</div>
         ${eventRows(st.day.events)}
       </div>
+      ${sunCard()}
       ${tzCard()}`;
     bindJumps(box);
     mountFx(box);
     return;
   }
   if (st.mode === "after") {
-    box.innerHTML = `<div class="card"><div class="kicker">行程已结束</div><div class="next">到北京了</div><p class="hint">需要回顾时去「行程」翻天看。</p></div>${tzCard()}`;
+    box.innerHTML = `<div class="card"><div class="kicker">行程已结束</div><div class="next">到北京了</div><p class="hint">需要回顾时去「行程」翻天看。</p></div>${sunCard()}${tzCard()}`;
     bindJumps(box);
     mountFx(box);
     return;
@@ -1664,6 +1703,7 @@ function renderToday() {
       ${eventRows(d.events)}
     </div>
     ${tomorrow?`<div class="card"><div class="kicker">明天早起</div><div class="title">${tomorrow.date} ${tomorrow.title}</div><div class="note" style="margin-top:6px">${linkText(tomorrow.events[0].t + " " + tomorrow.events[0].title + " · " + (tomorrow.events[0].note||""))}</div></div>`:""}
+    ${sunCard()}
     ${tzCard()}`;
   bindJumps(box);
   mountFx(box);
@@ -1876,7 +1916,7 @@ function renderTrip(filter, highlightId) {
 let mapObj = null;
 function renderMap() {
   const box = document.getElementById("page-map");
-  if (box.dataset.ready !== "legs3") {
+  if (box.dataset.ready !== "legs4") {
     if (mapObj) {
       try { mapObj.remove(); } catch (e) {}
       mapObj = null;
@@ -1899,18 +1939,18 @@ function renderMap() {
       </div>
       <div class="card">
         <div class="kicker">包车 / 轮渡</div>
-        <p class="hint">车程按路况约估。费用是 Grab / 当地打车或船票的公开价区间，仅供参考，不是已订包车价。</p>
+        <p class="hint">车程按路况约估。未写已订的费用是 Grab / 当地打车或船票的公开价区间，仅供参考。</p>
         ${GROUND_LEGS.map(leg => `
           <div class="leg-row">
             <div>
               <div class="lab">${esc(leg.from)} → ${esc(leg.to)}</div>
-              <div class="note">${esc(leg.date)} · ${esc(leg.kind)}</div>
+              <div class="note">${esc(leg.date)} · ${esc(leg.kind)}${leg.via ? " · 途经 " + esc(leg.via) : ""}${leg.booked ? " · 已订" : ""}</div>
               <div class="note">${esc(leg.fare)}</div>
             </div>
             <div class="meta">约 ${leg.km} 公里<br>约 ${esc(leg.dur)}</div>
           </div>`).join("")}
       </div>`;
-    box.dataset.ready = "legs3";
+    box.dataset.ready = "legs4";
   }
   box.querySelectorAll("[data-focus]").forEach(b => b.onclick = () => focusRegion(b.dataset.focus));
   setTimeout(initMap, 80);
