@@ -661,7 +661,7 @@ const hotels = [
   { inn:"9.30", out:"10.1", nights:1, name:"Meruhdani Boutique Ubud", aka:["Meruhdani","梅鲁达尼精品酒店","梅鲁达尼"], room:"园景高级豪华房", status:"ok", platform:"去哪儿", note:"梅鲁达尼精品酒店", lat:-8.5062, lng:115.2587 },
   { inn:"10.1", out:"10.3", nights:2, name:"Habitat Boutique Dive Resort", aka:["Habitat"], room:"潜店配套", status:"ok", platform:"微信直订", note:"yansu_diving / Let's dive，图蓝本", lat:-8.2758, lng:115.5915 },
   { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住", lat:-8.3352, lng:115.6467 },
-  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"canceling", platform:"携程", note:"携程已确认 ¥303；与 Habitat 重复，待退订，勿入住" },
+  { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"cancel", platform:"携程", note:"已退订，勿入住", lat:-8.2745, lng:115.5920 },
   { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村", lat:-8.1542, lng:115.0346 },
   { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"行程入住；携程 1767788834", lat:-8.1866, lng:114.2396 },
   { inn:"10.4", out:"10.5", nights:1, name:"Ijen Backpacker", aka:["Ijen Backpacker"], room:"—", status:"canceling", platform:"携程", note:"重复预订，¥76；待退订，勿入住。行程住 Purwa Ijen", lat:-8.1404, lng:114.3986 },
@@ -676,6 +676,7 @@ const acts = [
   { date:"9.29 16:00", name:"库塔冲浪私人课 2 小时", aka:["库塔冲浪私人课","冲浪课"], who:"Daddy and Mom Surfing School", detail:"零基础友好，教练带教", note:"Klook 已确认 ¥66.5", klook:true, img:"img/acts/act-kuta-surf.webp?v=2" },
   { date:"9.30", name:"库塔冲浪私人课 2 小时（第二天）", aka:["库塔海滩冲浪练习","冲浪练习"], who:"Daddy and Mom Surfing School", detail:"私人课 2 小时", note:"Klook 已确认 ¥70", klook:true, img:"img/acts/act-kuta-surf.webp?v=2" },
   { date:"10.1 08:30", name:"Ketut's Bali 美食烹饪教室", aka:["Ketut's Bali 烹饪课","Ketut's Bali","烹饪课"], who:"Klook", detail:"08:30 市场导览 → 09:30 烹饪班 → 12:30 午餐；乌布往返接送；8 道巴厘招牌菜", note:"订单 CAP433326，凭证 KLK0925092707", klook:true, img:"img/acts/act-cooking.webp?v=2" },
+  { date:"10.1 13:00", name:"乌布 → 图蓝本包车", aka:["Bali Private Car Charter","乌布图蓝本包车","圣泉寺","百沙基母庙"], who:"Klook", detail:"13:00 Meruhdani 接 → 圣泉寺（可下水）→ Akasa 咖啡厅看 Batur 火山 → 百沙基母庙简逛 → Habitat 图蓝本", note:"已订；6 小时英文司机；凭证 KLK8448107649", klook:true },
   { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认", img:"img/acts/act-ow-dive.webp?v=2" },
   { date:"10.3 14:00", name:"Aling-Aling 瀑布", aka:["Aling-Aling","Aling Aling","阿灵阿灵瀑布"], who:"Komang Arta 包车途经", detail:"Habitat 14:00 接，图蓝本 → Aling-Aling（停留至少 2 小时）→ 新苏纳里罗威那海滩度假村", note:"已订；2 人 IDR 600,000；乘客 RAN WEIJUN；门票另付" },
   { date:"10.5 02:00", name:"宜珍火山夜爬", aka:["宜珍火山夜爬","宜珍蓝火"], who:"Andre 泗水包车", detail:"02:00 出发，蓝火 + 硫磺湖；07:00 回 Purwa Ijen 休息", note:"已定，含在 Andre 行程", img:"img/acts/act-ijen-bluefire.webp?v=1" },
@@ -738,10 +739,10 @@ const days = [
   ]},
   { date:"10.01", iso:"2026-10-01", title:"烹饪课 → 图蓝本", phase:"bali",
     stay:"Habitat Boutique Dive Resort（微信已确认，2 晚）", breakfast:"烹饪课午餐 12:30",
-    flight:"无航班，下午包车北上图蓝本",
+    flight:"Klook 13:00 包车北上图蓝本",
     events:[
     { t:"08:30", title:"Ketut's Bali 烹饪课", note:"市场导览 → 09:30 烹饪 → 12:30 午餐；含乌布接送；Klook CAP433326 / KLK0925092707", kind:"hl" },
-    { t:"下午", title:"包车前往图蓝本", note:"包车待预订；入住 Habitat，勿去已退的 Seamount / 待退的 Ocean Villa", kind:"must" },
+    { t:"13:00", title:"包车前往图蓝本", note:"Klook 已订；Meruhdani 接 → 圣泉寺（可下水）→ Akasa 看 Batur 火山 → 百沙基母庙简逛 → Habitat；凭证 KLK8448107649", kind:"must" },
     { t:"晚上", title:"休整，准备 OW", note:"yansu_diving / Let's dive 中文教练", kind:"must" }
   ]},
   { date:"10.02", iso:"2026-10-02", title:"OW 考证 Day 1", phase:"bali",
@@ -757,14 +758,14 @@ const days = [
     events:[
     { t:"上午", title:"OW 开放水域第 1、2 潜，取证", note:"自由号沉船考核；下午 14:00 要在 Habitat 等车", kind:"hl" },
     { t:"14:00", title:"Komang 接往罗威纳，途经 Aling-Aling", note:"Habitat Boutique Dive Resort 接；2 人 IDR 600,000；瀑布停留至少 2 小时；入住新苏纳里罗威那海滩度假村；门票另付", kind:"must" },
-    { t:"晚上", title:"休整", note:"瀑布后到店偏晚；次日追海豚，早睡", kind:"must" }
+    { t:"晚上", title:"到酒店后海边找追海豚船", note:"瀑布后到店偏晚；傍晚去海滩议价，约 500,000盾/船，浮潜和挂漂可谈；次日早起", kind:"must" }
   ]},
   { date:"10.04", iso:"2026-10-04", title:"追海豚 → 宜珍", phase:"java",
     stay:"Purwa Ijen（花园景双人，已确认）", breakfast:"追海豚后简餐",
     flight:"轮渡去爪哇；13:00 Ketapang Andre 接",
     tz:"过海去爪哇，慢 1 小时",
     events:[
-    { t:"上午", title:"罗威纳追海豚，海上日出", note:"船待预订", kind:"hl" },
+    { t:"上午", title:"罗威纳追海豚，海上日出", note:"前一晚海边已议价，约 500,000盾/船；浮潜、挂漂可谈", kind:"hl" },
     { t:"午前", title:"追海豚后去 Gilimanuk 轮渡", note:"罗威纳 → 轮渡仍待预订；赶 13:00 前到外南梦 Ketapang", kind:"must" },
     { t:"13:00", title:"Ketapang Andre 接往宜珍酒店", note:"Andre 泗水包车已定；IDR 3,800,000，当天付一半", kind:"must", tz:"慢 1 小时" },
     { t:"晚上", title:"入住 Purwa Ijen，补觉", note:"02:00 出发爬宜珍；勿去待退的 Ijen Backpacker / 已退的大丰收", kind:"must" }
@@ -886,7 +887,7 @@ const stops = [
   { id:5,  name:"乌布", lat:-8.5069, lng:115.2625, phase:"bali", date:"9.30–10.1", desc:"Meruhdani · Ketut's 烹饪课" },
   { id:6,  name:"图蓝本", lat:-8.2767, lng:115.5928, phase:"bali", date:"10.1–03", desc:"Habitat · OW 考证" },
   { id:13, name:"艾湄", lat:-8.3381, lng:115.6603, phase:"bali", date:"10.3", desc:"海湾停留，回 Habitat 住，不连路线" },
-  { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 追海豚" },
+  { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 傍晚海边议价追海豚" },
   { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4", desc:"巴厘西端轮渡" },
   { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"Ketapang 港，13:00 Andre 接" },
   { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Purwa Ijen · Andre 蓝火" },
@@ -898,7 +899,7 @@ const flightSegs = [[0,1],[1,2],[2,3],[3,4],[12,2],[2,1],[1,0]];
 const groundSegs = [[4,5],[5,6],[6,14],[14,7],[7,8],[8,9],[9,10],[10,11],[11,12]];
 const GROUND_LEGS = [
   { date:"9.30", from:"库塔", to:"乌布", kind:"包车", km:35, dur:"1.5 小时", fare:"Grab 约 180 000–300 000盾" },
-  { date:"10.1", from:"乌布", to:"图蓝本", kind:"包车", km:85, dur:"2.5 小时", fare:"包车约 550 000–750 000盾（东线 Grab 常叫不到）" },
+  { date:"10.1", from:"乌布", to:"图蓝本", kind:"包车", km:85, dur:"约 6 小时含景点", fare:"已订 · Klook", via:"圣泉寺 · Akasa · 百沙基", booked:true },
   { date:"10.3", from:"图蓝本", to:"罗威纳", kind:"包车", km:95, dur:"含瀑布约 5 小时", fare:"已订 600 000盾 · Komang Arta", via:"Aling-Aling", booked:true },
   { date:"10.4", from:"罗威纳", to:"Gilimanuk", kind:"包车", km:90, dur:"2 小时", fare:"包车约 400 000–650 000盾" },
   { date:"10.4", from:"Gilimanuk", to:"外南梦", kind:"轮渡", km:6, dur:"45 分钟", fare:"船票约 8 500–11 000盾/人；小车约 213 000盾" },
@@ -948,7 +949,7 @@ const prep = [
   { id:"pre-ins", g:"行前必办", t:"购买境外旅行保险（含潜水、火山徒步）", done:false },
   { id:"pre-mdac", g:"行前必办", t:"填写吉隆坡 MDAC 电子入境卡（出发前 72 小时内）", done:false },
   { id:"pre-seamount", g:"行前必办", t:"退订 Seamount Amed 艾湄海山酒店", done:true },
-  { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（Booking / 携程 ¥303）", done:false },
+  { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（携程 ¥303）", done:true },
   { id:"pre-gh", g:"行前必办", t:"退订 Grand Harvest Resort & Villas Ijen（大丰收）", done:true },
   { id:"pre-ijendup", g:"行前必办", t:"退订 Ijen Backpacker（行程住 Purwa Ijen）", done:false },
   { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
@@ -960,9 +961,9 @@ const prep = [
   { id:"d-ubudcar", g:"按日期", t:"9.30 预订库塔 → 乌布包车", done:false },
   { id:"d-spa", g:"按日期", t:"9.30 预订乌布 SPA + 手工体验", done:false },
   { id:"d-cook", g:"按日期", t:"10.1 预订乌布农场烹饪课（已订 Ketut's Bali）", done:true },
-  { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车", done:false },
+  { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车（Klook 已订，途经圣泉寺 / Akasa / 百沙基）", done:true },
   { id:"d-lovcar", g:"按日期", t:"10.3 图蓝本 → 罗威纳包车（Komang Arta 已订，IDR 600,000，途经 Aling-Aling）", done:true },
-  { id:"d-dol", g:"按日期", t:"10.4 预订罗威纳追海豚船", done:false },
+  { id:"d-dol", g:"按日期", t:"10.3 傍晚罗威纳海边议价追海豚船（约 IDR 500,000/船，浮潜、挂漂可谈）", done:false },
   { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → Gilimanuk 轮渡（Ketapang 起 Andre 已接）", done:false },
   { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（Andre 已含行程）", done:true },
   { id:"d-bromocar", g:"按日期", t:"10.5 宜珍 → 布罗莫包车（Andre 已定）", done:true },
@@ -975,7 +976,7 @@ const prep = [
 // Built-in spend catalog only. Couple add/edit/delete is in cloud.lists
 // (extraSpend / goneSpend / editSpend). Do not copy those user items into this
 // array, and do not reset cloud.lists when changing this list.
-// Seamount、大丰收已退订、Oryza 已取消不列入；西双版纳酒店不是这次行程。
+// Seamount、Ocean Villa、大丰收已退订、Oryza 已取消不列入；西双版纳酒店不是这次行程。
 const SPEND_CATS = ["机票","酒店","活动","交通","其他"];
 const SPEND_CAT_COLOR = {
   "机票": "#8b5cf6",
@@ -997,7 +998,6 @@ const spends = [
   { id:"sp-h-kuta", cat:"酒店", date:"9.29", name:"The Kuta Beach Heritage Hotel", cny:475.06, note:"携程 454566143239 · 豪华传统特大床 · 9.30 含 2 早" },
   { id:"sp-h-meru", cat:"酒店", date:"9.30", name:"Meruhdani Boutique Ubud", cny:344.95, note:"去哪儿 · 1 晚" },
   { id:"sp-h-hab", cat:"酒店", date:"10.1", dates:["10.1","10.2"], name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补；按天平摊" },
-  { id:"sp-h-ocean", cat:"酒店", date:"10.1", dates:["10.1","10.2"], name:"Ocean Villa Dive Resort Tulamben", cny:303, note:"携程已确认；与 Habitat 重复，待退订；2 晚按天平摊" },
   { id:"sp-h-lov", cat:"酒店", date:"10.3", name:"New Sunari Lovina Beach Resort", cny:283.02, note:"去哪儿 · 1 晚" },
   { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；与 Purwa 重复，待退订" },
   { id:"sp-h-purwa", cat:"酒店", date:"10.4", name:"Purwa Ijen", cny:184.78, note:"携程 1767788834 · 花园景双人 · 行程入住" },
@@ -1007,6 +1007,8 @@ const spends = [
   { id:"sp-a-surf1", cat:"活动", date:"9.29", name:"库塔冲浪私人课（第一天）", cny:66.5, note:"Klook" },
   { id:"sp-a-surf2", cat:"活动", date:"9.30", name:"库塔冲浪私人课（第二天）", cny:70, note:"Klook" },
   { id:"sp-a-cook", cat:"活动", date:"10.1", name:"Ketut's Bali 美食烹饪教室", cny:264, note:"Klook · 2 人" },
+  { id:"sp-tulcar", cat:"交通", date:"10.1", name:"乌布 → 图蓝本包车（Klook）", cny:null, note:"13:00 Meruhdani → Habitat；途经圣泉寺 / Akasa / 百沙基；凭证 KLK8448107649" },
+  { id:"sp-a-dol", cat:"活动", date:"10.4", name:"罗威纳追海豚", idr:500000, note:"10.3 傍晚海边议价；浮潜、挂漂可谈" },
   { id:"sp-a-ow", cat:"活动", date:"10.2", dates:["10.2","10.3"], name:"OW 潜水考证", cny:null, note:"微信已确认，金额待补；两日按天平摊" },
   { id:"sp-a-ijen", cat:"活动", date:"10.5", name:"宜珍火山夜爬", cny:null, note:"含在 Andre 行程，门票若另付再补" },
   { id:"sp-a-bromo", cat:"活动", date:"10.6", name:"布罗莫日出", cny:null, note:"含在 Andre 行程，门票若另付再补" },
