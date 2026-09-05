@@ -115,6 +115,7 @@
     .chip-must { background: #d1fae5; color: var(--ok); }
     .chip-ok { background: #d1fae5; color: #047857; }
     .chip-wait { background: #fff7ed; color: #c2410c; }
+    .chip-alt { background: #fef3c7; color: #b45309; }
     .chip-canceling { background: #ffe4e6; color: #be123c; }
     .chip-off { background: #f3f4f6; color: #6b7280; }
     .warn {
@@ -425,6 +426,10 @@
       background: #fad1d8;
       border-color: #f5b7c2;
     }
+    .item.st-alt {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
     .ticket-top, .stay-top {
       display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
@@ -663,7 +668,8 @@ const hotels = [
   { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住", lat:-8.3352, lng:115.6467 },
   { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"cancel", platform:"携程", note:"已退订，勿入住", lat:-8.2745, lng:115.5920 },
   { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村", lat:-8.1542, lng:115.0346 },
-  { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"行程入住；携程 1767788834", lat:-8.1866, lng:114.2396 },
+  { inn:"10.4", out:"10.5", nights:1, name:"NusaBay Menjangan", aka:["NusaBay","努沙海湾蒙简甘","门姜酒店","WHM"], room:"特惠 Jungle Lanai Cottage · 50㎡ 大床", status:"alt", platform:"Trip.com", note:"宜珍关闭预案；2 人 RAN WEIJUN；IDR 1,028,225，9.25 扣款；9.27 12:00（巴厘）前可免费取消；10.5 须坐 09:50 班船回 Labuhan Lalang", lat:-8.1047, lng:114.5178 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"宜珍若开则住这里；关闭则改住 NusaBay，并退订。携程 1767788834", lat:-8.1866, lng:114.2396 },
   { inn:"10.4", out:"10.5", nights:1, name:"Ijen Backpacker", aka:["Ijen Backpacker"], room:"—", status:"canceling", platform:"携程", note:"重复预订，¥76；待退订，勿入住。行程住 Purwa Ijen", lat:-8.1404, lng:114.3986 },
   { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住。行程住 Purwa Ijen", lat:-8.1780, lng:114.2512 },
   { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋", lat:-7.9175, lng:113.0273 },
@@ -679,6 +685,7 @@ const acts = [
   { date:"10.1 13:00", name:"乌布 → 图蓝本包车", aka:["Bali Private Car Charter","乌布图蓝本包车","圣泉寺","百沙基母庙"], who:"Klook", detail:"13:00 Meruhdani 接 → 圣泉寺（可下水）→ Akasa 咖啡厅看 Batur 火山 → 百沙基母庙简逛 → Habitat 图蓝本", note:"已订；6 小时英文司机；凭证 KLK8448107649", klook:true },
   { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认", img:"img/acts/act-ow-dive.webp?v=2" },
   { date:"10.3 14:00", name:"Aling-Aling 瀑布", aka:["Aling-Aling","Aling Aling","阿灵阿灵瀑布"], who:"Komang Arta 包车途经", detail:"Habitat 14:00 接，图蓝本 → Aling-Aling（停留至少 2 小时）→ 新苏纳里罗威那海滩度假村", note:"已订；2 人 IDR 600,000；乘客 RAN WEIJUN；门票另付" },
+  { date:"10.4 13:30", name:"门姜岛浮潜", aka:["Menjangan","门姜","门姜岛","NusaBay 浮潜"], who:"NusaBay / Blue Corner", detail:"宜珍关闭预案；12:15 班船入住后下午出门姜 2 点浮潜，不订两瓶水肺", note:"酒店已订；2 人约 IDR 750,000/人；园票约 200,000/人退房时收；10.5 09:50 班船走" },
   { date:"10.5 02:00", name:"宜珍火山夜爬", aka:["宜珍火山夜爬","宜珍蓝火"], who:"Andre 泗水包车", detail:"02:00 出发，蓝火 + 硫磺湖；07:00 回 Purwa Ijen 休息", note:"已定，含在 Andre 行程", img:"img/acts/act-ijen-bluefire.webp?v=1" },
   { date:"10.6 02:00", name:"布罗莫日出", aka:["布罗莫日出","布罗莫观景台"], who:"Andre 泗水包车", detail:"02:00 出发观景台看日出和云海；10:00 回酒店早餐", note:"已定；与宜珍夜爬合计 IDR 3,800,000", img:"img/acts/act-bromo-sunrise.webp?v=1" }
 ];
@@ -769,7 +776,20 @@ const days = [
     { t:"午前", title:"追海豚后去 Gilimanuk 轮渡", note:"罗威纳 → 轮渡仍待预订；赶 13:00 前到外南梦 Ketapang", kind:"must" },
     { t:"13:00", title:"Ketapang Andre 接往宜珍酒店", note:"Andre 泗水包车已定；IDR 3,800,000，当天付一半", kind:"must", tz:"慢 1 小时" },
     { t:"晚上", title:"入住 Purwa Ijen，补觉", note:"02:00 出发爬宜珍；勿去待退的 Ijen Backpacker / 已退的大丰收", kind:"must" }
-  ]},
+    ],
+    alt:{
+      if:"宜珍仍关闭",
+      stay:"NusaBay Menjangan（Jungle Lanai Cottage，已订）",
+      breakfast:"海豚后简餐 / 酒店下午茶",
+      flight:"海豚后去 Labuhan Lalang，12:15 班船入住；不过海",
+      events:[
+        { t:"上午", title:"罗威纳追海豚，海上日出", note:"仍从 New Sunari 出发", kind:"hl" },
+        { t:"08:30", title:"包车去 Labuhan Lalang", note:"约 1.5–2 小时；不要去 Gilimanuk 赶 13:00 船", kind:"must" },
+        { t:"12:15", title:"班船到 NusaBay", note:"约 20 分钟；特惠 Jungle Lanai；RAN WEIJUN", kind:"must" },
+        { t:"13:30", title:"门姜岛浮潜 2 点", note:"不订两瓶水肺；house reef 装备免费", kind:"hl" }
+      ]
+    }
+  },
   { date:"10.05", iso:"2026-10-05", title:"宜珍蓝火 → 布罗莫", phase:"java",
     stay:"Omah Kayu Bromo（已确认）", breakfast:"夜爬后回酒店补觉",
     flight:"Andre 包车 12:00 出发，约 18:00 到布罗莫",
@@ -778,7 +798,21 @@ const days = [
     { t:"07:00", title:"回 Purwa Ijen 休整", note:"冲洗硫磺味", kind:"must" },
     { t:"12:00", title:"出发去布罗莫", note:"Andre 包车", kind:"must" },
     { t:"18:00", title:"入住 Omah Kayu，休整", note:"02:00 出发看日出", kind:"must" }
-  ]},
+    ],
+    alt:{
+      if:"宜珍仍关闭",
+      stay:"Omah Kayu Bromo（已确认）",
+      breakfast:"NusaBay 后车上 / 沿海简餐",
+      flight:"09:50 班船回岸 → Gilimanuk 轮渡 → 中午前 Ketapang Andre 接去布罗莫",
+      tz:"过海去爪哇，慢 1 小时",
+      events:[
+        { t:"09:50", title:"NusaBay 班船回 Labuhan Lalang", note:"必须坐这班，12:50 会耽误布罗莫", kind:"must" },
+        { t:"10:30", title:"Gilimanuk 轮渡", note:"码头约 20–30 分钟车", kind:"must" },
+        { t:"中午", title:"Ketapang Andre 接往布罗莫", note:"取消宜珍夜爬；当天付一半可改到 10.6", kind:"must", tz:"慢 1 小时" },
+        { t:"17:00–18:00", title:"入住 Omah Kayu", note:"次日 02:00 日出，早睡", kind:"must" }
+      ]
+    }
+  },
   { date:"10.06", iso:"2026-10-06", title:"布罗莫日出 → 泗水", phase:"java",
     stay:"Premier Place Surabaya Airport（经典大床，已确认）", breakfast:"10:00 回酒店早餐",
     flight:"Andre 包车 11:00 出发，13:30 到泗水",
@@ -888,9 +922,10 @@ const stops = [
   { id:6,  name:"图蓝本", lat:-8.2767, lng:115.5928, phase:"bali", date:"10.1–03", desc:"Habitat · OW 考证" },
   { id:13, name:"艾湄", lat:-8.3381, lng:115.6603, phase:"bali", date:"10.3", desc:"海湾停留，回 Habitat 住，不连路线" },
   { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 傍晚海边议价追海豚" },
+  { id:15, name:"门姜 / NusaBay", lat:-8.1047, lng:114.5178, phase:"bali", date:"10.4–05", desc:"宜珍关闭预案 · Jungle Lanai · 浮潜" },
   { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4", desc:"巴厘西端轮渡" },
-  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"Ketapang 港，13:00 Andre 接" },
-  { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Purwa Ijen · Andre 蓝火" },
+  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"Ketapang 港，13:00 Andre 接；预案改为 10.5 中午接" },
+  { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Purwa Ijen · Andre 蓝火；关闭则不去" },
   { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · Andre 日出" },
   { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place · 13:30 到" },
   { id:14, name:"Aling-Aling", lat:-8.1768, lng:115.1063, phase:"bali", date:"10.3", desc:"瀑布停留 ≥2 小时 · Komang 途经" }
@@ -902,9 +937,12 @@ const GROUND_LEGS = [
   { date:"10.1", from:"乌布", to:"图蓝本", kind:"包车", km:85, dur:"约 6 小时含景点", fare:"已订 · Klook", via:"圣泉寺 · Akasa · 百沙基", booked:true },
   { date:"10.3", from:"图蓝本", to:"罗威纳", kind:"包车", km:95, dur:"含瀑布约 5 小时", fare:"已订 600 000盾 · Komang Arta", via:"Aling-Aling", booked:true },
   { date:"10.4", from:"罗威纳", to:"Gilimanuk", kind:"包车", km:90, dur:"2 小时", fare:"包车约 400 000–650 000盾" },
+  { date:"10.4", from:"罗威纳", to:"门姜", kind:"包车", km:70, dur:"1.5–2 小时", fare:"宜珍关闭预案 · 送到 Labuhan Lalang 赶 12:15 班船", via:"Labuhan Lalang", alt:true },
   { date:"10.4", from:"Gilimanuk", to:"外南梦", kind:"轮渡", km:6, dur:"45 分钟", fare:"船票约 8 500–11 000盾/人；小车约 213 000盾" },
   { date:"10.4", from:"外南梦", to:"宜珍", kind:"包车", km:40, dur:"1.5 小时", fare:"当地车约 200 000–400 000盾" },
+  { date:"10.5", from:"门姜", to:"外南梦", kind:"班船+轮渡", km:40, dur:"约 2 小时", fare:"宜珍关闭预案 · 09:50 班船回岸后过海", via:"Labuhan Lalang · Gilimanuk", alt:true },
   { date:"10.5", from:"宜珍", to:"布罗莫", kind:"包车", km:250, dur:"6 小时", fare:"包车约 1 200 000–1 800 000盾（无 Grab）" },
+  { date:"10.5", from:"外南梦", to:"布罗莫", kind:"包车", km:250, dur:"5–7 小时", fare:"宜珍关闭预案 · Andre 10.5 中午 Ketapang 接", alt:true },
   { date:"10.6", from:"布罗莫", to:"泗水", kind:"包车", km:110, dur:"2.5 小时", fare:"包车约 450 000–750 000盾" }
 ];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:"#8b5cf6" };
@@ -951,7 +989,8 @@ const prep = [
   { id:"pre-seamount", g:"行前必办", t:"退订 Seamount Amed 艾湄海山酒店", done:true },
   { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（携程 ¥303）", done:true },
   { id:"pre-gh", g:"行前必办", t:"退订 Grand Harvest Resort & Villas Ijen（大丰收）", done:true },
-  { id:"pre-ijendup", g:"行前必办", t:"退订 Ijen Backpacker（行程住 Purwa Ijen）", done:false },
+  { id:"pre-ijendup", g:"行前必办", t:"退订 Ijen Backpacker（宜珍若开住 Purwa；关闭则住 NusaBay，两家都退）", done:false },
+  { id:"pre-ijenfire", g:"行前必办", t:"9.27 中午前确认宜珍是否重开：仍关则走门姜预案（NusaBay 已订）；重开则取消 NusaBay", done:false },
   { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
   { id:"pre-ow", g:"行前必办", t:"OW 潜水课提前学理论课", done:false },
   { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡市区酒店（1晚，T2附近）", done:false },
@@ -964,8 +1003,10 @@ const prep = [
   { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车（Klook 已订，途经圣泉寺 / Akasa / 百沙基）", done:true },
   { id:"d-lovcar", g:"按日期", t:"10.3 图蓝本 → 罗威纳包车（Komang Arta 已订，IDR 600,000，途经 Aling-Aling）", done:true },
   { id:"d-dol", g:"按日期", t:"10.3 傍晚罗威纳海边议价追海豚船（约 IDR 500,000/船，浮潜、挂漂可谈）", done:false },
-  { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → Gilimanuk 轮渡（Ketapang 起 Andre 已接）", done:false },
+  { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → Gilimanuk 轮渡（Ketapang 起 Andre 已接；若走预案则改送 Labuhan Lalang）", done:false },
   { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（Andre 已含行程）", done:true },
+  { id:"d-nusabay", g:"按日期", t:"10.4 宜珍关闭预案：NusaBay Jungle Lanai 已订，下午门姜浮潜；10.5 09:50 班船", done:true },
+  { id:"d-andre-alt", g:"按日期", t:"若宜珍关闭：通知 Andre 取消夜爬，改为 10.5 中午 Ketapang 接去布罗莫", done:false },
   { id:"d-bromocar", g:"按日期", t:"10.5 宜珍 → 布罗莫包车（Andre 已定）", done:true },
   { id:"d-jeep", g:"按日期", t:"10.6 布罗莫日出（Andre 已含行程）", done:true },
   { id:"d-subcar", g:"按日期", t:"10.6 布罗莫 → 泗水包车（Andre 已定）", done:true },
@@ -1000,7 +1041,8 @@ const spends = [
   { id:"sp-h-hab", cat:"酒店", date:"10.1", dates:["10.1","10.2"], name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补；按天平摊" },
   { id:"sp-h-lov", cat:"酒店", date:"10.3", name:"New Sunari Lovina Beach Resort", cny:283.02, note:"去哪儿 · 1 晚" },
   { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；与 Purwa 重复，待退订" },
-  { id:"sp-h-purwa", cat:"酒店", date:"10.4", name:"Purwa Ijen", cny:184.78, note:"携程 1767788834 · 花园景双人 · 行程入住" },
+  { id:"sp-h-purwa", cat:"酒店", date:"10.4", name:"Purwa Ijen", cny:184.78, note:"携程 1767788834 · 花园景双人 · 宜珍若开入住" },
+  { id:"sp-h-nusabay", cat:"酒店", date:"10.4", name:"NusaBay Menjangan（Jungle Lanai）", idr:1028225, note:"Trip.com 特惠；9.25 扣款；宜珍关闭预案，9.27 12:00 前可免费取消" },
   { id:"sp-h-omah", cat:"酒店", date:"10.5", name:"Omah Kayu Bromo", cny:154, note:"携程 · 1 晚" },
   { id:"sp-h-prem", cat:"酒店", date:"10.6", name:"Premier Place Surabaya Airport", cny:270.12, note:"去哪儿 · 1 晚" },
   { id:"sp-a-komodo", cat:"活动", date:"9.27", dates:["9.27","9.28"], name:"科莫多半日游 + 一日跳岛", idr:1400000, note:"两日两人共价，GP Travel；按天平摊" },
@@ -1025,6 +1067,7 @@ function phaseForDate(s) {
 function statusChip(s) {
   if (s==="ok") return '<span class="chip chip-ok">已确认</span>';
   if (s==="wait") return '<span class="chip chip-wait">待预订</span>';
+  if (s==="alt") return '<span class="chip chip-alt">预案</span>';
   if (s==="cancel") return '<span class="chip chip-off">已退订</span>';
   if (s==="canceling") return '<span class="chip chip-canceling">待退订</span>';
   return "";
@@ -1450,6 +1493,19 @@ function dayMeta(d) {
     <div class="kv"><b>早</b>${linkText(d.breakfast || "")}</div>
     <div class="kv"><b>交通</b>${linkText(d.flight || "")}</div>`;
 }
+function altPlanCard(d) {
+  if (!d || !d.alt) return "";
+  const a = d.alt;
+  return `
+    <div class="warn">
+      <div class="kicker urgent">预案 · ${a.if || "宜珍关闭"}</div>
+      <div class="kv"><b>住</b>${linkText(a.stay || "")}</div>
+      <div class="kv"><b>早</b>${linkText(a.breakfast || "")}</div>
+      <div class="kv"><b>交通</b>${linkText(a.flight || "")}</div>
+      ${a.tz ? tzNote(a.tz) : ""}
+      ${eventRows(a.events || [])}
+    </div>`;
+}
 
 function tap(text, jump, id) {
   return `<span class="tap" data-jump="${jump}" data-id="${id || ""}">${text}</span>`;
@@ -1598,7 +1654,7 @@ function flightBlock(f) {
 
 function hotelBlock(h, i) {
   const ph = phaseForDate(h.inn);
-  const stClass = h.status === "cancel" ? " st-cancel" : (h.status === "canceling" ? " st-canceling" : "");
+  const stClass = h.status === "cancel" ? " st-cancel" : (h.status === "canceling" ? " st-canceling" : (h.status === "alt" ? " st-alt" : ""));
   return `<div class="item ph-${ph}${stClass}" id="h-${i}">
     <div class="stay-top">
       <div>${tap(h.inn+"–"+h.out, "days", "day-"+dayIndexForDate(h.inn))}</div>
@@ -1692,7 +1748,8 @@ function renderToday() {
       ${phaseChip(d.phase)}
       ${dayMeta(d)}
       ${tzNote(d.tz)}
-      ${hard?`<div class="warn">10.04–10.06 连续早起，是全程瓶颈。优先睡够，保证宜珍蓝火和布罗莫日出。赛武瀑布已取消。</div>`:""}
+      ${hard?`<div class="warn">10.04–10.06 连续早起，是全程瓶颈。宜珍若开：保证蓝火和布罗莫日出。宜珍若关：走门姜预案（NusaBay 已订），10.5 无夜爬，保布罗莫。赛武瀑布已取消。</div>`:""}
+      ${altPlanCard(d)}
     </div>
     <div class="card">
       <div class="kicker">下一步</div>
@@ -1871,7 +1928,7 @@ function renderTrip(filter, highlightId) {
   } else if (tripTab === "hotels") {
     body = `
       <div class="page-head c-teal">酒店 <span>${hotels.length} 家</span></div>
-      <p class="hint">点入住日期看当天日程。「去哪儿」打开酒店订单。已退订、待退订和重复预订都列出，以免走错。</p>
+      <p class="hint">点入住日期看当天日程。「去哪儿」打开酒店订单。已退订、待退订、重复预订和预案都列出，以免走错。</p>
       ${hotels.map(hotelBlock).join("")}`;
   } else if (tripTab === "acts") {
     body = `
@@ -1894,6 +1951,7 @@ function renderTrip(filter, highlightId) {
           ${dayMeta(d)}
           ${tzNote(d.tz)}
           ${eventRows(d.events)}
+          ${altPlanCard(d)}
         </div>
       `).join("")}`;
   }
@@ -1918,7 +1976,7 @@ function renderTrip(filter, highlightId) {
 let mapObj = null;
 function renderMap() {
   const box = document.getElementById("page-map");
-  if (box.dataset.ready !== "legs4") {
+  if (box.dataset.ready !== "legs5") {
     if (mapObj) {
       try { mapObj.remove(); } catch (e) {}
       mapObj = null;
@@ -1946,13 +2004,13 @@ function renderMap() {
           <div class="leg-row">
             <div>
               <div class="lab">${esc(leg.from)} → ${esc(leg.to)}</div>
-              <div class="note">${esc(leg.date)} · ${esc(leg.kind)}${leg.via ? " · 途经 " + esc(leg.via) : ""}${leg.booked ? " · 已订" : ""}</div>
+              <div class="note">${esc(leg.date)} · ${esc(leg.kind)}${leg.via ? " · 途经 " + esc(leg.via) : ""}${leg.booked ? " · 已订" : ""}${leg.alt ? " · 预案" : ""}</div>
               <div class="note">${esc(leg.fare)}</div>
             </div>
             <div class="meta">约 ${leg.km} 公里<br>约 ${esc(leg.dur)}</div>
           </div>`).join("")}
       </div>`;
-    box.dataset.ready = "legs4";
+    box.dataset.ready = "legs5";
   }
   box.querySelectorAll("[data-focus]").forEach(b => b.onclick = () => focusRegion(b.dataset.focus));
   setTimeout(initMap, 80);
