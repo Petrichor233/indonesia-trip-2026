@@ -112,11 +112,15 @@
 
   :root { --safe: env(safe-area-inset-bottom, 0px); --accent:#2C5F84; --orange:#C2671B; --ok:#2F7A3B; }
   body { padding-bottom: calc(72px + var(--safe)); }
-  .app { max-width: 640px; margin: 0 auto; min-height: 100vh; overflow-x: hidden; }
-  .app-head { position:sticky; top:0; z-index:30; background:rgba(238,242,246,.94); backdrop-filter:blur(12px); padding:10px 16px 8px; border-bottom:0.5px solid #E2E8F0; }
+  .app { max-width: 640px; margin: 0 auto; min-height: 100vh; }
+  .app-head, .subchrome {
+    position:fixed; left:0; right:0; max-width:640px; margin:0 auto;
+    background:rgba(238,242,246,.94); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  }
+  .app-head { top:0; z-index:32; padding:10px 16px 8px; border-bottom:0.5px solid #E2E8F0; }
   .app-head h1 { font-size:17px; font-weight:700; }
   .app-head p { font-size:12px; color:#7B8794; margin-top:2px; }
-  .subchrome { position:sticky; top:var(--head-h,52px); z-index:28; background:rgba(238,242,246,.96); backdrop-filter:blur(12px); padding:8px 14px 10px; margin:0; }
+  .subchrome { top:var(--head-h,52px); z-index:31; padding:8px 14px 10px; }
   .subchrome[hidden] { display:none !important; }
   .subnav { display:grid; gap:6px; }
   .subnav.n4 { grid-template-columns:repeat(4,1fr); }
@@ -124,9 +128,9 @@
   .subnav button { border:0.5px solid #DCE3EA; background:#fff; color:#52606D; border-radius:12px; padding:8px 4px; font-size:13px; font-weight:650; min-height:40px; }
   .subnav button:active { transform:scale(.96); }
   .subnav button.on { background:#2C5F84; color:#fff; border-color:#2C5F84; }
-  .page { display:none; overflow-x:hidden; }
+  .page { display:none; overflow-x:clip; }
   .page.on { display:block; }
-  .app-body { padding-bottom:8px; }
+  .app-body { padding-top:calc(var(--head-h,52px) + var(--sub-h,0px)); padding-bottom:8px; overflow-x:clip; }
   .app-body.swiping, .app.swiping { cursor:grabbing; }
   .app.swiping a { pointer-events:none; }
   .pane-body { will-change:transform; touch-action:pan-y; }
@@ -185,7 +189,7 @@
   .stat.ok b { color:#2F7A3B; }
   .item-actions { display:flex; gap:4px; }
 @media (min-width:800px) {
-  nav.dock { left:50%; right:auto; width:640px; transform:translateX(-50%); }
+  nav.dock, .app-head, .subchrome { left:50%; right:auto; width:640px; transform:translateX(-50%); }
 }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
@@ -1364,12 +1368,14 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
   }
   function syncHead(){
     var h=document.querySelector('.app-head');
+    var s=document.getElementById('subchrome');
     document.documentElement.style.setProperty('--head-h', (h?h.offsetHeight:52)+'px');
+    document.documentElement.style.setProperty('--sub-h', (s && !s.hidden ? s.offsetHeight : 0)+'px');
   }
   function paintSubnav(){
     var chrome=document.getElementById('subchrome');
     if(!chrome) return;
-    if(page!=='trip' && page!=='prep'){ chrome.hidden=true; chrome.innerHTML=''; return; }
+    if(page!=='trip' && page!=='prep'){ chrome.hidden=true; chrome.innerHTML=''; syncHead(); return; }
     var tabs=page==='trip'?TRIP_TABS:PREP_TABS;
     var cur=page==='trip'?tripTab:prepTab;
     chrome.hidden=false;
@@ -1379,6 +1385,7 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
     Array.prototype.forEach.call(chrome.querySelectorAll('[data-sub]'), function(b){
       b.onclick=function(){ goSub(b.getAttribute('data-sub')); };
     });
+    syncHead();
   }
   function showTripSub(id){
     tripTab=id;
@@ -1582,6 +1589,7 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
   syncHead();
   paintSubnav();
   renderToday();
+  window.addEventListener('resize', syncHead);
 })();
 </script>
 
