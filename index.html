@@ -651,7 +651,7 @@ let packFilter = "all";
 const flights = [
   { date:"9.25", iso:"2026-09-25", no:"VN517", al:"越南航空", route:"北京大兴 → 胡志明新山一 T2", from:"PKX", to:"SGN", dep:"08:30", arr:"12:25", bag:"托运 23KG", book:"去哪儿", note:"去程第一段", tz:"到胡志明，慢 1 小时" },
   { date:"9.25", iso:"2026-09-25", no:"VN679", al:"越南航空", route:"胡志明新山一 T2 → 吉隆坡 T1", from:"SGN", to:"KUL", dep:"15:25", arr:"18:25", bag:"托运 23KG", book:"去哪儿", note:"同机场 T2 中转；当晚住 T2 附近方便次日亚航", tz:"到吉隆坡，快 1 小时" },
-  { date:"9.26", iso:"2026-09-26", no:"AK310", al:"亚洲航空", route:"吉隆坡 T2 → 科莫多", from:"KUL", to:"LBJ", dep:"10:45", arr:"14:25", bag:"无免费托运（已加购）", book:"去哪儿", note:"两人分单；从 T1 酒店转到 T2" },
+  { date:"9.26", iso:"2026-09-26", no:"AK310", al:"亚洲航空", route:"吉隆坡 T2 → 科莫多", from:"KUL", to:"LBJ", dep:"10:45", arr:"14:25", bag:"无免费托运（已加购）", book:"去哪儿", note:"两人分单；住 Tune KLIA Aeropolis，去 klia2 T2" },
   { date:"9.29", iso:"2026-09-29", no:"QZ647", al:"印尼亚航", route:"科莫多 → 巴厘岛登巴萨 D", from:"LBJ", to:"DPS", dep:"13:05", arr:"14:20", bag:"以机票为准", book:"去哪儿", note:"抵登巴萨后接机去库塔" },
   { date:"10.7", iso:"2026-10-07", no:"QZ322", al:"印尼亚航", route:"泗水朱安达 T2 → 吉隆坡 T2", from:"SUB", to:"KUL", dep:"11:20", arr:"15:00", bag:"以机票为准", book:"去哪儿", note:"无餐食；机场酒店出发", tz:"到吉隆坡，快 1 小时" },
   { date:"10.7", iso:"2026-10-07", no:"VN678", al:"越南航空", route:"吉隆坡 T1 → 胡志明新山一 T2", from:"KUL", to:"SGN", dep:"19:25", arr:"20:15", bag:"托运 23KG", book:"去哪儿", note:"KUL T2 转到 T1，预留 4 小时", tz:"到胡志明，慢 1 小时" },
@@ -659,7 +659,7 @@ const flights = [
 ];
 
 const hotels = [
-  { inn:"9.25", out:"9.26", nights:1, name:"吉隆坡市区酒店（T2附近）", aka:["吉隆坡市区酒店","T2 附近酒店","T2附近酒店","吉隆坡酒店"], room:"待定", status:"wait", platform:"", note:"待预订；次日 AK310 从 T2 起飞", lat:2.7449, lng:101.6828 },
+  { inn:"9.25", out:"9.26", nights:1, name:"Tune Hotel KLIA Aeropolis", aka:["Tune Hotel KLIA Aeropolis","吉隆坡机场图恩酒店","图恩酒店","吉隆坡市区酒店","T2 附近酒店","T2附近酒店","吉隆坡酒店"], room:"客房双人床 10㎡，含早", status:"ok", platform:"Agoda", note:"已付款 ¥203.73；RAN WEIJUN；14:00 入住 / 11:00 退房；不可退；+60387872759；次日 AK310 在旁 klia2", lat:2.7445, lng:101.6748 },
   { inn:"9.26", out:"9.27", nights:1, name:"Katamaran Hotel & Resort Komodo", aka:["Katamaran","卡塔马兰酒店及度假村","卡塔马兰"], room:"豪华海景特大床房", status:"ok", platform:"去哪儿", note:"卡塔马兰；日出徒步需预约；酒店桨板 / 浮潜", lat:-8.4716, lng:119.8768 },
   { inn:"9.27", out:"9.29", nights:2, name:"Seaesta Komodo Hostel & Hotel", aka:["Seaesta Komodo","Seaesta","西亚斯塔"], room:"双人房", status:"ok", platform:"去哪儿", note:"西亚斯塔；不含早餐", lat:-8.4894, lng:119.8778 },
   { inn:"9.29", out:"9.30", nights:1, name:"The Kuta Beach Heritage Hotel", aka:["库塔海滩遗产酒店","库塔酒店"], room:"豪华传统特大床房", status:"ok", platform:"携程", note:"雅高管理；9.30 含 2 早；携程 454566143239", lat:-8.7206, lng:115.1699 },
@@ -670,7 +670,7 @@ const hotels = [
   { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村", lat:-8.1542, lng:115.0346 },
   { inn:"10.4", out:"10.5", nights:1, name:"NusaBay Menjangan", aka:["NusaBay","努沙海湾蒙简甘","门姜酒店","WHM"], room:"特惠 Jungle Lanai Cottage · 50㎡ 大床", status:"alt", platform:"Trip.com", note:"宜珍关闭预案；2 人 RAN WEIJUN；IDR 1,028,225，9.25 扣款；9.27 12:00（巴厘）前可免费取消；10.5 须坐 09:50 班船回 Labuhan Lalang", lat:-8.1047, lng:114.5178 },
   { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"宜珍若开则住这里；关闭则改住 NusaBay，并退订。携程 1767788834", lat:-8.1866, lng:114.2396 },
-  { inn:"10.4", out:"10.5", nights:1, name:"Ijen Backpacker", aka:["Ijen Backpacker"], room:"—", status:"canceling", platform:"携程", note:"重复预订，¥76；待退订，勿入住。行程住 Purwa Ijen", lat:-8.1404, lng:114.3986 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Ijen Backpacker", aka:["Ijen Backpacker"], room:"—", status:"cancel", platform:"携程", note:"已退订，勿入住", lat:-8.1404, lng:114.3986 },
   { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住。行程住 Purwa Ijen", lat:-8.1780, lng:114.2512 },
   { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋", lat:-7.9175, lng:113.0273 },
   { inn:"10.6", out:"10.7", nights:1, name:"Premier Place Surabaya Airport", aka:["Premier Place","泗水机场酒店","机场酒店"], room:"经典大床房", status:"ok", platform:"去哪儿", note:"泗水机场普瑞米尔广场；确认免费送机", lat:-7.3804, lng:112.7459 }
@@ -692,7 +692,7 @@ const acts = [
 
 const days = [
   { date:"9.25", iso:"2026-09-25", title:"北京 → 胡志明 → 吉隆坡", phase:"transit",
-    stay:"吉隆坡市区酒店（T2附近，待预订）", breakfast:"机上 / 抵达后晚餐",
+    stay:"Tune Hotel KLIA Aeropolis（双人床含早，已确认）", breakfast:"机上 / 抵达后晚餐",
     flight:"VN517 08:30–12:25；VN679 15:25–18:25",
     tz:"到胡志明慢 1 小时；再飞吉隆坡快 1 小时",
     events:[
@@ -700,13 +700,13 @@ const days = [
     { t:"08:30", title:"VN517 飞胡志明", note:"越南航空，大兴 → 新山一 T2，托运 23KG", kind:"hl" },
     { t:"12:25", title:"抵达胡志明 T2", note:"不出海关，同航站楼转 VN679", kind:"must", tz:"慢 1 小时" },
     { t:"15:25", title:"VN679 飞吉隆坡", note:"新山一 T2 → 吉隆坡 T1，托运 23KG", kind:"hl" },
-    { t:"18:25", title:"抵达吉隆坡 T1，入住 T2 附近酒店", note:"酒店待预订；次日亚航在 T2", kind:"must", tz:"快 1 小时" }
+    { t:"18:25", title:"抵达吉隆坡 T1，转去 Tune KLIA Aeropolis", note:"T1 → klia2 / Aeropolis；图恩酒店已订，含早；次日 AK310 在 klia2", kind:"must", tz:"快 1 小时" }
   ]},
   { date:"9.26", iso:"2026-09-26", title:"吉隆坡 → 科莫多", phase:"komodo",
-    stay:"Katamaran Hotel & Resort Komodo（豪华海景大床，已确认）", breakfast:"吉隆坡酒店后退房",
+    stay:"Katamaran Hotel & Resort Komodo（豪华海景大床，已确认）", breakfast:"Tune 含早，11:00 前退房",
     flight:"AK310 10:45 吉隆坡 T2 → 14:25 科莫多",
     events:[
-    { t:"08:00", title:"吉隆坡酒店退房，去 T2", note:"已加购 AK310 托运行李；两人分单", kind:"must" },
+    { t:"08:00", title:"Tune 退房，去 klia2 T2", note:"酒店在 Aeropolis，步行或接驳；已加购 AK310 托运；两人分单", kind:"must" },
     { t:"10:45", title:"AK310 飞科莫多", note:"亚洲航空，无免费托运", kind:"hl" },
     { t:"14:25", title:"抵达 Labuan Bajo，入住 Katamaran", note:"卡塔马兰酒店及度假村", kind:"must" },
     { t:"16:00", title:"酒店玩桨板", note:"可预约酒店活动", kind:"hl" }
@@ -775,7 +775,7 @@ const days = [
     { t:"上午", title:"罗威纳追海豚，海上日出", note:"前一晚海边已议价，约 500,000盾/船；浮潜、挂漂可谈", kind:"hl" },
     { t:"午前", title:"追海豚后去 Gilimanuk 轮渡", note:"罗威纳 → 轮渡仍待预订；赶 13:00 前到外南梦 Ketapang", kind:"must" },
     { t:"13:00", title:"Ketapang Andre 接往宜珍酒店", note:"Andre 泗水包车已定；IDR 3,800,000，当天付一半", kind:"must", tz:"慢 1 小时" },
-    { t:"晚上", title:"入住 Purwa Ijen，补觉", note:"02:00 出发爬宜珍；勿去待退的 Ijen Backpacker / 已退的大丰收", kind:"must" }
+    { t:"晚上", title:"入住 Purwa Ijen，补觉", note:"02:00 出发爬宜珍；勿去已退的 Ijen Backpacker / 大丰收", kind:"must" }
     ],
     alt:{
       if:"宜珍仍关闭",
@@ -915,7 +915,7 @@ const PACK_LABEL = { none:"尚无", have:"已有", packed:"已装包" };
 const stops = [
   { id:0,  name:"北京", lat:39.9042, lng:116.4074, phase:"transit", date:"9.25 / 10.8", desc:"VN517 去，VN516 回" },
   { id:1,  name:"胡志明", lat:10.7769, lng:106.7009, phase:"transit", date:"9.25 / 10.7–8", desc:"VN679 去；VN678/VN516 回，不出机场" },
-  { id:2,  name:"吉隆坡", lat:3.1390, lng:101.6869, phase:"transit", date:"9.25–26 / 10.7", desc:"T1 抵达、T2 亚航；返程 T2→T1" },
+  { id:2,  name:"吉隆坡", lat:2.7445, lng:101.6748, phase:"transit", date:"9.25–26 / 10.7", desc:"T1 抵达；住 Tune Aeropolis；AK310 从 klia2" },
   { id:3,  name:"科莫多 LB", lat:-8.4961, lng:119.8877, phase:"komodo", date:"9.26–29", desc:"Katamaran + Seaesta · 半日+一日船" },
   { id:4,  name:"库塔", lat:-8.7183, lng:115.1686, phase:"bali", date:"9.29–30", desc:"Kuta Beach Heritage · 冲浪课" },
   { id:5,  name:"乌布", lat:-8.5069, lng:115.2625, phase:"bali", date:"9.30–10.1", desc:"Meruhdani · Ketut's 烹饪课" },
@@ -989,11 +989,11 @@ const prep = [
   { id:"pre-seamount", g:"行前必办", t:"退订 Seamount Amed 艾湄海山酒店", done:true },
   { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（携程 ¥303）", done:true },
   { id:"pre-gh", g:"行前必办", t:"退订 Grand Harvest Resort & Villas Ijen（大丰收）", done:true },
-  { id:"pre-ijendup", g:"行前必办", t:"退订 Ijen Backpacker（宜珍若开住 Purwa；关闭则住 NusaBay，两家都退）", done:false },
+  { id:"pre-ijendup", g:"行前必办", t:"退订 Ijen Backpacker", done:true },
   { id:"pre-ijenfire", g:"行前必办", t:"9.27 中午前确认宜珍是否重开：仍关则走门姜预案（NusaBay 已订）；重开则取消 NusaBay", done:false },
   { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
   { id:"pre-ow", g:"行前必办", t:"OW 潜水课提前学理论课", done:false },
-  { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡市区酒店（1晚，T2附近）", done:false },
+  { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡 T2 附近酒店（Tune KLIA Aeropolis 已订，Agoda ¥203.73）", done:true },
   { id:"d-kata", g:"按日期", t:"9.27 预约 Katamaran 日出徒步 + 浮潜", done:false },
   { id:"d-pick", g:"按日期", t:"9.29 预订登巴萨机场 → 库塔酒店接机", done:false },
   { id:"d-surf", g:"按日期", t:"9.30 库塔冲浪练习（Klook 已订）", done:true },
@@ -1017,7 +1017,7 @@ const prep = [
 // Built-in spend catalog only. Couple add/edit/delete is in cloud.lists
 // (extraSpend / goneSpend / editSpend). Do not copy those user items into this
 // array, and do not reset cloud.lists when changing this list.
-// Seamount、Ocean Villa、大丰收已退订、Oryza 已取消不列入；西双版纳酒店不是这次行程。
+// Seamount、Ocean Villa、Ijen Backpacker、大丰收已退订、Oryza 已取消不列入；西双版纳酒店不是这次行程。
 const SPEND_CATS = ["机票","酒店","活动","交通","其他"];
 const SPEND_CAT_COLOR = {
   "机票": "#8b5cf6",
@@ -1033,14 +1033,13 @@ const spends = [
   { id:"sp-ak310b", cat:"机票", date:"9.26", name:"AK310 吉隆坡 → 科莫多", cny:712, note:"两人分单" },
   { id:"sp-qz647", cat:"机票", date:"9.29", name:"QZ647 科莫多 → 巴厘岛", cny:816, note:"去哪儿" },
   { id:"sp-qz322", cat:"机票", date:"10.7", name:"QZ322 泗水 → 吉隆坡", cny:666, note:"去哪儿" },
-  { id:"sp-h-kl", cat:"酒店", date:"9.25", name:"吉隆坡市区酒店（T2附近）", cny:null, note:"待预订" },
+  { id:"sp-h-kl", cat:"酒店", date:"9.25", name:"Tune Hotel KLIA Aeropolis", cny:203.73, note:"Agoda · 含早 · 不可退" },
   { id:"sp-h-kata", cat:"酒店", date:"9.26", name:"Katamaran Hotel & Resort Komodo", cny:1162.47, note:"去哪儿 · 1 晚" },
   { id:"sp-h-sea", cat:"酒店", date:"9.27", dates:["9.27","9.28"], name:"Seaesta Komodo Hostel & Hotel", cny:963.74, note:"去哪儿 · 2 晚，按天平摊" },
   { id:"sp-h-kuta", cat:"酒店", date:"9.29", name:"The Kuta Beach Heritage Hotel", cny:475.06, note:"携程 454566143239 · 豪华传统特大床 · 9.30 含 2 早" },
   { id:"sp-h-meru", cat:"酒店", date:"9.30", name:"Meruhdani Boutique Ubud", cny:344.95, note:"去哪儿 · 1 晚" },
   { id:"sp-h-hab", cat:"酒店", date:"10.1", dates:["10.1","10.2"], name:"Habitat Boutique Dive Resort", cny:null, note:"微信直订，2 晚，金额待补；按天平摊" },
   { id:"sp-h-lov", cat:"酒店", date:"10.3", name:"New Sunari Lovina Beach Resort", cny:283.02, note:"去哪儿 · 1 晚" },
-  { id:"sp-h-ijenbp", cat:"酒店", date:"10.4", name:"Ijen Backpacker", cny:76, note:"携程已确认；与 Purwa 重复，待退订" },
   { id:"sp-h-purwa", cat:"酒店", date:"10.4", name:"Purwa Ijen", cny:184.78, note:"携程 1767788834 · 花园景双人 · 宜珍若开入住" },
   { id:"sp-h-nusabay", cat:"酒店", date:"10.4", name:"NusaBay Menjangan（Jungle Lanai）", idr:1028225, note:"Trip.com 特惠；9.25 扣款；宜珍关闭预案，9.27 12:00 前可免费取消" },
   { id:"sp-h-omah", cat:"酒店", date:"10.5", name:"Omah Kayu Bromo", cny:154, note:"携程 · 1 晚" },
