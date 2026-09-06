@@ -2458,7 +2458,7 @@ function openComposer(box, kind, item) {
       : (kind === "prep" ? "添加待办" : "添加行李");
     form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
     form.querySelector("[data-add-text]").value = item ? item.t : "";
-    form.querySelector("[data-add-group]").value = item ? item.g : (kind === "prep" ? "自加" : "其他");
+    form.querySelector("[data-add-group]").value = item ? item.g : (kind === "prep" ? "自加" : "");
   }
   form.querySelector("[data-add-text]").focus();
   form.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2731,7 +2731,7 @@ function renderPrep() {
     <div class="page-head c-teal">行李整理 <span>${packedItems.length} 件</span>
       <button type="button" class="add-pill" data-open-add="pack">＋ 添加</button>
     </div>
-    ${addComposer("pack", bgroups.length ? bgroups : ["其他"], "其他")}
+    ${addComposer("pack", bgroups.length ? bgroups : ["其他"], "")}
     <div class="stats">
       <button type="button" class="stat ${packFilter==="all"?"on":""}" data-pack-filter="all"><b>${packedItems.length}</b><span>全部</span></button>
       <button type="button" class="stat ok ${packFilter==="packed"?"on":""}" data-pack-filter="packed"><b>${packedN}</b><span>已装包</span></button>
