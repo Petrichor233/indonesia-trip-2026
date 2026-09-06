@@ -1,0 +1,3 @@
+:HL["/indonesia-trip-2026/ledger/_next/static/chunks/36cwj5fs5ow-h.css","style"]
+:HL["/indonesia-trip-2026/ledger/_next/static/chunks/18t9c0_8m7fxd.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"Gw-QDt6QAzVN4GZhGS5LN"}
