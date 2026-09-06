@@ -668,8 +668,8 @@ const hotels = [
   { inn:"10.1", out:"10.3", nights:2, name:"Seamount Amed 艾湄海山酒店", aka:["Seamount Amed","Seamount","艾湄海山酒店"], room:"海景豪华双人或双床间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住", lat:-8.3352, lng:115.6467 },
   { inn:"10.1", out:"10.3", nights:2, name:"Ocean Villa Dive Resort Tulamben", aka:["Ocean Villa"], room:"—", status:"cancel", platform:"携程", note:"已退订，勿入住", lat:-8.2745, lng:115.5920 },
   { inn:"10.3", out:"10.4", nights:1, name:"New Sunari Lovina Beach Resort", aka:["新苏纳里罗威那海滩度假村","New Sunari","新苏纳里"], room:"高级房", status:"ok", platform:"去哪儿", note:"新苏纳里罗威那海滩度假村", lat:-8.1542, lng:115.0346 },
-  { inn:"10.4", out:"10.5", nights:1, name:"NusaBay Menjangan", aka:["NusaBay","努沙海湾蒙简甘","门姜酒店","WHM"], room:"特惠 Jungle Lanai Cottage · 50㎡ 大床", status:"alt", platform:"Trip.com", note:"宜珍关闭预案；2 人 RAN WEIJUN；IDR 1,028,225，9.25 扣款；9.27 12:00（巴厘）前可免费取消；10.5 须坐 09:50 班船回 Labuhan Lalang", lat:-8.1047, lng:114.5178 },
-  { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"宜珍若开则住这里；关闭则改住 NusaBay，并退订。携程 1767788834", lat:-8.1866, lng:114.2396 },
+  { inn:"10.4", out:"10.5", nights:1, name:"NusaBay Menjangan", aka:["NusaBay","努沙海湾蒙简甘","门姜酒店","WHM"], room:"特惠 Jungle Lanai Cottage · 50㎡ 大床", status:"alt", platform:"Trip.com", note:"宜珍关闭预案；2 人 RAN WEIJUN；IDR 1,028,225，9.25 扣款；9.27 12:00（巴厘）前可免费取消；10.5 要约 12:30 退房，坐最晚免费班船 12:50（巴厘时间），不要等 15:05", lat:-8.1047, lng:114.5178 },
+  { inn:"10.4", out:"10.5", nights:1, name:"Purwa Ijen", aka:["Purwa Ijen"], room:"花园景双人间", status:"ok", platform:"携程", note:"宜珍若重开则住这里并恢复 Andre；仍关则住 NusaBay，并退订。携程 1767788834", lat:-8.1866, lng:114.2396 },
   { inn:"10.4", out:"10.5", nights:1, name:"Ijen Backpacker", aka:["Ijen Backpacker"], room:"—", status:"cancel", platform:"携程", note:"已退订，勿入住", lat:-8.1404, lng:114.3986 },
   { inn:"10.4", out:"10.5", nights:1, name:"Grand Harvest Resort & Villas Ijen", aka:["大丰收度假村","Grand Harvest","大丰收"], room:"花园景豪华双人间", status:"cancel", platform:"去哪儿", note:"已退订，勿入住。行程住 Purwa Ijen", lat:-8.1780, lng:114.2512 },
   { inn:"10.5", out:"10.6", nights:1, name:"Omah Kayu Bromo", aka:["Omah Kayu","布罗莫木屋"], room:"—", status:"ok", platform:"Booking", note:"布罗莫木屋", lat:-7.9175, lng:113.0273 },
@@ -685,9 +685,9 @@ const acts = [
   { date:"10.1 13:00", name:"乌布 → 图蓝本包车", aka:["Bali Private Car Charter","乌布图蓝本包车","圣泉寺","百沙基母庙"], who:"Klook", detail:"13:00 Meruhdani 接 → 圣泉寺（可下水）→ Akasa 咖啡厅看 Batur 火山 → 百沙基母庙简逛 → Habitat 图蓝本", note:"已订；6 小时英文司机；凭证 KLK8448107649", klook:true },
   { date:"10.2–10.3", name:"OW 潜水考证", aka:["OW 考证","OW 理论","OW 开放水域","OW"], who:"yansu_diving / Let's dive", detail:"图蓝本自由号沉船，中文教练，含 Habitat 住宿", note:"微信已确认", img:"img/acts/act-ow-dive.webp?v=2" },
   { date:"10.3 14:00", name:"Aling-Aling 瀑布", aka:["Aling-Aling","Aling Aling","阿灵阿灵瀑布"], who:"Komang Arta 包车途经", detail:"Habitat 14:00 接，图蓝本 → Aling-Aling（停留至少 2 小时）→ 新苏纳里罗威那海滩度假村", note:"已订；2 人 IDR 600,000；乘客 RAN WEIJUN；门票另付" },
-  { date:"10.4 13:30", name:"门姜岛浮潜", aka:["Menjangan","门姜","门姜岛","NusaBay 浮潜"], who:"NusaBay / Blue Corner", detail:"宜珍关闭预案；12:15 班船入住后下午出门姜 2 点浮潜，不订两瓶水肺", note:"酒店已订；2 人约 IDR 750,000/人；园票约 200,000/人退房时收；10.5 09:50 班船走" },
-  { date:"10.5 02:00", name:"宜珍火山夜爬", aka:["宜珍火山夜爬","宜珍蓝火"], who:"Andre 泗水包车", detail:"02:00 出发，蓝火 + 硫磺湖；07:00 回 Purwa Ijen 休息", note:"已定，含在 Andre 行程", img:"img/acts/act-ijen-bluefire.webp?v=1" },
-  { date:"10.6 02:00", name:"布罗莫日出", aka:["布罗莫日出","布罗莫观景台"], who:"Andre 泗水包车", detail:"02:00 出发观景台看日出和云海；10:00 回酒店早餐", note:"已定；与宜珍夜爬合计 IDR 3,800,000", img:"img/acts/act-bromo-sunrise.webp?v=1" }
+  { date:"10.4 13:30", name:"门姜岛浮潜", aka:["Menjangan","门姜","门姜岛","NusaBay 浮潜"], who:"NusaBay / Blue Corner", detail:"宜珍关闭预案；12:15 班船入住后下午出门姜 2 点浮潜，不订两瓶水肺", note:"酒店已订；2 人约 IDR 750,000/人；园票约 200,000/人退房时收；10.5 12:50 班船走" },
+  { date:"10.5 02:00", name:"宜珍火山夜爬", aka:["宜珍火山夜爬","宜珍蓝火"], who:"Andre 泗水包车", detail:"02:00 出发，蓝火 + 硫磺湖；07:00 回 Purwa Ijen 休息", note:"宜珍若重开才走；已定，含在 Andre 行程", img:"img/acts/act-ijen-bluefire.webp?v=1" },
+  { date:"10.6 02:00", name:"布罗莫日出", aka:["布罗莫日出","布罗莫观景台"], who:"Andre 泗水包车 / 当地吉普", detail:"02:00 出发观景台看日出和云海；10:00 回酒店早餐", note:"宜珍若开：含在 Andre；关闭预案：庞越自租摩托上山，当地订吉普，不叫 Andre", img:"img/acts/act-bromo-sunrise.webp?v=1" }
 ];
 
 const days = [
@@ -784,7 +784,7 @@ const days = [
       flight:"海豚后去 Labuhan Lalang，12:15 班船入住；不过海",
       events:[
         { t:"上午", title:"罗威纳追海豚，海上日出", note:"仍从 New Sunari 出发", kind:"hl" },
-        { t:"08:30", title:"包车去 Labuhan Lalang", note:"约 1.5–2 小时；不要去 Gilimanuk 赶 13:00 船", kind:"must" },
+        { t:"08:30", title:"包车去 Labuhan Lalang", note:"约 1.5–2 小时；不要去 Gilimanuk 赶 Andre", kind:"must" },
         { t:"12:15", title:"班船到 NusaBay", note:"约 20 分钟；特惠 Jungle Lanai；RAN WEIJUN", kind:"must" },
         { t:"13:30", title:"门姜岛浮潜 2 点", note:"不订两瓶水肺；house reef 装备免费", kind:"hl" }
       ]
@@ -802,14 +802,17 @@ const days = [
     alt:{
       if:"宜珍仍关闭",
       stay:"Omah Kayu Bromo（已确认）",
-      breakfast:"NusaBay 后车上 / 沿海简餐",
-      flight:"09:50 班船回岸 → Gilimanuk 轮渡 → 中午前 Ketapang Andre 接去布罗莫",
-      tz:"过海去爪哇，慢 1 小时",
+      breakfast:"NusaBay 后车上 / 简餐",
+      flight:"12:50 班船回岸 → Gilimanuk 轮渡 → 步行进 Ketapang (KTG) → 火车去庞越 → 自租摩托上 Bromo",
+      tz:"过海去爪哇，慢 1 小时；班船是巴厘时间，火车是爪哇时间",
       events:[
-        { t:"09:50", title:"NusaBay 班船回 Labuhan Lalang", note:"必须坐这班，12:50 会耽误布罗莫", kind:"must" },
-        { t:"10:30", title:"Gilimanuk 轮渡", note:"码头约 20–30 分钟车", kind:"must" },
-        { t:"中午", title:"Ketapang Andre 接往布罗莫", note:"取消宜珍夜爬；当天付一半可改到 10.6", kind:"must", tz:"慢 1 小时" },
-        { t:"17:00–18:00", title:"入住 Omah Kayu", note:"次日 02:00 日出，早睡", kind:"must" }
+        { t:"12:30", title:"晚点退房，赶 12:50 班船", note:"跟酒店要约 12:30 退房；免费班船最晚 12:50（巴厘时间），不要等 15:05", kind:"must" },
+        { t:"12:50", title:"NusaBay 班船回 Labuhan Lalang", note:"约 20 分钟；这是 complimentary 最晚一班", kind:"must" },
+        { t:"13:20", title:"车去 Gilimanuk 轮渡", note:"码头约 20–30 分钟", kind:"must" },
+        { t:"轮渡", title:"过海到 Ketapang，步行进 KTG", note:"船约 45 分钟；到爪哇拨慢 1 小时；Stasiun Ketapang (KTG)，原 Banyuwangi Baru，不是 Banyuwangi Kota；码头走 100–600 米", kind:"must", tz:"慢 1 小时" },
+        { t:"15:45", title:"火车去庞越 Probolinggo", note:"Access by KAI 确认；优先 Blambangan Ekspres 15:45→19:46；Sangkuriang 15:00→18:49 对 12:50 班船偏紧", kind:"must", tz:"爪哇时间" },
+        { t:"到站后", title:"庞越租摩托上 Bromo", note:"不叫 Andre（已告知）；夜骑约 1.5–2.5 小时，约 21:00–22:30 到 Omah Kayu", kind:"must" },
+        { t:"晚上", title:"入住 Omah Kayu，早睡", note:"次日 02:00 日出；吉普自理", kind:"must" }
       ]
     }
   },
@@ -821,7 +824,20 @@ const days = [
     { t:"10:00", title:"回酒店早餐", note:"", kind:"must" },
     { t:"11:00", title:"退房出发去泗水", note:"Andre 包车；赛武瀑布已取消", kind:"must" },
     { t:"13:30", title:"抵达泗水，入住 Premier Place", note:"付清余款；确认免费送机", kind:"must" }
-  ]},
+    ],
+    alt:{
+      if:"宜珍仍关闭",
+      stay:"Premier Place Surabaya Airport（经典大床，已确认）",
+      breakfast:"10:00 回酒店早餐",
+      flight:"自理去泗水；不叫 Andre；次日 QZ322 不变",
+      events:[
+        { t:"02:00", title:"布罗莫日出", note:"当地吉普或酒店代订；Andre 不接", kind:"hl" },
+        { t:"10:00", title:"回酒店早餐", note:"", kind:"must" },
+        { t:"11:00", title:"退房出发去泗水", note:"摩托回庞越转车，或当地包车；赛武瀑布已取消", kind:"must" },
+        { t:"下午", title:"抵达泗水，入住 Premier Place", note:"确认免费送机；次日 QZ322 不变", kind:"must" }
+      ]
+    }
+  },
   { date:"10.07", iso:"2026-10-07", title:"泗水 → 吉隆坡 → 胡志明", phase:"transit",
     stay:"胡志明新山一中转（不出机场）", breakfast:"机场酒店早餐",
     flight:"QZ322 11:20–15:00；VN678 19:25–20:15",
@@ -922,11 +938,12 @@ const stops = [
   { id:6,  name:"图蓝本", lat:-8.2767, lng:115.5928, phase:"bali", date:"10.1–03", desc:"Habitat · OW 考证" },
   { id:13, name:"艾湄", lat:-8.3381, lng:115.6603, phase:"bali", date:"10.3", desc:"海湾停留，回 Habitat 住，不连路线" },
   { id:7,  name:"罗威纳", lat:-8.1586, lng:115.0267, phase:"bali", date:"10.3–04", desc:"New Sunari · 傍晚海边议价追海豚" },
-  { id:15, name:"门姜 / NusaBay", lat:-8.1047, lng:114.5178, phase:"bali", date:"10.4–05", desc:"宜珍关闭预案 · Jungle Lanai · 浮潜" },
-  { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4", desc:"巴厘西端轮渡" },
-  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4", desc:"Ketapang 港，13:00 Andre 接；预案改为 10.5 中午接" },
+  { id:15, name:"门姜 / NusaBay", lat:-8.1047, lng:114.5178, phase:"bali", date:"10.4–05", desc:"宜珍关闭预案 · Jungle Lanai · 浮潜 · 10.5 12:50 班船" },
+  { id:8,  name:"Gilimanuk", lat:-8.1583, lng:114.4333, phase:"transit", date:"10.4 / 10.5", desc:"巴厘西端轮渡；预案 10.5 过海" },
+  { id:9,  name:"外南梦", lat:-8.2192, lng:114.3691, phase:"java", date:"10.4 / 10.5", desc:"Ketapang 港 / KTG 站；若开 13:00 Andre 接；关闭则 10.5 步行进站坐火车" },
   { id:10, name:"宜珍火山", lat:-8.0583, lng:114.2425, phase:"java", date:"10.4–05", desc:"Purwa Ijen · Andre 蓝火；关闭则不去" },
-  { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · Andre 日出" },
+  { id:11, name:"布罗莫", lat:-7.9425, lng:112.9530, phase:"java", date:"10.5–06", desc:"Omah Kayu · 若开 Andre 日出；关闭则庞越自骑" },
+  { id:16, name:"庞越", lat:-7.7538, lng:113.2159, phase:"java", date:"10.5", desc:"预案 · Ketapang 火车抵达后租摩托上 Bromo" },
   { id:12, name:"泗水", lat:-7.3797, lng:112.7870, phase:"java", date:"10.6–07", desc:"Premier Place · 13:30 到" },
   { id:14, name:"Aling-Aling", lat:-8.1768, lng:115.1063, phase:"bali", date:"10.3", desc:"瀑布停留 ≥2 小时 · Komang 途经" }
 ];
@@ -940,10 +957,12 @@ const GROUND_LEGS = [
   { date:"10.4", from:"罗威纳", to:"门姜", kind:"包车", km:70, dur:"1.5–2 小时", fare:"宜珍关闭预案 · 送到 Labuhan Lalang 赶 12:15 班船", via:"Labuhan Lalang", alt:true },
   { date:"10.4", from:"Gilimanuk", to:"外南梦", kind:"轮渡", km:6, dur:"45 分钟", fare:"船票约 8 500–11 000盾/人；小车约 213 000盾" },
   { date:"10.4", from:"外南梦", to:"宜珍", kind:"包车", km:40, dur:"1.5 小时", fare:"当地车约 200 000–400 000盾" },
-  { date:"10.5", from:"门姜", to:"外南梦", kind:"班船+轮渡", km:40, dur:"约 2 小时", fare:"宜珍关闭预案 · 09:50 班船回岸后过海", via:"Labuhan Lalang · Gilimanuk", alt:true },
+  { date:"10.5", from:"门姜", to:"外南梦", kind:"班船+轮渡", km:40, dur:"约 2.5 小时", fare:"宜珍关闭预案 · 12:50 班船回岸后过海，步行进 KTG", via:"Labuhan Lalang · Gilimanuk", alt:true },
   { date:"10.5", from:"宜珍", to:"布罗莫", kind:"包车", km:250, dur:"6 小时", fare:"包车约 1 200 000–1 800 000盾（无 Grab）" },
-  { date:"10.5", from:"外南梦", to:"布罗莫", kind:"包车", km:250, dur:"5–7 小时", fare:"宜珍关闭预案 · Andre 10.5 中午 Ketapang 接", alt:true },
-  { date:"10.6", from:"布罗莫", to:"泗水", kind:"包车", km:110, dur:"2.5 小时", fare:"包车约 450 000–750 000盾" }
+  { date:"10.5", from:"外南梦", to:"庞越", kind:"火车", km:220, dur:"约 4 小时", fare:"宜珍关闭预案 · Access by KAI；优先 Blambangan 15:45→19:46", via:"Stasiun Ketapang (KTG)", alt:true },
+  { date:"10.5", from:"庞越", to:"布罗莫", kind:"摩托", km:45, dur:"1.5–2.5 小时", fare:"宜珍关闭预案 · 到站自租，不叫 Andre；夜骑上 Omah Kayu", alt:true },
+  { date:"10.6", from:"布罗莫", to:"泗水", kind:"包车", km:110, dur:"2.5 小时", fare:"包车约 450 000–750 000盾" },
+  { date:"10.6", from:"布罗莫", to:"泗水", kind:"自理", km:110, dur:"2.5–4 小时", fare:"宜珍关闭预案 · 摩托回庞越转车或当地包车；不叫 Andre", alt:true }
 ];
 const PHASE_COLOR = { komodo:"#0f766e", bali:"#e67e22", java:"#22c55e", transit:"#8b5cf6" };
 // Arrival-day local sun times (NOAA). Not refreshed daily.
@@ -990,7 +1009,7 @@ const prep = [
   { id:"pre-ocean", g:"行前必办", t:"退订 Ocean Villa Dive Resort Tulamben（携程 ¥303）", done:true },
   { id:"pre-gh", g:"行前必办", t:"退订 Grand Harvest Resort & Villas Ijen（大丰收）", done:true },
   { id:"pre-ijendup", g:"行前必办", t:"退订 Ijen Backpacker", done:true },
-  { id:"pre-ijenfire", g:"行前必办", t:"9.27 中午前确认宜珍是否重开：仍关则走门姜预案（NusaBay 已订）；重开则取消 NusaBay", done:false },
+  { id:"pre-ijenfire", g:"行前必办", t:"9.27 中午前确认宜珍是否重开：仍关则走门姜→12:50船→Ketapang 火车→庞越租摩托（不叫 Andre）；重开则取消 NusaBay，恢复 Purwa + Andre", done:false },
   { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
   { id:"pre-ow", g:"行前必办", t:"OW 潜水课提前学理论课", done:false },
   { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡 T2 附近酒店（Tune KLIA Aeropolis 已订，Agoda ¥203.73）", done:true },
@@ -1003,14 +1022,17 @@ const prep = [
   { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车（Klook 已订，途经圣泉寺 / Akasa / 百沙基）", done:true },
   { id:"d-lovcar", g:"按日期", t:"10.3 图蓝本 → 罗威纳包车（Komang Arta 已订，IDR 600,000，途经 Aling-Aling）", done:true },
   { id:"d-dol", g:"按日期", t:"10.3 傍晚罗威纳海边议价追海豚船（约 IDR 500,000/船，浮潜、挂漂可谈）", done:false },
-  { id:"d-ijenx", g:"按日期", t:"10.4 预订罗威纳 → Gilimanuk 轮渡（Ketapang 起 Andre 已接；若走预案则改送 Labuhan Lalang）", done:false },
-  { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（Andre 已含行程）", done:true },
-  { id:"d-nusabay", g:"按日期", t:"10.4 宜珍关闭预案：NusaBay Jungle Lanai 已订，下午门姜浮潜；10.5 09:50 班船", done:true },
-  { id:"d-andre-alt", g:"按日期", t:"若宜珍关闭：通知 Andre 取消夜爬，改为 10.5 中午 Ketapang 接去布罗莫", done:false },
-  { id:"d-bromocar", g:"按日期", t:"10.5 宜珍 → 布罗莫包车（Andre 已定）", done:true },
-  { id:"d-jeep", g:"按日期", t:"10.6 布罗莫日出（Andre 已含行程）", done:true },
-  { id:"d-subcar", g:"按日期", t:"10.6 布罗莫 → 泗水包车（Andre 已定）", done:true },
-  { id:"d-andrepay", g:"按日期", t:"10.4 / 10.6 付 Andre：当天一半、最后一天一半，共 IDR 3,800,000", done:false },
+  { id:"d-ijenx", g:"按日期", t:"宜珍若开：10.4 预订罗威纳 → Gilimanuk（Ketapang Andre 接）；若关：10.4 送 Labuhan Lalang 赶 12:15 班船", done:false },
+  { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（宜珍若重开；Andre 已含行程）", done:true },
+  { id:"d-nusabay", g:"按日期", t:"10.4 宜珍关闭预案：NusaBay Jungle Lanai 已订，下午门姜浮潜", done:true },
+  { id:"d-nusabay-late", g:"按日期", t:"10.5 跟 NusaBay 要约 12:30 退房，坐 12:50 免费班船（不要 15:05）", done:false },
+  { id:"d-kai", g:"按日期", t:"预订 Ketapang (KTG) → 庞越火车（Access by KAI；优先 Blambangan Ekspres 15:45–19:46，Sangkuriang 15:00 偏紧）", done:false },
+  { id:"d-probike", g:"按日期", t:"10.5 庞越下车后租摩托上 Bromo / Omah Kayu（夜骑约 1.5–2.5 小时；不叫 Andre）", done:false },
+  { id:"d-andre-alt", g:"按日期", t:"宜珍关闭预案不需要 Andre，已告知；若重开再确认原包车", done:true },
+  { id:"d-bromocar", g:"按日期", t:"10.5 宜珍 → 布罗莫包车（宜珍若重开；Andre 已定）", done:true },
+  { id:"d-jeep", g:"按日期", t:"10.6 布罗莫日出（宜珍若开：Andre 已含；关闭则当地订吉普）", done:false },
+  { id:"d-subcar", g:"按日期", t:"10.6 布罗莫 → 泗水：宜珍若开 Andre 已定；关闭则摩托回庞越或当地包车", done:false },
+  { id:"d-andrepay", g:"按日期", t:"宜珍若重开才付 Andre：当天一半、最后一天一半，共 IDR 3,800,000", done:false },
   { id:"d-shuttle", g:"按日期", t:"10.7 确认泗水机场酒店免费送机", done:false }
 ];
 
@@ -1051,10 +1073,12 @@ const spends = [
   { id:"sp-tulcar", cat:"交通", date:"10.1", name:"乌布 → 图蓝本包车（Klook）", cny:null, note:"13:00 Meruhdani → Habitat；途经圣泉寺 / Akasa / 百沙基；凭证 KLK8448107649" },
   { id:"sp-a-dol", cat:"活动", date:"10.4", name:"罗威纳追海豚", idr:500000, note:"10.3 傍晚海边议价；浮潜、挂漂可谈" },
   { id:"sp-a-ow", cat:"活动", date:"10.2", dates:["10.2","10.3"], name:"OW 潜水考证", cny:null, note:"微信已确认，金额待补；两日按天平摊" },
-  { id:"sp-a-ijen", cat:"活动", date:"10.5", name:"宜珍火山夜爬", cny:null, note:"含在 Andre 行程，门票若另付再补" },
-  { id:"sp-a-bromo", cat:"活动", date:"10.6", name:"布罗莫日出", cny:null, note:"含在 Andre 行程，门票若另付再补" },
+  { id:"sp-a-ijen", cat:"活动", date:"10.5", name:"宜珍火山夜爬", cny:null, note:"宜珍若重开才走；含在 Andre 行程，门票若另付再补" },
+  { id:"sp-a-bromo", cat:"活动", date:"10.6", name:"布罗莫日出", cny:null, note:"宜珍若开含在 Andre；关闭预案改为当地吉普，门票若另付再补" },
   { id:"sp-komang", cat:"交通", date:"10.3", name:"Komang Arta 包车（图蓝本→Aling-Aling→罗威纳）", idr:600000, note:"10.3 14:00 Habitat 接；2 人；乘客 RAN WEIJUN；瀑布门票另计" },
-  { id:"sp-andre", cat:"交通", date:"10.4", dates:["10.4","10.5","10.6"], name:"Andre 泗水包车（宜珍→布罗莫→泗水）", idr:3800000, note:"10.4–10.6 按天平摊；付当天一半、最后一天一半" }
+  { id:"sp-andre", cat:"交通", date:"10.4", dates:["10.4","10.5","10.6"], name:"Andre 泗水包车（宜珍→布罗莫→泗水）", idr:3800000, note:"宜珍若重开才用；关闭预案已告知不需要。10.4–10.6 按天平摊" },
+  { id:"sp-kai", cat:"交通", date:"10.5", name:"Ketapang → 庞越火车", cny:null, note:"宜珍关闭预案；Access by KAI；优先 Blambangan Ekspres 15:45–19:46" },
+  { id:"sp-probike", cat:"交通", date:"10.5", name:"庞越租摩托上 Bromo", cny:null, note:"宜珍关闭预案；到站自租，不叫 Andre" }
 ];
 
 const phaseName = { komodo:"科莫多", bali:"巴厘", java:"爪哇", transit:"中转" };
@@ -1747,7 +1771,7 @@ function renderToday() {
       ${phaseChip(d.phase)}
       ${dayMeta(d)}
       ${tzNote(d.tz)}
-      ${hard?`<div class="warn">10.04–10.06 连续早起，是全程瓶颈。宜珍若开：保证蓝火和布罗莫日出。宜珍若关：走门姜预案（NusaBay 已订），10.5 无夜爬，保布罗莫。赛武瀑布已取消。</div>`:""}
+      ${hard?`<div class="warn">10.04–10.06 是全程瓶颈。宜珍若重开：Purwa + Andre 夜爬 + 布罗莫。宜珍仍关：门姜浮潜（NusaBay 已订）→ 10.5 12:50 班船 → Ketapang 火车 → 庞越租摩托上 Bromo，不叫 Andre。赛武瀑布已取消。</div>`:""}
       ${altPlanCard(d)}
     </div>
     <div class="card">
@@ -1975,7 +1999,7 @@ function renderTrip(filter, highlightId) {
 let mapObj = null;
 function renderMap() {
   const box = document.getElementById("page-map");
-  if (box.dataset.ready !== "legs5") {
+  if (box.dataset.ready !== "legs6") {
     if (mapObj) {
       try { mapObj.remove(); } catch (e) {}
       mapObj = null;
@@ -2009,7 +2033,7 @@ function renderMap() {
             <div class="meta">约 ${leg.km} 公里<br>约 ${esc(leg.dur)}</div>
           </div>`).join("")}
       </div>`;
-    box.dataset.ready = "legs5";
+    box.dataset.ready = "legs6";
   }
   box.querySelectorAll("[data-focus]").forEach(b => b.onclick = () => focusRegion(b.dataset.focus));
   setTimeout(initMap, 80);
