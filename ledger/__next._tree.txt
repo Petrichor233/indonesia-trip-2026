@@ -1,4 +1,4 @@
 :HL["/indonesia-trip-2026/ledger/_next/static/chunks/36cwj5fs5ow-h.css","style"]
 :HL["/indonesia-trip-2026/ledger/_next/static/chunks/18t9c0_8m7fxd.css","style"]
 :HL["/indonesia-trip-2026/ledger/_next/static/media/feb57b2dc8f29018-s.p.3qy4m29-cg3o4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}},"staleTime":300,"buildId":"Gw-QDt6QAzVN4GZhGS5LN"}
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}},"staleTime":300,"buildId":"MerXithy0qmxRF9X42j-5"}
