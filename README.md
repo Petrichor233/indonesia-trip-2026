@@ -4,7 +4,7 @@
 
 公开镜像（GitHub Pages）：https://petrichor233.github.io/indonesia-trip-2026/
 
-手机或电脑打开即可。入口：今日、行程、地图、准备、备忘。
+手机请用 Safari / Chrome 打开。微信内置浏览器经常打不开 `github.io`。
 
 ## 怎么用
 
