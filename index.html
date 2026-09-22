@@ -225,6 +225,11 @@
     }
     .check .lab { transition: color .16s ease; }
     .check.done .lab { color: var(--muted); text-decoration: line-through; }
+    .prep-date {
+      flex-shrink: 0; min-width: 2.4em; padding-top: 1px;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
     .pack-st {
       display: flex; gap: 10px; align-items: center;
       width: 100%; text-align: left;
@@ -1018,29 +1023,29 @@ const prep = [
   { id:"pre-ijenfire", g:"行前必办", t:"9.27 中午前确认宜珍、布罗莫是否重开：宜珍关走门姜；布罗莫开则庞越上山，关则 10.5 住玛琅、10.6 赛武再去泗水（不叫 Andre）", done:false },
   { id:"pre-np", g:"行前必办", t:"确认科莫多船游是否已含国家公园门票", done:false },
   { id:"pre-ow", g:"行前必办", t:"OW 潜水课提前学理论课", done:false },
-  { id:"d-kl", g:"按日期", t:"9.25 预订吉隆坡 T2 附近酒店（Tune KLIA Aeropolis 已订，Agoda ¥203.73）", done:true },
-  { id:"d-kata", g:"按日期", t:"9.27 预约 Katamaran 日出徒步 + 浮潜", done:false },
-  { id:"d-pick", g:"按日期", t:"9.29 预订登巴萨机场 → 库塔酒店接机", done:false },
-  { id:"d-surf", g:"按日期", t:"9.30 库塔冲浪练习（Klook 已订）", done:true },
-  { id:"d-ubudcar", g:"按日期", t:"9.30 预订库塔 → 乌布包车", done:false },
-  { id:"d-spa", g:"按日期", t:"9.30 预订乌布 SPA + 手工体验", done:false },
-  { id:"d-cook", g:"按日期", t:"10.1 预订乌布农场烹饪课（已订 Ketut's Bali）", done:true },
-  { id:"d-tulcar", g:"按日期", t:"10.1 预订乌布 → 图蓝本包车（Klook 已订，途经圣泉寺 / Akasa / 百沙基）", done:true },
-  { id:"d-lovcar", g:"按日期", t:"10.3 图蓝本 → 罗威纳包车（Komang Arta 已订，IDR 600,000，途经 Aling-Aling）", done:true },
-  { id:"d-dol", g:"按日期", t:"10.3 傍晚罗威纳海边议价追海豚船（约 IDR 500,000/船，浮潜、挂漂可谈）", done:false },
-  { id:"d-ijenx", g:"按日期", t:"宜珍若开：10.4 预订罗威纳 → Gilimanuk（Ketapang Andre 接）；若关：10.4 送 Labuhan Lalang 赶 12:15 班船", done:false },
-  { id:"d-ijenh", g:"按日期", t:"10.5 宜珍夜爬（宜珍若重开；Andre 已含行程）", done:true },
-  { id:"d-nusabay", g:"按日期", t:"10.4 宜珍关闭预案：NusaBay Jungle Lanai 已订，下午门姜浮潜", done:true },
-  { id:"d-nusabay-late", g:"按日期", t:"10.5 跟 NusaBay 要约 12:30 退房，坐 12:50 免费班船（不要 15:05）", done:false },
-  { id:"d-kai", g:"按日期", t:"预订 Ketapang 火车（Access by KAI）：布罗莫开则去庞越（优先 Blambangan 15:45–19:46）；关则改玛琅，不要上山", done:false },
-  { id:"d-probike", g:"按日期", t:"仅布罗莫若开：10.5 庞越下车后包车或租摩托上 Omah Kayu（夜路建议包车；不叫 Andre）", done:false },
-  { id:"d-sewu", g:"按日期", t:"布罗莫若关：订玛琅 10.5 一晚 + 10.6 早包车去 Tumpak Sewu，看完去泗水；取消 Omah Kayu", done:false },
-  { id:"d-andre-alt", g:"按日期", t:"宜珍关闭预案不需要 Andre，已告知；若重开再确认原包车（布罗莫若关可改送玛琅/赛武）", done:true },
-  { id:"d-bromocar", g:"按日期", t:"10.5 宜珍 → 布罗莫包车（宜珍若重开且布罗莫开；Andre 已定）", done:true },
-  { id:"d-jeep", g:"按日期", t:"10.6 布罗莫日出（两座都开：Andre 已含；仅宜珍关则当地订吉普；布罗莫关则改赛武）", done:false },
-  { id:"d-subcar", g:"按日期", t:"10.6 去泗水：布罗莫开从 Omah Kayu；布罗莫关从赛武/玛琅包车。宜珍开才用 Andre", done:false },
-  { id:"d-andrepay", g:"按日期", t:"宜珍若重开才付 Andre：当天一半、最后一天一半，共 IDR 3,800,000", done:false },
-  { id:"d-shuttle", g:"按日期", t:"10.7 确认泗水机场酒店免费送机", done:false }
+  { id:"d-kl", g:"按日期", date:"9.25", t:"9.25 预订吉隆坡 T2 附近酒店（Tune KLIA Aeropolis 已订，Agoda ¥203.73）", done:true },
+  { id:"d-kata", g:"按日期", date:"9.27", t:"9.27 预约 Katamaran 日出徒步 + 浮潜", done:false },
+  { id:"d-pick", g:"按日期", date:"9.29", t:"9.29 预订登巴萨机场 → 库塔酒店接机", done:false },
+  { id:"d-surf", g:"按日期", date:"9.30", t:"9.30 库塔冲浪练习（Klook 已订）", done:true },
+  { id:"d-ubudcar", g:"按日期", date:"9.30", t:"9.30 预订库塔 → 乌布包车", done:false },
+  { id:"d-spa", g:"按日期", date:"9.30", t:"9.30 预订乌布 SPA + 手工体验", done:false },
+  { id:"d-cook", g:"按日期", date:"10.1", t:"10.1 预订乌布农场烹饪课（已订 Ketut's Bali）", done:true },
+  { id:"d-tulcar", g:"按日期", date:"10.1", t:"10.1 预订乌布 → 图蓝本包车（Klook 已订，途经圣泉寺 / Akasa / 百沙基）", done:true },
+  { id:"d-lovcar", g:"按日期", date:"10.3", t:"10.3 图蓝本 → 罗威纳包车（Komang Arta 已订，IDR 600,000，途经 Aling-Aling）", done:true },
+  { id:"d-dol", g:"按日期", date:"10.3", t:"10.3 傍晚罗威纳海边议价追海豚船（约 IDR 500,000/船，浮潜、挂漂可谈）", done:false },
+  { id:"d-ijenx", g:"按日期", date:"10.4", t:"宜珍若开：10.4 预订罗威纳 → Gilimanuk（Ketapang Andre 接）；若关：10.4 送 Labuhan Lalang 赶 12:15 班船", done:false },
+  { id:"d-ijenh", g:"按日期", date:"10.5", t:"10.5 宜珍夜爬（宜珍若重开；Andre 已含行程）", done:true },
+  { id:"d-nusabay", g:"按日期", date:"10.4", t:"10.4 宜珍关闭预案：NusaBay Jungle Lanai 已订，下午门姜浮潜", done:true },
+  { id:"d-nusabay-late", g:"按日期", date:"10.5", t:"10.5 跟 NusaBay 要约 12:30 退房，坐 12:50 免费班船（不要 15:05）", done:false },
+  { id:"d-kai", g:"按日期", date:"10.5", t:"预订 Ketapang 火车（Access by KAI）：布罗莫开则去庞越（优先 Blambangan 15:45–19:46）；关则改玛琅，不要上山", done:false },
+  { id:"d-probike", g:"按日期", date:"10.5", t:"仅布罗莫若开：10.5 庞越下车后包车或租摩托上 Omah Kayu（夜路建议包车；不叫 Andre）", done:false },
+  { id:"d-sewu", g:"按日期", date:"10.5", t:"布罗莫若关：订玛琅 10.5 一晚 + 10.6 早包车去 Tumpak Sewu，看完去泗水；取消 Omah Kayu", done:false },
+  { id:"d-andre-alt", g:"按日期", date:"10.4", t:"宜珍关闭预案不需要 Andre，已告知；若重开再确认原包车（布罗莫若关可改送玛琅/赛武）", done:true },
+  { id:"d-bromocar", g:"按日期", date:"10.5", t:"10.5 宜珍 → 布罗莫包车（宜珍若重开且布罗莫开；Andre 已定）", done:true },
+  { id:"d-jeep", g:"按日期", date:"10.6", t:"10.6 布罗莫日出（两座都开：Andre 已含；仅宜珍关则当地订吉普；布罗莫关则改赛武）", done:false },
+  { id:"d-subcar", g:"按日期", date:"10.6", t:"10.6 去泗水：布罗莫开从 Omah Kayu；布罗莫关从赛武/玛琅包车。宜珍开才用 Andre", done:false },
+  { id:"d-andrepay", g:"按日期", date:"10.4", t:"宜珍若重开才付 Andre：当天一半、最后一天一半，共 IDR 3,800,000", done:false },
+  { id:"d-shuttle", g:"按日期", date:"10.7", t:"10.7 确认泗水机场酒店免费送机", done:false }
 ];
 
 // Built-in spend catalog only. Couple add/edit/delete is in cloud.lists
@@ -1224,6 +1229,31 @@ function spendDateLabel(s) {
   if (iso) return Number(iso[2]) + "." + Number(iso[3]);
   return (s || "日期待定");
 }
+function prepDate(item) {
+  const raw = String((item && item.date) || "").trim();
+  if (raw) {
+    const lab = spendDateLabel(raw);
+    if (lab && lab !== "日期待定") return lab;
+  }
+  const m = String((item && item.t) || "").match(/(\d{1,2})\.(\d{1,2})/);
+  return m ? Number(m[1]) + "." + Number(m[2]) : "";
+}
+function prepGroupRank(g) {
+  if (g === "行前必办") return 0;
+  if (g === "按日期") return 1;
+  return 2;
+}
+function prepGroups(todos) {
+  const seen = [];
+  (todos || []).forEach(p => {
+    const g = (p && p.g) || "按日期";
+    if (!seen.includes(g)) seen.push(g);
+  });
+  return seen.sort((a, b) => prepGroupRank(a) - prepGroupRank(b));
+}
+function sortPrepItems(items) {
+  return (items || []).slice().sort((a, b) => spendDateKey(prepDate(a)) - spendDateKey(prepDate(b)));
+}
 function spendDayOptions() {
   const seen = new Set();
   return days.map(d => spendDateLabel(d.date)).filter(lab => {
@@ -1277,12 +1307,18 @@ function spendFieldsFromForm(form) {
     idr: cur === "IDR" ? amt : null
   };
 }
-function addListItem(kind, t, g) {
+function addListItem(kind, t, g, date) {
   t = (t || "").trim();
   if (!t) return;
   const L = ensureLists();
-  if (kind === "prep") L.extraPrep.push({ id: newItemId("up-"), g: (g || "自加").trim() || "自加", t });
-  else L.extraPack.push({ id: newItemId("ub-"), g: (g || "其他").trim() || "其他", t, st: "none" });
+  if (kind === "prep") {
+    const day = prepDate({ t, date });
+    let group = (g || "").trim();
+    if (!group) group = day ? "按日期" : "待办";
+    L.extraPrep.push({ id: newItemId("up-"), g: group, t, date: day });
+  } else {
+    L.extraPack.push({ id: newItemId("ub-"), g: (g || "其他").trim() || "其他", t, st: "none" });
+  }
 }
 function addSpendItem(fields) {
   const name = (fields.name || "").trim();
@@ -1298,14 +1334,22 @@ function addSpendItem(fields) {
     note: (fields.note || "").trim()
   });
 }
-function renameListItem(kind, id, t, g) {
+function renameListItem(kind, id, t, g, date) {
   t = (t || "").trim();
   if (!id || !t) return;
   const L = ensureLists();
   const extras = kind === "prep" ? L.extraPrep : L.extraPack;
   const extra = extras.find(p => p.id === id);
   const patch = { t };
-  if (g && g.trim()) patch.g = g.trim();
+  if (kind === "prep") {
+    const day = prepDate({ t, date });
+    let group = (g || "").trim();
+    if (!group) group = day ? "按日期" : "待办";
+    patch.g = group;
+    patch.date = day;
+  } else if (g && g.trim()) {
+    patch.g = g.trim();
+  }
   if (extra) Object.assign(extra, patch);
   else if (kind === "prep") L.editPrep[id] = Object.assign({}, L.editPrep[id], patch);
   else L.editPack[id] = Object.assign({}, L.editPack[id], patch);
@@ -1350,13 +1394,18 @@ function itemActions(kind, id) {
   return `<button type="button" class="ebtn" data-edit-${kind}="${id}" aria-label="编辑">✎</button><button type="button" class="xbtn" data-del-${kind}="${id}" aria-label="删除">×</button>`;
 }
 function addComposer(kind, groups, defaultGroup) {
-  const opts = groups.map(g => `<option value="${esc(g)}"></option>`).join("");
+  const opts = groups.filter(g => g && g !== "自加").map(g => `<option value="${esc(g)}"></option>`).join("");
+  const dateField = kind === "prep"
+    ? `<input class="field" data-add-date maxlength="10" list="prep-dates" placeholder="日期（可选，如 9.25）">
+      <datalist id="prep-dates">${spendDayOptions().map(d => `<option value="${esc(d)}"></option>`).join("")}</datalist>`
+    : "";
   return `
     <div class="card add-box" data-composer="${kind}" hidden>
       <div class="kicker">${kind === "prep" ? "添加待办" : "添加行李"}</div>
       <input class="field" data-add-text maxlength="120" placeholder="${kind === "prep" ? "要做的事" : "要带的东西"}">
-      <input class="field" data-add-group maxlength="20" list="${kind}-groups" placeholder="分组" value="${esc(defaultGroup)}">
+      <input class="field" data-add-group maxlength="20" list="${kind}-groups" placeholder="分组" value="${esc(defaultGroup || "")}">
       <datalist id="${kind}-groups">${opts}</datalist>
+      ${dateField}
       <div class="bar">
         <button type="button" class="btn" data-add-save>添加</button>
         <button type="button" class="btn sec" data-add-cancel>取消</button>
@@ -2467,7 +2516,9 @@ function openComposer(box, kind, item) {
       : (kind === "prep" ? "添加待办" : "添加行李");
     form.querySelector("[data-add-save]").textContent = item ? "保存" : "添加";
     form.querySelector("[data-add-text]").value = item ? item.t : "";
-    form.querySelector("[data-add-group]").value = item ? item.g : (kind === "prep" ? "自加" : "");
+    form.querySelector("[data-add-group]").value = item ? (item.g || "") : "";
+    const dateEl = form.querySelector("[data-add-date]");
+    if (dateEl) dateEl.value = item ? (prepDate(item) || "") : "";
   }
   form.querySelector("[data-add-text]").focus();
   form.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2506,16 +2557,18 @@ function bindPrepActions(box) {
     }
     const t = form.querySelector("[data-add-text]").value;
     const g = form.querySelector("[data-add-group]").value;
+    const dateEl = form.querySelector("[data-add-date]");
+    const date = dateEl ? dateEl.value : "";
     if (!(t || "").trim()) {
       form.querySelector("[data-add-text]").focus();
       return;
     }
-    if (form.dataset.mode === "edit") renameListItem(kind, form.dataset.id, t, g);
-    else addListItem(kind, t, g);
+    if (form.dataset.mode === "edit") renameListItem(kind, form.dataset.id, t, g, date);
+    else addListItem(kind, t, g, date);
     renderPrep();
     schedulePush();
   });
-  box.querySelectorAll("[data-add-text]").forEach(inp => inp.addEventListener("keydown", e => {
+  box.querySelectorAll("[data-add-text], [data-add-date]").forEach(inp => inp.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       e.preventDefault();
       inp.closest("[data-composer]")?.querySelector("[data-add-save]")?.click();
@@ -2696,7 +2749,7 @@ function spendBodyHtml(fx) {
 function renderPrep() {
   const todos = livePrep();
   const packedItems = liveBags();
-  const groups = [...new Set(todos.map(p=>p.g))];
+  const groups = prepGroups(todos);
   const bgroups = [...new Set(packedItems.map(p=>p.g))];
   const box = document.getElementById("page-prep");
   const left = todos.filter(p=>!isChecked("prep", p)).length;
@@ -2708,27 +2761,34 @@ function renderPrep() {
     <div class="page-head c-blue">待办事项 <span>${todos.length} 条任务</span>
       <button type="button" class="add-pill" data-open-add="prep">＋ 添加</button>
     </div>
-    ${addComposer("prep", groups.length ? groups : ["行前必办","按日期","自加"], "自加")}
+    ${addComposer("prep", groups.length ? groups : ["行前必办","按日期"], "")}
     <div class="card">
       <div class="kicker">行前进度</div>
       <div class="prog">
         <div class="prog-top"><span>已完成 ${todos.length - left} / ${todos.length}</span><b>${pct}%</b></div>
         <div class="prog-bar"><i style="width:${pct}%"></i></div>
       </div>
-      <p class="hint">${canEdit ? "勾选、添加、删除会立刻同步到云端。点铅笔可改文字。" : "先解锁才能勾选、添加或删除。"}</p>
+      <p class="hint">${canEdit ? "勾选、添加、删除会立刻同步到云端。点铅笔可改文字和日期。填日期会进「按日期」并按天排序。" : "先解锁才能勾选、添加或删除。"}</p>
     </div>
-    ${groups.map(g=>`
+    ${groups.map(g=>{
+      const rows = g === "按日期" ? sortPrepItems(todos.filter(p=>p.g===g)) : todos.filter(p=>p.g===g);
+      return `
       <div class="card">
         <div class="kicker ${g==="行前必办"?"urgent":""}">${esc(g)}</div>
-        ${todos.filter(p=>p.g===g).map(p=>`
+        ${rows.map(p=>{
+          const day = g === "按日期" ? (prepDate(p) || "—") : "";
+          return `
           <div class="check ${isChecked("prep",p)?"done":""}">
             <label class="check-main">
               <input type="checkbox" data-list="prep" data-id="${p.id}" ${isChecked("prep",p)?"checked":""} ${canEdit?"":"disabled"}>
+              ${day ? `<span class="prep-date">${esc(day)}</span>` : ""}
               <span class="lab">${esc(p.t)}</span>
             </label>
             ${itemActions("prep", p.id)}
-          </div>`).join("")}
-      </div>`).join("")}
+          </div>`;
+        }).join("")}
+      </div>`;
+    }).join("")}
     <div class="card">
       <div class="kicker">共享备忘</div>
       <p class="hint">${canEdit ? "两人看到的是同一份。不要写护照号、证件号。" : "解锁后可编辑。"}</p>
