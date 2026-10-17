@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EEF2F6">
+<title>芭提雅筛选稿 · 2027.10.1–10.7</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../vendor/leaflet/leaflet.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root { --safe: env(safe-area-inset-bottom, 0px); --ink:#1F2933; --sub:#7B8794; --line:#E2E8F0; --blue:#2C5F84; --sea:#0F766E; --city:#C2671B; --bg:#EEF2F6; --head-h:52px; }
+  body { font-family:'PingFang SC','Helvetica Neue','Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; font-size:15px; padding-bottom:calc(72px + var(--safe)); }
+  .app { max-width:640px; margin:0 auto; min-height:100vh; }
+  .app-head { position:fixed; left:0; right:0; top:0; max-width:640px; margin:0 auto; z-index:32; background:rgba(238,242,246,.94); backdrop-filter:blur(12px); padding:10px 16px 8px; border-bottom:0.5px solid var(--line); }
+  .app-head h1 { font-size:17px; font-weight:700; }
+  .app-head p { font-size:12px; color:var(--sub); margin-top:2px; }
+  .app-body { padding-top:var(--head-h); }
+  .page { display:none; }
+  .page.on { display:block; }
+  .pane { padding:12px 14px 24px; }
+  .hero { background:linear-gradient(135deg,#0F766E,#2C5F84); color:#fff; border-radius:0 0 20px 20px; padding:22px 18px 16px; margin:0 -14px 14px; }
+  .hero h1 { font-size:21px; font-weight:700; }
+  .hero .sub { font-size:12.5px; opacity:.94; margin-top:5px; }
+  .fbox { margin-top:12px; display:grid; gap:8px; }
+  .fp { background:rgba(255,255,255,.14); border-radius:11px; padding:9px 12px; font-size:12.5px; }
+  .fp .who { font-weight:700; }
+  .fp .line { display:flex; justify-content:space-between; gap:8px; padding:2px 0; flex-wrap:wrap; }
+  .chip { font-size:10.5px; background:rgba(255,255,255,.22); border-radius:5px; padding:0 6px; margin-left:4px; }
+  .sec-title { display:flex; align-items:center; gap:8px; font-size:16.5px; font-weight:700; margin:20px 2px 10px; }
+  .sec-title::before { content:''; width:5px; height:17px; border-radius:3px; background:var(--blue); }
+  .overview { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .ov { background:#fff; border:0.5px solid var(--line); border-radius:12px; padding:8px 6px; text-align:center; }
+  .ov .d { font-size:11px; color:var(--blue); font-weight:700; }
+  .ov .t { font-size:12px; font-weight:650; margin-top:2px; }
+  .ov .p { font-size:10.5px; color:var(--sub); margin-top:1px; }
+  .ov.lock { background:#F0F7FC; }
+  .card { background:#fff; border:0.5px solid var(--line); border-radius:15px; padding:14px 15px; margin-bottom:11px; font-size:13.5px; }
+  .card h3 { font-size:14.5px; margin-bottom:6px; }
+  .card ul { list-style:none; }
+  .card li { position:relative; padding-left:14px; margin:5px 0; color:#33414F; }
+  .card li::before { content:''; position:absolute; left:1px; top:8px; width:6px; height:6px; border-radius:50%; background:var(--blue); }
+  .note { margin:8px 0; border-radius:10px; padding:9px 12px; font-size:12.5px; line-height:1.6; }
+  .red { background:#FDEDED; color:#8A2B30; border-left:3px solid #EA6668; }
+  .yel { background:#FCF5E6; color:#8A5D00; border-left:3px solid #E8A33D; }
+  .grn { background:#EBF6EC; color:#1F6B32; border-left:3px solid #52A85C; }
+  .blu { background:#EAF2F9; color:#23506E; border-left:3px solid #5B93B8; }
+  .note b, .card b { font-weight:700; }
+  .cmp { background:#fff; border:0.5px solid var(--line); border-radius:14px; padding:11px 12px; margin-bottom:8px; }
+  .cmp-top { display:flex; align-items:center; gap:8px; }
+  .cmp-top b { font-size:14.5px; }
+  .cmp-top .rank { margin-left:auto; }
+  .cmp-meta { font-size:12.6px; color:#52606D; margin-top:3px; }
+  .hint { font-size:12.5px; color:var(--sub); }
+  .kicker { font-size:12px; font-weight:700; color:var(--sub); margin-bottom:6px; }
+  .filters { display:flex; gap:6px; overflow-x:auto; padding:2px 0 10px; position:sticky; top:var(--head-h); z-index:20; background:rgba(238,242,246,.94); backdrop-filter:blur(10px); }
+  .filters button, .choices button, .pick button, .copybtn, .mapbtns button {
+    border:0.5px solid #DCE3EA; background:#fff; color:#52606D; border-radius:999px; padding:7px 12px; font-size:12.5px; font-weight:700; font-family:inherit;
+  }
+  .filters button.on, .choices button.on, .pick button.on { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .pick button[data-set="yes"].on { background:var(--sea); border-color:var(--sea); }
+  .pick button[data-set="no"].on { background:#9F1239; border-color:#9F1239; }
+  .opt { background:#fff; border:0.5px solid var(--line); border-radius:14px; padding:12px 13px; margin-bottom:10px; }
+  .opt.head { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .opt h3 { font-size:15px; font-weight:750; }
+  .tag { font-size:11px; font-weight:700; border-radius:6px; padding:1px 7px; }
+  .tag.sea { background:#D1FAE5; color:#065F46; }
+  .tag.city { background:#FFEDD5; color:#9A3412; }
+  .tag.stay { background:#E0F2FE; color:#075985; }
+  .rank { margin-left:auto; font-size:11px; font-weight:700; border-radius:6px; padding:1px 7px; color:#fff; background:#3F8F5B; }
+  .rank.alt { background:#2F5FC0; }
+  .rank.gray { background:#8A8F99; }
+  .rank.no { background:#B4333A; }
+  .meta { font-size:12.3px; color:#52606D; margin:6px 0; }
+  .opt ul { margin:4px 0 0 18px; font-size:13.3px; color:#33414F; }
+  .opt li { margin:3px 0; }
+  .pick { display:flex; gap:6px; margin-top:8px; }
+  .pick button { flex:1; min-height:36px; }
+  .meter { background:#fff; border:0.5px solid var(--line); border-radius:14px; padding:12px 13px; margin-bottom:10px; }
+  .meter b { color:var(--blue); }
+  .bar { height:8px; background:#EDF1F5; border-radius:99px; overflow:hidden; margin-top:6px; }
+  .bar i { display:block; height:100%; background:var(--sea); width:0; }
+  .bar.over i { background:#C2671B; }
+  .sumline { font-size:13px; margin-top:6px; }
+  .copybtn { background:var(--blue); color:#fff; border-color:var(--blue); margin-top:8px; }
+  .day { background:#fff; border:0.5px solid var(--line); border-radius:16px; padding:14px 14px 12px; margin-bottom:11px; }
+  .day-h { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; border-bottom:1px solid #EDF1F5; padding-bottom:8px; margin-bottom:8px; }
+  .day-h .no { background:var(--blue); color:#fff; font-size:11.5px; font-weight:700; border-radius:7px; padding:2px 8px; }
+  .day-h .dt { font-size:14.5px; font-weight:700; }
+  .day-h .th { font-size:12.5px; color:var(--sea); font-weight:650; }
+  .tx { font-size:13.4px; color:#33414F; }
+  .bone { display:none; }
+  .bone.on { display:block; }
+  .plan { background:#fff; border:0.5px solid var(--line); border-radius:14px; padding:12px 13px; margin-bottom:10px; }
+  .plan h3 { font-size:14.5px; margin-bottom:4px; }
+  .choices { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .choices button { text-align:left; border-radius:10px; min-height:40px; }
+  .check { display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-top:0.5px solid #EDF1F5; font-size:14px; }
+  .check:first-of-type { border-top:none; }
+  .check input { margin-top:3px; width:18px; height:18px; flex:0 0 auto; }
+  .mapcard { background:#fff; border:0.5px solid var(--line); border-radius:14px; padding:8px; margin:8px 0 12px; }
+  #map { height:62vh; min-height:380px; border-radius:10px; background:#E9EEF1; }
+  .mapbtns { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .lg { display:inline-flex; align-items:center; gap:5px; font-size:12px; background:#fff; border:0.5px solid var(--line); border-radius:999px; padding:3px 8px; }
+  .dot { width:9px; height:9px; border-radius:50%; }
+  .footer { font-size:11px; color:#9AA5B1; line-height:1.65; padding:8px 2px 0; }
+  nav.dock { position:fixed; left:0; right:0; bottom:0; z-index:40; display:grid; grid-template-columns:repeat(4,1fr); background:#fff; border-top:0.5px solid var(--line); padding:6px 0 calc(6px + var(--safe)); max-width:640px; margin:0 auto; }
+  nav.dock button { border:0; background:none; font-family:inherit; font-size:12px; font-weight:700; color:#9AA5B1; padding:6px 0; }
+  nav.dock button.on { color:var(--blue); }
+  .leaflet-popup-content { font-size:13px; line-height:1.45; margin:10px 12px; }
+  @media (min-width:800px) {
+    .app-head, nav.dock { left:50%; right:auto; width:640px; transform:translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-head">
+    <h1>芭提雅 · 筛选稿</h1>
+    <p>2027.10.1–10.7 · 5人 · 落地曼谷 · 最终行程还没写</p>
+  </header>
+  <div class="app-body">
+    <section id="page-today" class="page on">
+      <div class="pane">
+        <div class="hero">
+          <h1>5人 · 国庆周去芭提雅</h1>
+          <div class="sub">10月1日周五落地素万那普，10月7日周四早上飞回。机票已出票。酒店、出海、市区都还没定，这一页用来勾选。</div>
+          <div class="fbox">
+            <div class="fp">
+              <div class="line"><span><span class="who">成都一单</span> 泰国航空 TG619 / TG618</span><span>出票完成 · ¥7471</span></div>
+              <div class="line"><span>去 10/1 成都 15:55 → 曼谷 18:00 <span class="chip">TG619</span></span><span>当地时间</span></div>
+              <div class="line"><span>返 10/7 曼谷 10:50 → 成都 15:00 <span class="chip">TG618</span></span><span></span></div>
+            </div>
+            <div class="fp">
+              <div class="line"><span><span class="who">北京一单</span> 泰国航空 TG615 / TG614</span><span>出票完成 · ¥4971</span></div>
+              <div class="line"><span>去 10/1 北京 17:05 → 曼谷 21:15 <span class="chip">TG615</span></span><span>当地时间</span></div>
+              <div class="line"><span>返 10/7 曼谷 10:00 → 北京 15:45 <span class="chip">TG614</span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-title">这 7 天能玩几天</div>
+        <div class="overview">
+          <div class="ov lock"><div class="d">10/1 五</div><div class="t">只落地</div><div class="p">差 3 小时</div></div>
+          <div class="ov"><div class="d">10/2 六</div><div class="t">整天</div><div class="p">周末</div></div>
+          <div class="ov"><div class="d">10/3 日</div><div class="t">整天</div><div class="p">周末</div></div>
+          <div class="ov"><div class="d">10/4 一</div><div class="t">整天</div><div class="p">工作日</div></div>
+          <div class="ov"><div class="d">10/5 二</div><div class="t">整天</div><div class="p">工作日</div></div>
+          <div class="ov"><div class="d">10/6 三</div><div class="t">看撤不撤</div><div class="p">建议下午走</div></div>
+          <div class="ov lock"><div class="d">10/7 四</div><div class="t">早班机</div><div class="p">不排景点</div></div>
+          <div class="ov"><div class="d">能排</div><div class="t">4 个白天</div><div class="p">2–5 日</div></div>
+        </div>
+
+        <div class="note yel" style="margin-top:12px"><b>国庆周会挤。</b>10月在泰国是雨季尾巴，不是欧美旺季，但这 7 天正好落在中国国庆。国务院放假单要等当年通知，中国团队通常会挤在这一周。酒店和船按「会挤」准备。票面金额两单合计 ¥12442，是订单总价。7471 和 4971 大约是 3:2，截图没有乘客姓名，先不写谁坐哪班。</div>
+
+        <div class="sec-title">已经定死的事</div>
+        <div class="card"><ul>
+          <li>两班都是泰航国际线，在<b>素万那普</b>起降，不去廊曼。截图没写航站楼，成都、北京从哪个航站楼走以机票为准。</li>
+          <li>曼谷时间比北京慢 1 小时。票上的出发、到达都是当地时间。成都去程大约飞 3 小时，北京去程大约飞 5 小时 10 分，和票面对得上。</li>
+          <li>成都 18:00 落地，北京 21:15 落地。出关取行李之后，两边大约差 3 小时，不适合让成都在机场干等成默认方案。</li>
+          <li>回程北京班 10:00 更早。5 人一起走，就按这班卡点：大约 07:00 前到素万那普。</li>
+          <li>芭提雅到机场大约 120 公里，平日 1.5–2.5 小时，下雨和早高峰更久。10/7 凌晨从芭提雅出发能多一个早晨，也更容易误机。</li>
+        </ul></div>
+        <div class="note blu"><b>10 月的海：</b>格兰岛公共轮渡大多数日子能开，船大，单程大约 30–45 分钟。快艇和远岛看浪，风大就停。2026 年 10 月中旬 Bali Hai 还有风浪，游客靠岸要人协助。远岛先不锁，近岛留一天。</div>
+
+        <div class="meter" id="todayMeter"></div>
+        <p class="hint">勾选记在这台手机的浏览器里。换手机或发给我，用「筛选」或「待定」里的复制。</p>
+        <div class="footer">价格和船期是 2026 年公开信息，2027 年出发前再核一次。这一页还没推到公开网站。</div>
+      </div>
+    </section>
+
+    <section id="page-pick" class="page">
+      <div class="pane">
+        <div class="filters" id="filters">
+          <button type="button" class="on" data-g="all">全部</button>
+          <button type="button" data-g="sea">出海</button>
+          <button type="button" data-g="city">市区</button>
+          <button type="button" data-g="stay">住哪</button>
+        </div>
+        <div class="meter" id="pickMeter"></div>
+
+        <div class="sec-title">六项对照</div>
+        <div class="cmp"><div class="cmp-top"><b>格兰岛轮渡</b><span class="rank">优先留</span></div><div class="cmp-meta">占 1 天。10 月最稳，10/2、10/3 周末人多。</div><div class="cmp-meta">2026 年 10 月单程 40 铢/人，往返 80 铢。躺椅和岛上双条车另付现金。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>沙岛快艇或 5 人包船</b><span class="rank alt">和轮渡留一种</span></div><div class="cmp-meta">也是这 1 天。浪大就取消。</div><div class="cmp-meta">跟团常见大约 1000–1800 铢/人。包船按艘，把油、午餐、浮潜写清楚。有人晕船就留轮渡。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>远岛浮潜</b><span class="rank gray">先不锁</span></div><div class="cmp-meta">再加 1 天。最容易停船，水下能见度经常一般，比近岛贵。</div><div class="cmp-meta">要排的话，同一天写好市区备用。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>真理寺</b><span class="rank">优先留</span></div><div class="cmp-meta">半天。小雨还能看。官网成人日间 500 铢，夜间 700 铢。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>东芭乐园</b><span class="rank alt">可加</span></div><div class="cmp-meta">大半天，在南边。大雨时花园体验差。</div><div class="cmp-meta">非居民门票近年大约 15 美元起。和真理寺不要放同一天。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>水上市场</b><span class="rank gray">可砍</span></div><div class="cmp-meta">一个上午，有棚，在中天南边。</div><div class="cmp-meta">2026 年有的写免费，有的写外籍约 200 铢。时间紧就砍。</div></div>
+        <p class="hint">一整天的项目（出海、东芭、体验潜水、住岛）和半天的项目（真理寺、水上市场、烹饪、按摩）加在一起，上限是 4 个白天。晚上的秀、步行街、海鲜不占白天。轮渡、沙岛快艇、包船是近岛的三种坐法，都点「想去」也只算 1 天。</p>
+
+        <div class="sec-title">逐项勾</div>
+        <div id="optRoot"></div>
+
+        <div class="sec-title">位置</div>
+        <div class="mapcard">
+          <div id="map"></div>
+          <div class="mapbtns">
+            <button type="button" id="btnLocal">芭提雅和岛</button>
+            <button type="button" id="btnAll">连机场一起看</button>
+          </div>
+          <div class="legend">
+            <span class="lg"><i class="dot" style="background:#0F766E"></i>出海 / 适合下水的住</span>
+            <span class="lg"><i class="dot" style="background:#C2671B"></i>市区</span>
+            <span class="lg"><i class="dot" style="background:#2C5F84"></i>机场</span>
+          </div>
+        </div>
+        <p class="hint">点圆点看说明。远岛那个点是方向示意，不是下潜坐标。水上市场、纳中天以导航英文名为准。</p>
+      </div>
+    </section>
+
+    <section id="page-bone" class="page">
+      <div class="pane">
+        <div class="filters" id="bones">
+          <button type="button" class="on" data-b="a">出海两天</button>
+          <button type="button" data-b="b">市区为主</button>
+          <button type="button" data-b="c">躺海滩</button>
+          <button type="button" data-b="move">怎么接送</button>
+        </div>
+        <div class="note yel">三套都是拼法，方便你删。选定之前不写成最终行程。三套都默认 10/6 下午撤到机场附近，因为北京班 10:00。</div>
+
+        <div class="bone on" id="bone-a">
+          <div class="card"><h3>出海两天</h3><ul>
+            <li>近岛锁在周一，避开周末。</li>
+            <li>远岛放周二，早上开不了船就改成东芭或烹饪。</li>
+            <li>真理寺放周六下午。东芭不占必去名额。</li>
+          </ul></div>
+          <div class="day"><div class="day-h"><span class="no">10/1</span><span class="dt">周五</span><span class="th">落地</span></div><div class="tx">不排景点。成都 18:00 到，北京 21:15 到。怎么汇合看「怎么接送」。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/2</span><span class="dt">周六</span><span class="th">真理寺</span></div><div class="tx">下午看真理寺，傍晚在住的那片海滩走一走。周末岛上人多，这一天不排出海。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/3</span><span class="dt">周日</span><span class="th">海滩 + 按摩</span></div><div class="tx">上午下水或在酒店休息，下午 5 人按摩。下雨就改去商场吃饭。把体力留给后面两天的船。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/4</span><span class="dt">周一</span><span class="th">格兰岛轮渡</span></div><div class="tx">Bali Hai 坐公共轮渡，岛上自己去 Tawaen，想安静再去 Tien 或 Samae。末班以当天码头告示为准，赶在天黑前回市区。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/5</span><span class="dt">周二</span><span class="th">远岛，看天</span></div><div class="tx">早上确认船能开再出发。停船的话，这一天改东芭，或者烹饪课加海滩。不空等码头。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/6</span><span class="dt">周三</span><span class="th">上午自由，下午撤</span></div><div class="tx">上午海滩或补一个没去成的半天项目。14:00 前出发去素万那普附近住，行李不再拖回芭提雅。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/7</span><span class="dt">周四</span><span class="th">返程</span></div><div class="tx">北京 TG614 10:00 走，成都 TG618 10:50 走。5 人按 07:00 前到机场。</div></div>
+        </div>
+
+        <div class="bone" id="bone-b">
+          <div class="card"><h3>市区为主，只出一天海</h3><ul>
+            <li>真理寺、东芭、格兰岛各占一块，互不挤在同一天。</li>
+            <li>远岛、住岛、步行街都不进这套。</li>
+            <li>周五晚上的秀可加可不加，加在 10/5。</li>
+          </ul></div>
+          <div class="day"><div class="day-h"><span class="no">10/1</span><span class="dt">周五</span><span class="th">落地</span></div><div class="tx">同上一套，不排景点。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/2</span><span class="dt">周六</span><span class="th">真理寺</span></div><div class="tx">白天场看雕刻。住帕山或北芭会顺路。傍晚回住处，不安排岛。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/3</span><span class="dt">周日</span><span class="th">东芭乐园</span></div><div class="tx">南边花园加表演，留出往返车程。票里如果绑了骑象，把骑乘拿掉。大雨就只看有棚的表演，或者把这一天和 10/5 对调。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/4</span><span class="dt">周一</span><span class="th">格兰岛轮渡</span></div><div class="tx">唯一的出海日，用大船。快艇作为天气好时的替换，不额外再占一天。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/5</span><span class="dt">周二</span><span class="th">市场上午，晚上可选秀</span></div><div class="tx">水上市场一个上午就够。下午按摩。晚上想看人妖秀，就看 Tiffany 或 Alcazar 的较早一场，看完直接回酒店。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/6</span><span class="dt">周三</span><span class="th">上午自由，下午撤</span></div><div class="tx">14:00 前往北去机场附近。海鲜放在东芭那天或中天吃。邦萨雷、水上市场在南边，和去机场反方向。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/7</span><span class="dt">周四</span><span class="th">返程</span></div><div class="tx">07:00 前到素万那普。北京班先飞。</div></div>
+        </div>
+
+        <div class="bone" id="bone-c">
+          <div class="card"><h3>住安静海滩，只出一次海</h3><ul>
+            <li>基地改中天或纳中天，酒店门口就能下水。</li>
+            <li>市区只留真理寺。东芭、水上市场、步行街都砍。</li>
+            <li>适合有人晕船、想少搬家的排法。</li>
+          </ul></div>
+          <div class="day"><div class="day-h"><span class="no">10/1</span><span class="dt">周五</span><span class="th">落地</span></div><div class="tx">车直接去中天或纳中天。北京那单到酒店会接近午夜。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/2</span><span class="dt">周六</span><span class="th">海滩</span></div><div class="tx">不下岛。周末把人让给格兰岛。下雨就烹饪课或按摩。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/3</span><span class="dt">周日</span><span class="th">继续海滩，或烹饪</span></div><div class="tx">5 人如果想有一个室内项目，烹饪课放今天。否则继续下水、早睡。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/4</span><span class="dt">周一</span><span class="th">格兰岛轮渡</span></div><div class="tx">从中天去 Bali Hai 多留 20 分钟，纳中天多留 40 分钟。仍用轮渡。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/5</span><span class="dt">周二</span><span class="th">真理寺半天</span></div><div class="tx">北芭看真理寺，看完回中天。不把东芭加进来。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/6</span><span class="dt">周三</span><span class="th">上午再躺，下午撤</span></div><div class="tx">午饭在中天吃，吃完往北去机场。邦萨雷在南边，不放在这一天。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/7</span><span class="dt">周四</span><span class="th">返程</span></div><div class="tx">机场酒店出发，07:00 前到航站楼。</div></div>
+        </div>
+
+        <div class="bone" id="bone-move">
+          <div class="sec-title">10/1 三个人先到，两个人后到</div>
+          <div class="plan"><h3>各自走，酒店汇合</h3>
+            <div class="tx">成都出关后直接上 9 座去芭提雅，大约 20:30–22:00 到。北京大约 0:00 前后到，堵车会更晚。两趟车。谁都不在机场干等。</div>
+          </div>
+          <div class="plan"><h3>成都等北京，一辆车走</h3>
+            <div class="tx">成都要在机场或附近吃完饭再等大约 3 小时。22:30 前后一起走，到芭提雅接近午夜。车只付一趟，人比较累。</div>
+          </div>
+          <div class="plan"><h3>10/1 住机场附近，10/2 一起去</h3>
+            <div class="tx">两边各自到素万那普附近的酒店，第二天早饭后一辆车去芭提雅，中午前后到，下午还能安排真理寺。少一个芭提雅的晚上，汇合最省事。国庆周机场酒店要早订。</div>
+          </div>
+
+          <div class="sec-title">10/7 北京班 10:00</div>
+          <div class="plan"><h3>10/6 下午撤到机场附近</h3>
+            <div class="tx">14:00 前离开芭提雅，晚上住素万那普附近。10/7 早上从容值机。三套拼法都按这个写。5 人行李放一辆 9 座。</div>
+          </div>
+          <div class="plan"><h3>10/7 凌晨从芭提雅出发</h3>
+            <div class="tx">大约 04:30–05:00 出门，才有机会 07:00 到机场。能多一个 10/6 的晚上和 10/7 清早的海滩，雨天堵在高速上就危险。要选这个，等你明确说。</div>
+          </div>
+          <div class="note blu">泰航国际航班按起飞前约 3 小时到机场来留余量。截载以机票为准。5 个人不要拆成两辆轿车再加一堆箱子。</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-decide" class="page">
+      <div class="pane">
+        <div class="sec-title">你点完我就按这个写最终行程</div>
+        <div class="meter" id="decideMeter"></div>
+
+        <div class="card"><h3>两张机票分别是谁</h3>
+          <div class="hint">截图只有金额，没有姓名。</div>
+          <div class="choices" data-dec="who">
+            <button type="button" data-val="unknown">还没对上名字</button>
+            <button type="button" data-val="3-2">成都 3 人、北京 2 人</button>
+            <button type="button" data-val="other">别的分法，我再说明</button>
+          </div>
+        </div>
+        <div class="card"><h3>10/1 怎么进芭提雅</h3>
+          <div class="choices" data-dec="in">
+            <button type="button" data-val="split">各自走，酒店汇合</button>
+            <button type="button" data-val="wait">成都等北京，一辆车</button>
+            <button type="button" data-val="bkk">10/1 住机场附近，10/2 一起去</button>
+          </div>
+        </div>
+        <div class="card"><h3>10/6 晚上住哪</h3>
+          <div class="choices" data-dec="out">
+            <button type="button" data-val="bkk">下午撤到素万那普附近</button>
+            <button type="button" data-val="early">住芭提雅，10/7 凌晨出发</button>
+            <button type="button" data-val="later">再比较</button>
+          </div>
+        </div>
+        <div class="card"><h3>住哪一片</h3>
+          <div class="choices" data-dec="base">
+            <button type="button" data-val="pratumnak">帕山</button>
+            <button type="button" data-val="jomtien">中天海滩</button>
+            <button type="button" data-val="central">芭提雅海滩</button>
+            <button type="button" data-val="north">北芭 / 真理寺一带</button>
+            <button type="button" data-val="south">纳中天 / 邦萨雷</button>
+            <button type="button" data-val="open">还没定</button>
+          </div>
+        </div>
+        <div class="card"><h3>5 个人怎么住</h3>
+          <div class="hint">一间双床房住不下 5 个大人。片区定了再订房，国庆周不要拖到最后一个月。</div>
+          <div class="choices" data-dec="room">
+            <button type="button" data-val="villa">一栋两到三卧的别墅</button>
+            <button type="button" data-val="two">两间房，另加床</button>
+            <button type="button" data-val="three">三间房</button>
+            <button type="button" data-val="open">还没定</button>
+          </div>
+        </div>
+        <div class="card"><h3>出海</h3>
+          <div class="choices" data-dec="sea">
+            <button type="button" data-val="one">只出 1 天，格兰岛轮渡</button>
+            <button type="button" data-val="two">轮渡一天，再加一天看天的远岛</button>
+            <button type="button" data-val="speed">近岛改成快艇或包船</button>
+            <button type="button" data-val="sleep">想在格兰岛住一晚</button>
+            <button type="button" data-val="none">先不出海</button>
+          </div>
+        </div>
+        <div class="card"><h3>晚上</h3>
+          <div class="choices" data-dec="night">
+            <button type="button" data-val="show">看一场人妖秀</button>
+            <button type="button" data-val="walk">步行街走一圈</button>
+            <button type="button" data-val="none">晚上都不要</button>
+            <button type="button" data-val="later">看到时候</button>
+          </div>
+        </div>
+
+        <div class="sec-title">出发前再做</div>
+        <div class="card" id="prepList"></div>
+        <div class="note grn">免签按 2026 年 9 月 2 日使馆提醒：普通护照旅游单次不超过 30 天，每 180 天累计不超过 90 天。这次 6 个晚上在限额里。TDAC 不是签证，官网免费，地址 tdac.immigration.go.th ，入境前 3 天内填。代填网站不要用。护照号不要写进这个页面。</div>
+        <div class="footer">船期：Bali Hai 格兰岛轮渡，2026 年 10 月公开价单程 40 铢，末班会因浪调整。真理寺官网：日间成人 500 铢，夜间 700 铢。东芭为 2026 年票务平台标价量级。地图点位来自 OpenStreetMap。出海取消与否以当天码头为准。</div>
+      </div>
+    </section>
+  </div>
+  <nav class="dock">
+    <button type="button" class="on" data-page="today">概况</button>
+    <button type="button" data-page="pick">筛选</button>
+    <button type="button" data-page="bone">骨架</button>
+    <button type="button" data-page="decide">待定</button>
+  </nav>
+</div>
+<script src="../vendor/leaflet/leaflet.js"></script>
+<script>
+const ITEMS = [
+  {id:"stay-pratumnak", g:"stay", tag:"住", name:"帕山", rank:"优先看", rc:"", span:"base",
+    meta:"全程一个基地 · 去 Bali Hai 大约 10 分钟",
+    good:["夹在芭提雅海滩和中天之间，出海、市区两边都不算远。","比步行街安静，晚上走路还能吃饭。","5 人适合一栋别墅，或两间房。"],
+    bad:"沙滩一般。要下水，去中天或上岛。"},
+  {id:"stay-jomtien", g:"stay", tag:"住", name:"中天海滩", rank:"优先看", rc:"", span:"base",
+    meta:"全程一个基地 · 去码头大约 15–25 分钟",
+    good:["这一带的沙滩比芭提雅海滩适合下水。","餐馆多，离步行街远，睡得着。","躺海滩那套拼法就住这里。"],
+    bad:"真理寺在北边，同一天又出海又看寺会来回赶。"},
+  {id:"stay-central", g:"stay", tag:"住", name:"芭提雅海滩", rank:"可加", rc:"alt", span:"base",
+    meta:"全程一个基地 · 离码头最近",
+    good:["去 Bali Hai 最近，晚上出门方便。","想看步行街的人住这里少打一次车。"],
+    bad:"声音大，海水一般。想早睡就换帕山或中天。"},
+  {id:"stay-north", g:"stay", tag:"住", name:"北芭 / 真理寺一带", rank:"可加", rc:"alt", span:"base",
+    meta:"全程一个基地 · 出海要先到南边码头，大约 20–30 分钟",
+    good:["安静，真理寺很近。","适合把寺当成重点、出海只安排一天。"],
+    bad:"每天出海或去中天都要折返。"},
+  {id:"stay-south", g:"stay", tag:"住", name:"纳中天 / 邦萨雷", rank:"备用", rc:"gray", span:"base",
+    meta:"全程一个基地 · 去码头大约 30–45 分钟",
+    good:["最安静，邦萨雷有本地海鲜。","适合几乎不打卡、只躺着的一周。"],
+    bad:"真理寺、码头、东芭都更远。打卡多就别住这么南。"},
+  {id:"sea-ferry", g:"sea", tag:"出海", name:"格兰岛轮渡", rank:"优先看", rc:"", span:"mode",
+    meta:"1 天 · 10 月相对最稳 · 往返船票 80 铢/人（2026 年 10 月公开价）",
+    good:["Bali Hai 上船，大约 30–45 分钟到 Na Ban 码头，船比快艇稳。","岛上自己走，不跟购物站。Tawaen 人最多，Tien、Samae 安静些，岛上双条车过去。","全程穿救生衣。末班大约 17:00–18:00，以当天告示为准。"],
+    bad:"10/2、10/3 是周末，人多。近岸珊瑚一般，图好看主要在沙滩。"},
+  {id:"sea-sak", g:"sea", tag:"出海", name:"快艇：格兰岛 + 沙岛", rank:"可加", rc:"alt", span:"mode",
+    meta:"也是这 1 天，和轮渡留一种 · 浪大就取消",
+    good:["沙岛没有公共轮渡，水通常比 Tawaen 清，人少。","5 人可以包一条小艇，自己定返航时间。"],
+    bad:"快艇颠。有人晕船就留轮渡。取消了这一天，用真理寺、东芭或按摩接上。"},
+  {id:"sea-charter", g:"sea", tag:"出海", name:"5 人包船，当天再定去哪面", rank:"可加", rc:"alt", span:"mode",
+    meta:"也是这 1 天 · 按艘算，5 人分摊",
+    good:["不用跟大团。浪大时改去背风的海滩，不必把整天取消。","确认里写清：从 Bali Hai 出发、含不含油、午餐、浮潜装备、超时怎么算。"],
+    bad:"码头拉客先问清路线再付款。和轮渡、沙岛快艇最后只留一种。"},
+  {id:"sea-far", g:"sea", tag:"出海", name:"远岛浮潜", rank:"备用", rc:"gray", span:"day",
+    meta:"额外 1 天 · 林岛、克拉姆一带 · 10 月最容易停",
+    good:["水质和珊瑚通常好于格兰岛码头海滩。","只有预报连续大半天风小才值得排，放在 10/4 或 10/5。"],
+    bad:"船程更长。10 月水下经常发绿，和印尼那趟不是一档。这一天要配市区备用。"},
+  {id:"sea-dive", g:"sea", tag:"出海", name:"体验潜水", rank:"先不排", rc:"no", span:"day",
+    meta:"单独 1 天 · 无证可以上体验潜",
+    good:["有人特别想试试，就单独标出来，不要当成全员项目。"],
+    bad:"10 月能见度多数日子只有几米。远岛如果海况好，再问能不能加一次，不必为潜水再占一天。"},
+  {id:"sea-night", g:"sea", tag:"出海", name:"格兰岛住一晚", rank:"先不排", rc:"no", span:"day",
+    meta:"1 个白天加 1 晚 · 行李要上岛",
+    good:["傍晚团队回城后，海滩安静。"],
+    bad:"这趟只有 4 个完整白天，住岛会挤掉市区，还要多搬一次。想躺海，住中天就能达到大部分。"},
+  {id:"sea-cruise", g:"sea", tag:"出海", name:"日落船", rank:"备用", rc:"gray", span:"eve",
+    meta:"傍晚 2–3 小时 · 不占白天",
+    good:["不下水也能看海，适合不想早起赶船的人。"],
+    bad:"风大也会取消。和人妖秀抢的是同一个晚上。"},
+  {id:"sea-toys", g:"sea", tag:"出海", name:"摩托艇、拖曳伞、香蕉船", rank:"先不排", rc:"no", span:"skip",
+    meta:"海滩上随手，不占一天",
+    good:["没有必须体验的理由。"],
+    bad:"拉客和事故都常见。默认不排。"},
+  {id:"city-sanctuary", g:"city", tag:"市区", name:"真理寺", rank:"优先看", rc:"", span:"half",
+    meta:"半天 · 北芭海边 · 成人日间 500 铢，夜间 700 铢",
+    good:["全木建筑，是市区里最值得看的一处。","日间看得清雕刻，夜间灯光更好，二选一即可。","小雨还能看，木栈道湿了就慢一点。"],
+    bad:"在北边。和东芭放同一天会南北各跑一头。"},
+  {id:"city-nongnooch", g:"city", tag:"市区", name:"东芭乐园", rank:"可加", rc:"alt", span:"day",
+    meta:"大半天 · 南边车程大约 30–50 分钟 · 门票大约 15 美元起",
+    good:["花园和表演适合想看园子的人。","含不含园内车、午餐，买的时候看清票种。"],
+    bad:"大雨时花园体验差。票里常绑骑象，骑乘拿掉，只看花园和人的表演。"},
+  {id:"city-market", g:"city", tag:"市区", name:"水上市场", rank:"备用", rc:"gray", span:"half",
+    meta:"一个上午 · 在中天南边，车程大约 20–30 分钟",
+    good:["有棚，有小吃，好拍照。","和东芭、邦萨雷同在南边，放在同一个南边日。去机场是往北，不绕到这里。"],
+    bad:"是建给游客的市场。门票 2026 年有免费和约 200 铢两种说法，现场再看。时间紧就砍。"},
+  {id:"city-buddha", g:"city", tag:"市区", name:"帕山大佛", rank:"顺路", rc:"alt", span:"skip",
+    meta:"大约 1 小时 · 免费",
+    good:["住帕山或去码头时顺路看海。"],
+    bad:"不单独占半天。"},
+  {id:"city-cook", g:"city", tag:"市区", name:"烹饪课", rank:"可加", rc:"alt", span:"half",
+    meta:"半天 · 室内 · 含吃",
+    good:["下雨、停船都能用。5 人一起做。"],
+    bad:"不要和出海占同一个上午。"},
+  {id:"city-massage", g:"city", tag:"市区", name:"泰式按摩", rank:"优先看", rc:"", span:"half",
+    meta:"一个下午或出海回来的晚上 · 室内",
+    good:["5 人都能参加。船取消了，用它把下午补上。","选住处附近或商场里的店。"],
+    bad:"步行街拉客的店跳过。先问清是泰式、油压还是加钟。"},
+  {id:"city-show", g:"city", tag:"市区", name:"人妖秀", rank:"备用", rc:"gray", span:"eve",
+    meta:"晚上 70–90 分钟 · Tiffany 或 Alcazar · 不占白天",
+    good:["2026 年两家都还在演。一张票大约几百到一千多铢，看座位。","看较早的一场，结束还能早回。"],
+    bad:"和长辈一起先问想不想看。场次每年会改，想看再查当周。"},
+  {id:"city-walk", g:"city", tag:"市区", name:"步行街", rank:"先不排", rc:"no", span:"eve",
+    meta:"晚上 1 小时够 · 不占白天",
+    good:["知道芭提雅晚上是什么样，走一圈就走。"],
+    bad:"成人夜生活为主。海鲜和按摩不在这里买。"},
+  {id:"city-seafood", g:"city", tag:"市区", name:"邦萨雷或中天海鲜", rank:"可加", rc:"alt", span:"eve",
+    meta:"一顿晚饭 · 不占白天",
+    good:["比步行街的餐厅实在。不住南边的话，专程去吃一顿就够。"],
+    bad:"先问清按斤还是套餐，再坐下。"},
+  {id:"city-mall", g:"city", tag:"市区", name:"商场避雨", rank:"备用", rc:"gray", span:"skip",
+    meta:"Terminal 21 或 Central · 不专门排",
+    good:["10 月午后常有雷阵雨，用来吃饭、吹空调。"],
+    bad:"不必写进日程。"}
+];
+
+const PREP = [
+  {id:"tdac", t:"TDAC 电子入境卡：入境前 3 天内，只填 tdac.immigration.go.th，免费"},
+  {id:"pass", t:"护照有效期够这次使用。免签单次不超过 30 天，出发前再看使馆有没有新提醒"},
+  {id:"ins", t:"旅行险写上乘船。远岛和快艇如果最后要去，保险范围一并看一眼"},
+  {id:"sea", t:"问清谁晕船、谁不会游泳。晕船的人近岛用轮渡"},
+  {id:"cash", t:"备一些泰铢现金：船票、岛上双条车、躺椅经常只收现金。取款手续费大约 220 铢"},
+  {id:"plug", t:"两脚扁插多数能用。三脚和斜脚带一个转换头"},
+  {id:"van", t:"5 人加行李用一辆 9 座。机场往返、出海日去码头都按一辆车"},
+  {id:"book", t:"片区定了再订房。国庆周按会挤来订，不按雨季淡季往后再拖"}
+];
+
+const PTS = [
+  {name:"素万那普", lat:13.68188, lng:100.74858, c:"#2C5F84", d:"泰航国际线在这里。去芭提雅大约 120 公里，平日 1.5–2.5 小时。"},
+  {name:"真理寺", lat:12.97278, lng:100.88915, c:"#C2671B", d:"北芭海边。日间成人 500 铢，夜间 700 铢。"},
+  {name:"北芭海滩", lat:12.96260, lng:100.88449, c:"#0F766E", d:"安静，离真理寺近，离 Bali Hai 大约 20–30 分钟。"},
+  {name:"Terminal 21", lat:12.94988, lng:100.88977, c:"#C2671B", d:"下雨吃饭、避雨。不专门排。"},
+  {name:"芭提雅海滩", lat:12.93550, lng:100.88340, c:"#C2671B", d:"热闹，海水一般。步行街在这片的南端。"},
+  {name:"步行街", lat:12.92742, lng:100.87465, c:"#C2671B", d:"晚上看一圈即可。海鲜和按摩不在这里买。"},
+  {name:"Bali Hai 码头", lat:12.92774, lng:100.86792, c:"#0F766E", d:"格兰岛轮渡和多数快艇从这里走。"},
+  {name:"帕山大佛", lat:12.92039, lng:100.86677, c:"#C2671B", d:"帕山上一小时，免费，看海。"},
+  {name:"中天海滩", lat:12.87727, lng:100.88437, c:"#0F766E", d:"更适合下水。去码头大约 15–25 分钟。"},
+  {name:"水上市场", lat:12.86857, lng:100.90652, c:"#C2671B", d:"中天南边。导航搜 Pattaya Floating Market。"},
+  {name:"纳中天", lat:12.84772, lng:100.90182, c:"#0F766E", d:"更安静。去码头大约 30–45 分钟。"},
+  {name:"邦萨雷", lat:12.77146, lng:100.89893, c:"#C2671B", d:"本地海鲜，在芭提雅南边。去素万那普是往北，这顿不要放在撤走的路上。"},
+  {name:"东芭乐园", lat:12.76468, lng:100.93612, c:"#C2671B", d:"南边，大半天。骑象不写进默认。"},
+  {name:"沙岛", lat:12.94403, lng:100.79098, c:"#0F766E", d:"快艇才到。10 月看浪。"},
+  {name:"格兰岛 Tawaen", lat:12.92538, lng:100.77975, c:"#0F766E", d:"人最多的海滩。轮渡先到 Na Ban，再坐双条车。"},
+  {name:"Na Ban 码头", lat:12.92263, lng:100.78932, c:"#0F766E", d:"公共轮渡靠这里。末班以当天告示为准。"},
+  {name:"远岛方向", lat:12.80000, lng:100.79000, c:"#8A8F99", d:"林岛一带的方向示意，不是下潜点。10 月先不锁。"}
+];
+
+const PKEY = "pattaya2027-picks-v1";
+const DKEY = "pattaya2027-dec-v1";
+const CKEY = "pattaya2027-prep-v1";
+let map, mapReady = false;
+
+function load(k){ try { return JSON.parse(localStorage.getItem(k) || "{}"); } catch (e) { return {}; } }
+function save(k, v){ localStorage.setItem(k, JSON.stringify(v)); writeHash(); }
+
+function writeHash(){
+  const p = load(PKEY), d = load(DKEY);
+  const y = [], m = [], n = [];
+  Object.keys(p).forEach(id => { if (p[id]==="yes") y.push(id); else if (p[id]==="maybe") m.push(id); else if (p[id]==="no") n.push(id); });
+  const ds = Object.keys(d).map(k => k + ":" + d[k]).join(",");
+  const hash = "y=" + y.join(",") + "&m=" + m.join(",") + "&n=" + n.join(",") + "&d=" + ds;
+  history.replaceState(null, "", "#" + hash);
+}
+function readHash(){
+  if (!location.hash || location.hash.length < 2) return;
+  const q = new URLSearchParams(location.hash.slice(1));
+  const p = {};
+  (q.get("y") || "").split(",").filter(Boolean).forEach(id => p[id] = "yes");
+  (q.get("m") || "").split(",").filter(Boolean).forEach(id => p[id] = "maybe");
+  (q.get("n") || "").split(",").filter(Boolean).forEach(id => p[id] = "no");
+  const d = {};
+  (q.get("d") || "").split(",").filter(Boolean).forEach(pair => {
+    const i = pair.indexOf(":");
+    if (i > 0) d[pair.slice(0,i)] = pair.slice(i+1);
+  });
+  if (Object.keys(p).length) localStorage.setItem(PKEY, JSON.stringify(p));
+  if (Object.keys(d).length) localStorage.setItem(DKEY, JSON.stringify(d));
+}
+
+function dayLoad(p){
+  const yes = id => p[id] === "yes";
+  let half = 0;
+  const notes = [];
+  const modes = ["sea-ferry","sea-sak","sea-charter"].filter(yes);
+  if (modes.length) half += 2;
+  if (modes.length > 1) notes.push("轮渡、沙岛快艇、包船是近岛的三种坐法，最后留一种，这里只算 1 天。");
+  if (yes("sea-far")) half += 2;
+  if (yes("sea-dive")) half += 2;
+  if (yes("sea-night")) { half += 2; notes.push("住岛会再占掉一个市区白天。"); }
+  if (yes("city-nongnooch")) half += 2;
+  ["city-sanctuary","city-market","city-cook","city-massage"].forEach(id => { if (yes(id)) half += 1; });
+  const stays = ["stay-pratumnak","stay-jomtien","stay-central","stay-north","stay-south"].filter(yes);
+  if (stays.length > 1) notes.push("住宿片区留一个。");
+  return { days: half / 2, notes };
+}
+
+function names(ids){
+  return ids.map(id => (ITEMS.find(x => x.id === id) || {}).name).filter(Boolean);
+}
+function grouped(){
+  const p = load(PKEY);
+  const buckets = {yes:[], maybe:[], no:[]};
+  ITEMS.forEach(it => { if (p[it.id]) buckets[p[it.id]].push(it.name); });
+  return buckets;
+}
+
+function meterHTML(){
+  const {days, notes} = dayLoad(load(PKEY));
+  const g = grouped();
+  const pct = Math.min(100, days / 4 * 100);
+  const over = days > 4;
+  const yes = g.yes.length ? g.yes.join("、") : "还没有";
+  const maybe = g.maybe.length ? g.maybe.join("、") : "无";
+  const no = g.no.length ? g.no.join("、") : "无";
+  return `<div class="kicker">已勾选 · 白天大约 ${days} / 4</div>
+    <div class="bar ${over ? "over" : ""}"><i style="width:${pct}%"></i></div>
+    <div class="sumline"><b>想去</b> ${yes}</div>
+    <div class="sumline"><b>再看</b> ${maybe}</div>
+    <div class="sumline"><b>不要</b> ${no}</div>
+    ${notes.map(n => `<div class="note yel" style="margin-top:8px">${n}</div>`).join("")}
+    ${over ? `<div class="note yel">想去的项目超过 4 个白天，写最终行程时要砍。</div>` : ""}
+    <button type="button" class="copybtn">复制筛选结果</button>`;
+}
+function paintMeters(){
+  ["todayMeter","pickMeter","decideMeter"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = meterHTML();
+  });
+}
+
+function renderOpts(){
+  const p = load(PKEY);
+  const g = document.querySelector("#filters button.on").dataset.g;
+  const root = document.getElementById("optRoot");
+  root.innerHTML = ITEMS.filter(it => g === "all" || it.g === g).map(it => {
+    const cur = p[it.id] || "";
+    const on = v => cur === v ? " on" : "";
+    return `<article class="opt" data-id="${it.id}">
+      <div class="head"><span class="tag ${it.g}">${it.tag}</span><h3>${it.name}</h3><span class="rank ${it.rc}">${it.rank}</span></div>
+      <div class="meta">${it.meta}</div>
+      <ul>${it.good.map(x => `<li>${x}</li>`).join("")}</ul>
+      <div class="note blu">${it.bad}</div>
+      <div class="pick">
+        <button type="button" data-set="yes" class="${on("yes")}">想去</button>
+        <button type="button" data-set="maybe" class="${on("maybe")}">再看</button>
+        <button type="button" data-set="no" class="${on("no")}">不要</button>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function renderDec(){
+  const d = load(DKEY);
+  document.querySelectorAll("[data-dec]").forEach(box => {
+    box.querySelectorAll("[data-val]").forEach(btn => {
+      btn.classList.toggle("on", d[box.dataset.dec] === btn.dataset.val);
+    });
+  });
+}
+function renderPrep(){
+  const c = load(CKEY);
+  document.getElementById("prepList").innerHTML = PREP.map(item =>
+    `<label class="check"><input type="checkbox" data-prep="${item.id}" ${c[item.id] ? "checked" : ""}><span>${item.t}</span></label>`
+  ).join("");
+}
+
+const DEC_LABEL = {
+  who:{unknown:"还没对上名字","3-2":"成都 3 人、北京 2 人",other:"别的分法"},
+  in:{split:"各自走，酒店汇合",wait:"成都等北京，一辆车",bkk:"10/1 住机场附近"},
+  out:{bkk:"10/6 下午撤到机场附近",early:"10/7 凌晨从芭提雅出发",later:"返程再比较"},
+  base:{pratumnak:"帕山",jomtien:"中天",central:"芭提雅海滩",north:"北芭",south:"纳中天/邦萨雷",open:"住哪还没定"},
+  room:{villa:"别墅",two:"两间房加床",three:"三间房",open:"房间还没定"},
+  sea:{one:"只出 1 天轮渡",two:"轮渡 + 远岛看天",speed:"近岛改快艇或包船",sleep:"想住岛一晚",none:"先不出海"},
+  night:{show:"看人妖秀",walk:"步行街走一圈",none:"晚上都不要",later:"晚上看到时候"}
+};
+function copySummary(){
+  const g = grouped();
+  const {days} = dayLoad(load(PKEY));
+  const d = load(DKEY);
+  const line = (k, title) => `${title}：${(DEC_LABEL[k] && DEC_LABEL[k][d[k]]) || "还没点"}`;
+  const text = [
+    "芭提雅筛选 2027.10.1–10.7（最终行程还没写）",
+    `想去：${g.yes.join("、") || "无"}`,
+    `再看：${g.maybe.join("、") || "无"}`,
+    `不要：${g.no.join("、") || "无"}`,
+    `白天大约 ${days} / 4`,
+    line("who","机票谁坐"),
+    line("in","10/1"),
+    line("out","10/6"),
+    line("base","住"),
+    line("room","房间"),
+    line("sea","出海"),
+    line("night","晚上"),
+    location.href
+  ].join("\n");
+  const done = () => {
+    document.querySelectorAll(".copybtn").forEach(b => { b.textContent = "已复制"; });
+    setTimeout(() => document.querySelectorAll(".copybtn").forEach(b => { b.textContent = "复制筛选结果"; }), 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => fallback(text, done));
+  else fallback(text, done);
+}
+function fallback(text, done){
+  const ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  ta.remove(); done();
+}
+
+function show(page){
+  document.querySelectorAll(".page").forEach(s => s.classList.toggle("on", s.id === "page-" + page));
+  document.querySelectorAll("nav.dock button").forEach(b => b.classList.toggle("on", b.dataset.page === page));
+  if (page === "pick") ensureMap();
+  window.scrollTo(0, 0);
+}
+
+let localBounds, allBounds;
+function ensureMap(){
+  const el = document.getElementById("map");
+  if (typeof L === "undefined") { el.innerHTML = '<div class="hint" style="padding:16px">地图没载入。上面的文字可以继续勾。</div>'; return; }
+  if (!mapReady) {
+    if (el.clientHeight < 40) { requestAnimationFrame(ensureMap); return; }
+    map = L.map(el, { scrollWheelZoom: false });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      subdomains: "abc", maxZoom: 19, attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
+    PTS.forEach(p => {
+      L.circleMarker([p.lat, p.lng], { radius: 8, color: "#fff", weight: 2, fillColor: p.c, fillOpacity: 1 })
+        .bindPopup("<b>" + p.name + "</b><br>" + p.d)
+        .addTo(map);
+    });
+    L.polyline([[12.92774,100.86792],[12.92263,100.78932]], { color:"#0F766E", weight: 3 }).addTo(map);
+    L.polyline([[13.68188,100.74858],[12.9355,100.8834]], { color:"#2C5F84", weight: 2, dashArray: "6 6" }).addTo(map);
+    localBounds = L.latLngBounds([[12.74,100.74],[12.99,100.96]]);
+    allBounds = L.latLngBounds(PTS.map(p => [p.lat, p.lng]));
+    mapReady = true;
+  }
+  requestAnimationFrame(() => {
+    map.invalidateSize();
+    try { map.fitBounds(localBounds, { padding: [20, 20] }); } catch (e) {}
+  });
+}
+
+function fitHead(){
+  const h = document.querySelector(".app-head").offsetHeight;
+  document.documentElement.style.setProperty("--head-h", h + "px");
+}
+
+readHash();
+renderOpts();
+renderDec();
+renderPrep();
+paintMeters();
+fitHead();
+
+document.querySelectorAll("nav.dock button").forEach(b => b.addEventListener("click", () => show(b.dataset.page)));
+document.getElementById("filters").addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  document.querySelectorAll("#filters button").forEach(x => x.classList.toggle("on", x === btn));
+  renderOpts();
+});
+document.getElementById("optRoot").addEventListener("click", e => {
+  const btn = e.target.closest("[data-set]");
+  if (!btn) return;
+  const id = btn.closest("[data-id]").dataset.id;
+  const p = load(PKEY);
+  p[id] = p[id] === btn.dataset.set ? "" : btn.dataset.set;
+  if (!p[id]) delete p[id];
+  save(PKEY, p);
+  renderOpts();
+  paintMeters();
+});
+document.getElementById("bones").addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  document.querySelectorAll("#bones button").forEach(x => x.classList.toggle("on", x === btn));
+  document.querySelectorAll(".bone").forEach(x => x.classList.toggle("on", x.id === "bone-" + btn.dataset.b));
+});
+document.getElementById("page-decide").addEventListener("click", e => {
+  const btn = e.target.closest("[data-val]");
+  if (!btn) return;
+  const box = btn.closest("[data-dec]");
+  const d = load(DKEY);
+  d[box.dataset.dec] = d[box.dataset.dec] === btn.dataset.val ? "" : btn.dataset.val;
+  if (!d[box.dataset.dec]) delete d[box.dataset.dec];
+  save(DKEY, d);
+  renderDec();
+});
+document.getElementById("prepList").addEventListener("change", e => {
+  const box = e.target.closest("[data-prep]");
+  if (!box) return;
+  const c = load(CKEY);
+  c[box.dataset.prep] = box.checked;
+  localStorage.setItem(CKEY, JSON.stringify(c));
+});
+document.body.addEventListener("click", e => { if (e.target.closest(".copybtn")) copySummary(); });
+document.getElementById("btnLocal").addEventListener("click", () => { try { map && map.fitBounds(localBounds, { padding:[20,20] }); } catch (e) {} });
+document.getElementById("btnAll").addEventListener("click", () => { try { map && map.fitBounds(allBounds, { padding:[24,24] }); } catch (e) {} });
+window.addEventListener("resize", fitHead);
+</script>
+</body>
+</html>

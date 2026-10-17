@@ -4,6 +4,8 @@
 
 公开镜像（GitHub Pages）：https://petrichor233.github.io/indonesia-trip-2026/
 
+芭提雅筛选稿（2027.10.1–10.7，选项还没写成最终行程）：https://petrichor233.github.io/indonesia-trip-2026/pattaya-2027/
+
 手机请用 Safari / Chrome 打开。微信内置浏览器经常打不开 `github.io`。
 
 ## 怎么用
