@@ -105,7 +105,9 @@
   .lg { display:inline-flex; align-items:center; gap:5px; font-size:12px; background:#fff; border:0.5px solid var(--line); border-radius:999px; padding:3px 8px; }
   .dot { width:9px; height:9px; border-radius:50%; }
   .footer { font-size:11px; color:#9AA5B1; line-height:1.65; padding:8px 2px 0; }
-  nav.dock { position:fixed; left:0; right:0; bottom:0; z-index:40; display:grid; grid-template-columns:repeat(4,1fr); background:#fff; border-top:0.5px solid var(--line); padding:6px 0 calc(6px + var(--safe)); max-width:640px; margin:0 auto; }
+  nav.dock { position:fixed; left:0; right:0; bottom:0; z-index:40; display:grid; grid-template-columns:repeat(5,1fr); background:#fff; border-top:0.5px solid var(--line); padding:6px 0 calc(6px + var(--safe)); max-width:640px; margin:0 auto; }
+  .dim div { display:grid; grid-template-columns:3.6em 1fr; gap:0 8px; font-size:13.2px; margin:4px 0; color:#33414F; }
+  .dim b { color:var(--blue); font-weight:700; }
   nav.dock button { border:0; background:none; font-family:inherit; font-size:12px; font-weight:700; color:#9AA5B1; padding:6px 0; }
   nav.dock button.on { color:var(--blue); }
   .leaflet-popup-content { font-size:13px; line-height:1.45; margin:10px 12px; }
@@ -162,7 +164,7 @@
           <li>回程北京班 10:00 更早。5 人一起走，就按这班卡点：大约 07:00 前到素万那普。</li>
           <li>芭提雅到机场大约 120 公里，平日 1.5–2.5 小时，下雨和早高峰更久。10/7 凌晨从芭提雅出发能多一个早晨，也更容易误机。</li>
         </ul></div>
-        <div class="note blu"><b>10 月的海：</b>浮潜、海钓、冲浪是三件事。远岛快艇和出海钓看浪，风大就停；格兰岛公共轮渡大多数日子能开。冲浪在罗勇的湄兰蓬，往东一个多小时，不在岛上。默认不住岛。2026 年 10 月中旬 Bali Hai 还有风浪，游客靠岸要人协助，全程穿救生衣。</div>
+        <div class="note blu"><b>10 月的海：</b>浮潜、海钓、冲浪是三件事。远岛快艇和出海钓看浪，风大就停；格兰岛公共轮渡大多数日子能开。冲浪在罗勇的湄兰蓬，往东一个多小时。各岛的景色和玩法、以及想住岛选哪座，在底部「海岛」。2026 年 10 月中旬 Bali Hai 还有风浪，游客靠岸要人协助，全程穿救生衣。</div>
 
         <div class="meter" id="todayMeter"></div>
         <p class="hint">勾选记在这台手机的浏览器里。换手机或发给我，用「筛选」或「待定」里的复制。</p>
@@ -181,13 +183,13 @@
         <div class="meter" id="pickMeter"></div>
 
         <div class="sec-title">岛和三项水上</div>
-        <div class="note grn"><b>默认不住岛。</b>能订酒店的只有格兰岛。住一晚也到不了林岛、竹岛的珊瑚，末班船下午就停，浪大还可能回不了市区。钓鱼和冲浪都从陆地出发。这 4 个白天里，值得占满的是远岛浮潜 1 天、海钓 1 天。冲浪只在当天真有浪时抽半天。</div>
+        <div class="note grn"><b>默认先不住岛。</b>芭提雅这边能订酒店的是格兰岛，罗勇的沙美岛也能住。想住一晚选哪座，看底部「海岛」。钓鱼和冲浪都从陆地出发。这 4 个白天里，值得占满的是远岛浮潜 1 天、海钓 1 天。冲浪只在当天真有浪时抽半天。</div>
         <div class="cmp"><div class="cmp-top"><b>林岛 + 竹岛 + 曼威猜</b><span class="rank">浮潜这一天</span></div><div class="cmp-meta">无人岛，不能住。一条快艇拼三个点，占 1 整天。</div><div class="cmp-meta">林岛是这附近珊瑚和潜水最好的，有两小段沙滩。竹岛由海军看管，浅水大约 4–8 米，鱼和珊瑚都能看，不许过夜。曼威猜在竹岛南边，更小，浅水浮潜，不单独成一天。</div><div class="cmp-meta">10 月这条线最容易停。停了改沙岛；沙岛再停，改格兰岛轮渡。跟团常见大约 1000–1800 铢/人，2026 年价，出发前再核。</div></div>
         <div class="cmp"><div class="cmp-top"><b>沙岛</b><span class="rank alt">停船时用</span></div><div class="cmp-meta">没有轮渡、没有村子、没有酒店。从 Bali Hai 快艇大约 20–25 分钟。</div><div class="cmp-meta">看点在东侧的礁，沙滩短，中午人会挤。跟团常常只停大约 45 分钟，有的行程还顺带格兰岛。10 月浪大也会取消。它是远岛去不成时的近替，不值得再单独占一整天。</div></div>
         <div class="cmp"><div class="cmp-top"><b>格兰岛</b><span class="rank gray">天气备份</span></div><div class="cmp-meta">公共轮渡，船大，单程大约 30–45 分钟。2026 年 10 月单程 40 铢/人。末班大约 17:00–18:00，以当天告示为准。</div><div class="cmp-meta">核心是沙滩：Tawaen 人最多，Tien、Samae 安静些。码头附近浮潜一般，船多、人多、珊瑚旧。钓鱼和冲浪都不从这里出发。10/2、10/3 周末人多。</div></div>
         <div class="cmp"><div class="cmp-top"><b>克拉姆一带出海钓</b><span class="rank">海钓这一天</span></div><div class="cmp-meta">克拉姆是东海岸最大的岛，海军管辖。公开资料写游客不能随便上岛，船公司仍有登岛行程，海龟季会关。能不能上岸以当天船方为准。钓鱼在岛外，不必上岸。</div><div class="cmp-meta">船从邦萨雷或纳中天的海洋码头走，和 Bali Hai 的观光快艇不是一条船。休闲海钓不用执照，不保证渔获。全天按艘算，价差很大，行前问清油、餐、竿、超时。10 月仍在风浪尾巴，海况好才出全天；早上不行就白天改市区，晚上夜钓鱿鱼。</div><div class="cmp-meta">夜钓从 Bali Hai 或邦萨雷走，傍晚出发，不占白天。2026 年公开价大约 530–1800 铢/人。有的船一周只开几天，星期几出发前再问。</div></div>
         <div class="cmp"><div class="cmp-top"><b>罗勇湄兰蓬冲浪</b><span class="rank gray">看当天预报</span></div><div class="cmp-meta">不是岛。在芭提雅东边，车程大约一个多小时，和去机场反方向。</div><div class="cmp-meta">4–10 月有风浪，沙底，适合初学和长板。浪经常只有脚踝到腰，没有浪就不要专程开过去。课大约 1300–1500 铢，含板，2026 年价。有的学校一组大约 3 人，5 人可能要拆成两组。11–3 月这片更平。</div></div>
-        <div class="note yel">沙美岛、象岛、库德、马克都超出这 4 个白天。斯米兰、素林大约 5 月中到 10 月中关闭，而且在西海岸。</div>
+        <div class="note yel">沙美岛放在「海岛」里单独比，它在罗勇，能住。象岛、库德、马克要另换一座城市当基地。斯米兰、素林大约 5 月中到 10 月中关闭，而且在西海岸。</div>
 
         <div class="sec-title">市区对照</div>
         <div class="cmp"><div class="cmp-top"><b>真理寺</b><span class="rank">优先留</span></div><div class="cmp-meta">半天。小雨还能看。官网成人日间 500 铢，夜间 700 铢。</div></div>
@@ -213,7 +215,87 @@
             <span class="lg"><i class="dot" style="background:#2C5F84"></i>机场</span>
           </div>
         </div>
-        <p class="hint">点圆点看说明。林岛、竹岛、曼威猜、克拉姆是岛的位置。湄兰蓬在罗勇，点「看罗勇」才进入画面。水上市场、纳中天以导航英文名为准。</p>
+        <p class="hint">点圆点看说明。林岛、竹岛、曼威猜、克拉姆、萨美山在「芭提雅和岛」里。沙美岛和湄兰蓬在罗勇，点「看罗勇」。水上市场、纳中天以导航英文名为准。</p>
+      </div>
+    </section>
+
+    <section id="page-isles" class="page">
+      <div class="pane">
+        <div class="sec-title">海岛筛选</div>
+        <p class="hint">还没定行程。冲浪在罗勇湄兰蓬，不在下面这些岛上。海钓是另一条船，从邦萨雷或海洋码头出发，钓克拉姆和萨美山外海。价格是 2026 年公开价，2027 年再核。</p>
+
+        <div class="note grn"><b>如果要找一个岛住一晚，选沙美岛。</b>能订到游客酒店的只有沙美岛和格兰岛。无人三岛、萨美山、沙岛都不能过夜。沙美岛住一晚，第二天再离开，才像换了一座岛。当天来回只剩一个海滩的时间。</div>
+        <div class="card"><h3>住一晚怎么选</h3><ul>
+          <li>想要海湾、晚饭、晚上还能在岛上走：沙美岛。5 个人的行李要先搬到罗勇，再搬回芭提雅或机场方向。10 月渡船会看浪。浮潜、海钓、冲浪仍然不在这座岛上。</li>
+          <li>想少搬家，只要一个安静的晚上：格兰岛。轮渡近，单程 40 铢。白天的游客走了以后海滩会静一些。住一晚到不了林岛和竹岛的珊瑚，末班大约 17:00–18:00，浪大可能回不了市区。</li>
+          <li>两座都还没写进默认行程。真要住，只住一晚，不和远岛浮潜、出海钓叠成三天船。</li>
+        </ul></div>
+
+        <div class="card"><h3>无人三岛 · 林岛、竹岛、曼威猜</h3>
+          <div class="dim">
+            <div><b>景色</b><span>空岛，没有村子和餐馆。林岛两小段沙滩，珊瑚和鱼是这附近最好的。竹岛沙滩更白，水浅大约 4–8 米。曼威猜更小，在竹岛南边，沙滩短。</span></div>
+            <div><b>玩法</b><span>浮潜。三个点通常同一条快艇、同一天。体验潜问林岛能不能加。船上不带钓竿。</span></div>
+            <div><b>特色</b><span>水下最好，岸上几乎没有可逛的。竹岛归海军看管。</span></div>
+            <div><b>住宿</b><span>都不能住，竹岛不许过夜。</span></div>
+            <div><b>怎么去</b><span>Bali Hai 快艇，比格兰岛远。跟团大约 1000–1800 铢/人。</span></div>
+            <div><b>10 月</b><span>这条线最容易因浪停船。</span></div>
+            <div><b>占时</b><span>整整 1 天。</span></div>
+          </div>
+        </div>
+
+        <div class="card"><h3>格兰岛</h3>
+          <div class="dim">
+            <div><b>景色</b><span>几个海湾，能转岛。Tawaen 最宽也最挤，Tien、Samae 人少些。码头附近海水和珊瑚一般。</span></div>
+            <div><b>玩法</b><span>游泳、躺沙滩、坐双条车转岛。浮潜是附带。</span></div>
+            <div><b>特色</b><span>离芭提雅最近，公共轮渡最稳，岛上有吃有住。</span></div>
+            <div><b>住宿</b><span>可以住。适合少搬家的安静一晚，不适合当成远途度假岛。</span></div>
+            <div><b>怎么去</b><span>Bali Hai 轮渡大约 30–45 分钟，单程 40 铢。末班大约 17:00–18:00。</span></div>
+            <div><b>10 月</b><span>大船最不容易停。周末和国庆人多。</span></div>
+            <div><b>占时</b><span>1 天。住一晚再加一个岛上的早晨。</span></div>
+          </div>
+        </div>
+
+        <div class="card"><h3>萨美山</h3>
+          <div class="dim">
+            <div><b>景色</b><span>海军限客下的沙滩和浅礁，人比格兰岛少，水通常更清。岸上是海滩、浅水和短步行。</span></div>
+            <div><b>玩法</b><span>浅水浮潜，大约 3–6 米。上岛这次是观光船。岛外水域才用钓船。</span></div>
+            <div><b>特色</b><span>名额有上限，票和船绑在一起。外籍上岛近年大约 600 铢、含船。有的走法要泰国人陪同，5 个人跟一天团办票更省事。</span></div>
+            <div><b>住宿</b><span>岛上不能住。海鲜和村子在对岸陆地。</span></div>
+            <div><b>怎么去</b><span>往南开车大约 1–1.5 小时，再坐 15–30 分钟船。门到门大约 7–8 小时。</span></div>
+            <div><b>10 月</b><span>船程短，比远岛快艇好开一点，大浪仍会停。国庆名额要早问。</span></div>
+            <div><b>占时</b><span>整整 1 天，和无人三岛抢同一个浮潜日。</span></div>
+          </div>
+        </div>
+
+        <div class="card"><h3>沙美岛</h3>
+          <div class="dim">
+            <div><b>景色</b><span>最像度假岛。一连串海湾，Sai Kaew 最宽也最挤，往南安静些，西边能看日落。码头附近浮潜普通。</span></div>
+            <div><b>玩法</b><span>换海湾、游泳、吃饭、骑摩托车转岛。看珊瑚要再租船。海钓和冲浪不在这里。</span></div>
+            <div><b>特色</b><span>国家公园里有镇子的岛，有酒店，有晚饭。</span></div>
+            <div><b>住宿</b><span>能住，而且住一晚才不像赶路。想住岛，优先这座。</span></div>
+            <div><b>怎么去</b><span>往东大约 70–80 公里，车程 1–1.5 小时到 Ban Phe。慢船大约 45–60 分钟，快艇大约 10–15 分钟。慢船大约 80 铢起，快艇大约 200 铢出头，公园门票另付。</span></div>
+            <div><b>10 月</b><span>雨季，渡船会推迟或停，有的店缩短营业。</span></div>
+            <div><b>占时</b><span>当天来回 1 整天。住一晚要来回搬运行李，再吃掉一个岛上的早晨。</span></div>
+          </div>
+        </div>
+
+        <div class="card"><h3>沙岛</h3>
+          <div class="dim">
+            <div><b>景色</b><span>很小，沙滩短，中午船多就挤。东侧有礁，水通常比格兰岛码头清。</span></div>
+            <div><b>玩法</b><span>下船浮潜，或涉水上岸坐一会儿。跟团常常只停大约 45 分钟。</span></div>
+            <div><b>特色</b><span>近、快，没有轮渡、村子和酒店。</span></div>
+            <div><b>住宿</b><span>不能住。</span></div>
+            <div><b>怎么去</b><span>Bali Hai 快艇大约 20–25 分钟。</span></div>
+            <div><b>10 月</b><span>浪大也会取消，只是比林岛近。</span></div>
+            <div><b>占时</b><span>不单独占满 1 天。远岛或萨美山停船时拿来顶上。</span></div>
+          </div>
+        </div>
+
+        <div class="card"><h3>这次先不放进候选</h3><ul>
+          <li>象岛、库德、马克、苏梅要另换一座城市当基地，赶不上 10 月 7 日早上从素万那普飞走。</li>
+          <li>克拉姆是东海岸最大的岛，海军管辖，能不能上岸当天才能确定。用处是岛外海钓，不是上岸看景。</li>
+        </ul></div>
+        <div class="footer">萨美山票价、名额和是否需要泰国人陪同，出发前再问船方或码头。沙美渡船时刻以 Ban Phe 当天告示为准。岛的位置来自 OpenStreetMap，沙美岛用的是罗勇这座，不是春蓬的同名岛。</div>
       </div>
     </section>
 
@@ -354,6 +436,15 @@
             <button type="button" data-val="none">先不出海</button>
           </div>
         </div>
+        <div class="card"><h3>如果要住岛一晚</h3>
+          <div class="hint">对比在「海岛」。这里先记倾向，还不排进行程。</div>
+          <div class="choices" data-dec="sleepisle">
+            <button type="button" data-val="no">不住岛</button>
+            <button type="button" data-val="samet">沙美岛住一晚</button>
+            <button type="button" data-val="larn">格兰岛住一晚</button>
+            <button type="button" data-val="later">再看</button>
+          </div>
+        </div>
         <div class="card"><h3>晚上</h3>
           <div class="choices" data-dec="night">
             <button type="button" data-val="show">看一场人妖秀</button>
@@ -373,6 +464,7 @@
   <nav class="dock">
     <button type="button" class="on" data-page="today">概况</button>
     <button type="button" data-page="pick">筛选</button>
+    <button type="button" data-page="isles">海岛</button>
     <button type="button" data-page="bone">骨架</button>
     <button type="button" data-page="decide">待定</button>
   </nav>
@@ -435,7 +527,7 @@ const ITEMS = [
   {id:"sea-night", g:"sea", tag:"出海", name:"格兰岛住一晚", rank:"先不排", rc:"no", span:"day",
     meta:"只有格兰岛有酒店 · 行李要上岛",
     good:["傍晚团队回城后，海滩会安静一些。"],
-    bad:"住一晚到不了林岛和竹岛。末班下午就停，浪大可能回不了市区。想躺海，住中天就能达到大部分。"},
+    bad:"住一晚到不了林岛和竹岛。末班下午就停，浪大可能回不了市区。想换一座能住的度假岛，看「海岛」里的沙美岛。"},
   {id:"sea-cruise", g:"sea", tag:"出海", name:"日落船", rank:"备用", rc:"gray", span:"eve",
     meta:"傍晚 2–3 小时 · 不占白天",
     good:["不下水也能看海，适合不想早起赶船的人。"],
@@ -518,7 +610,9 @@ const PTS = [
   {name:"竹岛", lat:12.93575, lng:100.67411, c:"#0F766E", d:"无人岛，海军看管，不许过夜。浅水浮潜大约 4–8 米。常和林岛、曼威猜同一天。"},
   {name:"曼威猜", lat:12.87556, lng:100.67326, c:"#0F766E", d:"竹岛南边的小岛。浅水浮潜，不单独占一天。"},
   {name:"克拉姆", lat:12.69598, lng:100.78857, c:"#0F766E", d:"东海岸最大岛，海军管辖。能不能上岸以当天船方为准。海钓在岛外，船从邦萨雷或海洋码头走。"},
-  {name:"湄兰蓬", lat:12.61060, lng:101.38447, c:"#6D28D9", d:"罗勇的冲浪海滩，不是岛。芭提雅往东大约一个多小时。当天有浪再去。"}
+  {name:"萨美山", lat:12.56900, lng:100.95219, c:"#0F766E", d:"梭桃邑外海，海军限客。浅水浮潜，岛上不能住。往南开车大约 1–1.5 小时再坐船。"},
+  {name:"湄兰蓬", lat:12.61060, lng:101.38447, c:"#6D28D9", d:"罗勇的冲浪海滩，不是岛。芭提雅往东大约一个多小时。当天有浪再去。"},
+  {name:"沙美岛", lat:12.55231, lng:101.44828, c:"#0F766E", d:"罗勇的度假岛，能住。车到 Ban Phe 再坐船。这是罗勇这座，不是春蓬的同名岛。"}
 ];
 
 const PKEY = "pattaya2027-picks-v1";
@@ -655,6 +749,7 @@ const DEC_LABEL = {
   base:{pratumnak:"帕山",jomtien:"中天",central:"芭提雅海滩",north:"北芭",south:"纳中天/邦萨雷",open:"住哪还没定"},
   room:{villa:"别墅",two:"两间房加床",three:"三间房",open:"房间还没定"},
   sea:{both:"远岛浮潜 + 海钓",two:"只留远岛浮潜",fish:"再加海钓，去不成改夜钓",one:"只出 1 天轮渡",speed:"近岛改快艇或包船",sleep:"想住岛一晚",none:"先不出海"},
+  sleepisle:{no:"不住岛",samet:"沙美岛住一晚",larn:"格兰岛住一晚",later:"住岛再看"},
   night:{show:"看人妖秀",walk:"步行街走一圈",none:"晚上都不要",later:"晚上看到时候"}
 };
 function copySummary(){
@@ -674,6 +769,7 @@ function copySummary(){
     line("base","住"),
     line("room","房间"),
     line("sea","出海"),
+    line("sleepisle","住岛"),
     line("night","晚上"),
     location.href
   ].join("\n");
@@ -715,8 +811,8 @@ function ensureMap(){
     });
     L.polyline([[12.92774,100.86792],[12.92263,100.78932]], { color:"#0F766E", weight: 3 }).addTo(map);
     L.polyline([[13.68188,100.74858],[12.9355,100.8834]], { color:"#2C5F84", weight: 2, dashArray: "6 6" }).addTo(map);
-    localBounds = L.latLngBounds([[12.65,100.64],[12.99,100.96]]);
-    surfBounds = L.latLngBounds([[12.55,100.64],[12.99,101.42]]);
+    localBounds = L.latLngBounds([[12.52,100.64],[12.99,100.98]]);
+    surfBounds = L.latLngBounds([[12.50,100.64],[12.99,101.50]]);
     allBounds = L.latLngBounds(PTS.map(p => [p.lat, p.lng]));
     mapReady = true;
   }
