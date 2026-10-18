@@ -55,7 +55,7 @@
   .kicker { font-size:12px; font-weight:700; color:var(--sub); margin-bottom:6px; }
   .filters { display:flex; gap:6px; overflow-x:auto; padding:2px 0 10px; position:sticky; top:var(--head-h); z-index:20; background:rgba(238,242,246,.94); backdrop-filter:blur(10px); }
   .filters button, .choices button, .pick button, .copybtn, .mapbtns button {
-    border:0.5px solid #DCE3EA; background:#fff; color:#52606D; border-radius:999px; padding:7px 12px; font-size:12.5px; font-weight:700; font-family:inherit;
+    border:0.5px solid #DCE3EA; background:#fff; color:#52606D; border-radius:999px; padding:7px 12px; font-size:12.5px; font-weight:700; font-family:inherit; white-space:nowrap; flex:0 0 auto;
   }
   .filters button.on, .choices button.on, .pick button.on { background:var(--blue); color:#fff; border-color:var(--blue); }
   .pick button[data-set="yes"].on { background:var(--sea); border-color:var(--sea); }
@@ -120,7 +120,7 @@
 <div class="app">
   <header class="app-head">
     <h1>芭提雅 · 筛选稿</h1>
-    <p>2027.10.1–10.7 · 5人 · 落地曼谷 · 最终行程还没写</p>
+    <p>2027.10.1–10.7 · 5人 · 落地曼谷 · 行程在「骨架」</p>
   </header>
   <div class="app-body">
     <section id="page-today" class="page on">
@@ -191,10 +191,18 @@
         <div class="cmp"><div class="cmp-top"><b>罗勇湄兰蓬冲浪</b><span class="rank gray">看当天预报</span></div><div class="cmp-meta">不是岛。在芭提雅东边，车程大约一个多小时，和去机场反方向。</div><div class="cmp-meta">4–10 月有风浪，沙底，适合初学和长板。浪经常只有脚踝到腰，没有浪就不要专程开过去。课大约 1300–1500 铢，含板，2026 年价。有的学校一组大约 3 人，5 人可能要拆成两组。11–3 月这片更平。</div></div>
         <div class="note yel">沙美岛放在「海岛」里单独比，它在罗勇，能住。象岛、库德、马克要另换一座城市当基地。斯米兰、素林大约 5 月中到 10 月中关闭，而且在西海岸。</div>
 
-        <div class="sec-title">市区对照</div>
-        <div class="cmp"><div class="cmp-top"><b>真理寺</b><span class="rank">优先留</span></div><div class="cmp-meta">半天。小雨还能看。官网成人日间 500 铢，夜间 700 铢。</div></div>
-        <div class="cmp"><div class="cmp-top"><b>东芭乐园</b><span class="rank alt">可加</span></div><div class="cmp-meta">大半天，在南边。大雨时花园体验差。</div><div class="cmp-meta">非居民门票近年大约 15 美元起。和真理寺不要放同一天。</div></div>
-        <div class="cmp"><div class="cmp-top"><b>水上市场</b><span class="rank gray">可砍</span></div><div class="cmp-meta">一个上午，有棚，在中天南边。</div><div class="cmp-meta">2026 年有的写免费，有的写外籍约 200 铢。时间紧就砍。</div></div>
+        <div class="sec-title">市区</div>
+        <p class="hint">这一版白天在岛上。市区白天用来接停船；晚上不占船。成人项目 5 个人先说好再去。住帕山的话，下面这些晚上打车都近。</p>
+        <div class="cmp"><div class="cmp-top"><b>人妖秀</b><span class="rank">晚上优先</span></div><div class="cmp-meta">Tiffany 或 Alcazar，70–90 分钟。票大约几百到一千多铢，看座位。看较早一场，看完回帕山。10/2 到 10/4 任一晚都可以。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>步行街</b><span class="rank alt">晚上可去</span></div><div class="cmp-meta">成人酒吧和夜生活集中在这里，走一圈大约 1 小时。海鲜和按摩不在这里买。帕山下去很近，吵，所以不住在街里面。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>6 号街</b><span class="rank alt">晚上可去</span></div><div class="cmp-meta">比步行街小的酒吧街，傍晚就开。坐下来喝酒，点单前问清价格。不在这里吃饭。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>步行街成人表演</b><span class="rank gray">先问过再去</span></div><div class="cmp-meta">短篇成人秀，门口拉客多。坐下前问清时长、含几杯、总价。不想看就只在街上走。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>泰式按摩</b><span class="rank">停船可用</span></div><div class="cmp-meta">出海回来或船取消的下午。选帕山附近或商场里的店。先问清是泰式、油压还是加钟。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>真理寺</b><span class="rank">停船可用</span></div><div class="cmp-meta">半天，在北边。小雨还能看。官网成人日间 500 铢，夜间 700 铢。船停了再去，不和东芭放同一天。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>帕山大佛</b><span class="rank alt">顺路</span></div><div class="cmp-meta">住帕山时大约 1 小时，免费，看海。不单独占半天。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>烹饪课</b><span class="rank alt">停船可用</span></div><div class="cmp-meta">半天，室内，含吃。5 人一起。只在某天的船开不了时用。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>东芭乐园</b><span class="rank gray">这一版不排</span></div><div class="cmp-meta">大半天，在南边。这一版三个白天都在岛上，只有连续停船才腾得出来。票里的骑象拿掉。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>水上市场</b><span class="rank gray">可砍</span></div><div class="cmp-meta">一个上午，在中天南边。时间紧就砍。</div></div>
         <p class="hint">远岛浮潜、出海钓、东芭、体验潜水、住岛各算 1 个白天。冲浪、真理寺、水上市场、烹饪、按摩各算半天。夜钓、秀、步行街、海鲜不占白天。轮渡、沙岛、包船是近处的坐法，都点「想去」也只算 1 天；若同时点了远岛，沙岛和轮渡按停船替换，计数会多算，替换项改成「再看」。</p>
 
         <div class="sec-title">逐项勾</div>
@@ -222,7 +230,7 @@
     <section id="page-isles" class="page">
       <div class="pane">
         <div class="sec-title">海岛筛选</div>
-        <p class="hint">还没定行程。冲浪在罗勇湄兰蓬，不在下面这些岛上。海钓是另一条船，从邦萨雷或海洋码头出发，钓克拉姆和萨美山外海。价格是 2026 年公开价，2027 年再核。</p>
+        <p class="hint">当前排法在「骨架」的「这一版」。冲浪在罗勇湄兰蓬，不在下面这些岛上。海钓这一版没有单独留一天。价格是 2026 年公开价，2027 年再核。</p>
 
         <div class="sec-title">四句对照</div>
         <div class="cmp"><div class="cmp-top"><b>格兰岛</b></div><div class="cmp-meta">沙滩上另卖拖曳伞、摩托艇、香蕉船、浮潜，按项收费。2026 年码头价大约：拖曳伞 800 铢一项，摩托艇 500，香蕉船 400，浮潜船大约 500–800。四项加在一起不是 800。上船前问清次数和损坏怎么赔。</div></div>
@@ -234,7 +242,7 @@
         <div class="card"><h3>住一晚怎么选</h3><ul>
           <li>想要海湾、晚饭、晚上还能在岛上走：沙美岛。5 个人的行李要先搬到罗勇，再搬回芭提雅或机场方向。10 月渡船会看浪。岛上海滩的浮潜普通；旁边的 6 岛行程可以浮潜，不含海钓。冲浪不在这里。</li>
           <li>想少搬家，只要一个安静的晚上：格兰岛。轮渡近，单程 40 铢。白天的游客走了以后海滩会静一些。这一晚只发生在格兰岛。林岛、竹岛是从芭提雅另坐快艇的一天，两件事不在一条船上。末班大约 17:00–18:00，浪大可能回不了市区。</li>
-          <li>两座都还没写进默认行程。真要住，只住一晚，不和远岛浮潜、出海钓叠成三天船。</li>
+          <li>这一版住沙美岛一晚，不住格兰岛。只住这一晚。</li>
         </ul></div>
 
         <div class="card"><h3>无人三岛 · 林岛、竹岛、曼威猜</h3>
@@ -308,14 +316,31 @@
     <section id="page-bone" class="page">
       <div class="pane">
         <div class="filters" id="bones">
-          <button type="button" class="on" data-b="a">浮潜加海钓</button>
+          <button type="button" class="on" data-b="now">这一版</button>
+          <button type="button" data-b="a">浮潜加海钓</button>
           <button type="button" data-b="b">市区为主</button>
           <button type="button" data-b="c">躺海滩</button>
           <button type="button" data-b="move">怎么接送</button>
         </div>
-        <div class="note yel">三套都是拼法，方便你删。选定之前不写成最终行程。三套都默认 10/6 下午撤到机场附近，因为北京班 10:00。</div>
+        <div class="note yel">「这一版」是现在要走的。酒店还没订。下面三套留着对照。10/7 北京班 10:00，所以 10/6 晚上住机场附近。</div>
 
-        <div class="bone on" id="bone-a">
+        <div class="bone on" id="bone-now">
+          <div class="card"><h3>三天跳岛，沙美住一晚</h3><ul>
+            <li>10/1 到 10/4 晚上都住帕山，只换这一家。吃饭在帕山附近。秀和步行街打车近，Bali Hai 大约 10 分钟。</li>
+            <li>10/2 格兰岛，10/3 萨美山，10/4 无人三岛。萨美山容易停，所以不放最后。停船就互相顶上，最后用格兰岛或市区。</li>
+            <li>10/5 去沙美岛住一晚。10/6 下午离开沙美，住素万那普附近。</li>
+            <li>5 个大人订别墅，或两到三间房。国庆周早订。</li>
+          </ul></div>
+          <div class="day"><div class="day-h"><span class="no">10/1</span><span class="dt">周五</span><span class="th">包车去帕山</span></div><div class="tx">不排景点。成都 18:00 落地，出关后大约 20:30–22:00 到帕山。北京 21:15 落地。同一辆车要在机场再等大约 3 小时，到酒店接近午夜；分两辆车，北京那辆也是午夜前后。当晚不看秀。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/2</span><span class="dt">周六</span><span class="th">格兰岛</span></div><div class="tx">Bali Hai 坐轮渡。周末人多。拖曳伞、摩托艇、香蕉船、浮潜按项买，四项不是打包 800 铢。晚上可以看 Tiffany 或 Alcazar 的早场。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/3</span><span class="dt">周日</span><span class="th">萨美山</span></div><div class="tx">大家已经睡过一晚，早上往南。名额和天气都容易停。停了，这一天改无人三岛。晚上可以去步行街或 6 号街。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/4</span><span class="dt">周一</span><span class="th">无人三岛</span></div><div class="tx">林岛、竹岛、曼威猜，工作日。再停，就补萨美山。萨美山也过不去，就再去格兰岛，或改真理寺、烹饪、按摩。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/5</span><span class="dt">周二</span><span class="th">去沙美，住一晚</span></div><div class="tx">早上退房离开帕山，往东到 Ban Phe 再坐船。6 岛浮潜中午从沙美开船。只有午前上岛才赶得上。赶不上就转海湾、租摩托。晚上住在岛上。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/6</span><span class="dt">周三</span><span class="th">上午在岛上，下午撤</span></div><div class="tx">上午继续海湾。下午早一点下岛，船加车大约 3 到 4 小时，住素万那普附近。不要等末班船，也不要这一天再排 6 岛。</div></div>
+          <div class="day"><div class="day-h"><span class="no">10/7</span><span class="dt">周四</span><span class="th">返程</span></div><div class="tx">北京 TG614 10:00 走，成都 TG618 10:50 走。5 人按 07:00 前到机场。</div></div>
+        </div>
+
+        <div class="bone" id="bone-a">
           <div class="card"><h3>浮潜一天，海钓一天</h3><ul>
             <li>不住岛。浮潜和出海钓各占一天，两条船。</li>
             <li>浮潜放周一：林岛、竹岛、曼威猜。停船改沙岛，沙岛再停改格兰岛轮渡。</li>
@@ -380,7 +405,7 @@
           <div class="plan"><h3>10/7 凌晨从芭提雅出发</h3>
             <div class="tx">大约 04:30–05:00 出门，才有机会 07:00 到机场。能多一个 10/6 的晚上和 10/7 清早的海滩，雨天堵在高速上就危险。要选这个，等你明确说。</div>
           </div>
-          <div class="note blu">泰航国际航班按起飞前约 3 小时到机场来留余量。截载以机票为准。5 个人不要拆成两辆轿车再加一堆箱子。</div>
+          <div class="note blu">这一版是 10/6 下午离开沙美岛去机场附近，不是 14:00 从芭提雅出发。泰航国际航班按起飞前约 3 小时到机场来留余量。5 个人用一辆 9 座。</div>
         </div>
       </div>
     </section>
@@ -455,6 +480,8 @@
           <div class="choices" data-dec="night">
             <button type="button" data-val="show">看一场人妖秀</button>
             <button type="button" data-val="walk">步行街走一圈</button>
+            <button type="button" data-val="soi">6 号街坐一会儿</button>
+            <button type="button" data-val="adult">步行街成人表演</button>
             <button type="button" data-val="none">晚上都不要</button>
             <button type="button" data-val="later">看到时候</button>
           </div>
@@ -480,7 +507,7 @@
 const ITEMS = [
   {id:"stay-pratumnak", g:"stay", tag:"住", name:"帕山", rank:"优先看", rc:"", span:"base",
     meta:"全程一个基地 · 去 Bali Hai 大约 10 分钟",
-    good:["夹在芭提雅海滩和中天之间，出海、市区两边都不算远。","比步行街安静，晚上走路还能吃饭。","5 人适合一栋别墅，或两间房。"],
+    good:["这一版 10/1 到 10/4 晚上住这里，只订一家。","去 Bali Hai 大约 10 分钟。吃饭在附近，看秀和步行街打车近。","5 人适合一栋别墅，或两到三间房。"],
     bad:"沙滩一般。要下水，去中天或上岛。"},
   {id:"stay-jomtien", g:"stay", tag:"住", name:"中天海滩", rank:"优先看", rc:"", span:"base",
     meta:"全程一个基地 · 去码头大约 15–25 分钟",
@@ -566,14 +593,22 @@ const ITEMS = [
     meta:"一个下午或出海回来的晚上 · 室内",
     good:["5 人都能参加。船取消了，用它把下午补上。","选住处附近或商场里的店。"],
     bad:"步行街拉客的店跳过。先问清是泰式、油压还是加钟。"},
-  {id:"city-show", g:"city", tag:"市区", name:"人妖秀", rank:"备用", rc:"gray", span:"eve",
+  {id:"city-show", g:"city", tag:"市区", name:"人妖秀", rank:"晚上优先", rc:"", span:"eve",
     meta:"晚上 70–90 分钟 · Tiffany 或 Alcazar · 不占白天",
-    good:["2026 年两家都还在演。一张票大约几百到一千多铢，看座位。","看较早的一场，结束还能早回。"],
-    bad:"和长辈一起先问想不想看。场次每年会改，想看再查当周。"},
-  {id:"city-walk", g:"city", tag:"市区", name:"步行街", rank:"先不排", rc:"no", span:"eve",
-    meta:"晚上 1 小时够 · 不占白天",
-    good:["知道芭提雅晚上是什么样，走一圈就走。"],
-    bad:"成人夜生活为主。海鲜和按摩不在这里买。"},
+    good:["2026 年两家都还在演。一张票大约几百到一千多铢，看座位。","看较早的一场。10/2 到 10/4 任一晚，从帕山打车去。"],
+    bad:"5 个人先说好想不想看。场次每年会改，想看再查当周。"},
+  {id:"city-walk", g:"city", tag:"市区", name:"步行街", rank:"可加", rc:"alt", span:"eve",
+    meta:"晚上 1 小时够 · 不占白天 · 住帕山下去很近",
+    good:["成人酒吧和夜生活集中在这里，走一圈就知道。","可以和人妖秀分两个晚上。"],
+    bad:"海鲜和按摩不在这里买。不住在街里面，否则四个早上都吵。"},
+  {id:"city-soi", g:"city", tag:"市区", name:"6 号街", rank:"可加", rc:"alt", span:"eve",
+    meta:"傍晚就开始 · 比步行街小 · 不占白天",
+    good:["酒吧街，坐下来喝一杯。离帕山不远。"],
+    bad:"点单前问清价格。不在这里吃饭和按摩。"},
+  {id:"city-adult", g:"city", tag:"市区", name:"步行街成人表演", rank:"先问过", rc:"gray", span:"eve",
+    meta:"短篇 · 门口拉客 · 不占白天",
+    good:["想看就看一场，看完离开。"],
+    bad:"5 个人先说好。坐下前问清时长、含几杯和总价。不看就只在街上走。"},
   {id:"city-seafood", g:"city", tag:"市区", name:"邦萨雷或中天海鲜", rank:"可加", rc:"alt", span:"eve",
     meta:"一顿晚饭 · 不占白天",
     good:["比步行街的餐厅实在。不住南边的话，专程去吃一顿就够。"],
@@ -756,7 +791,7 @@ const DEC_LABEL = {
   room:{villa:"别墅",two:"两间房加床",three:"三间房",open:"房间还没定"},
   sea:{both:"远岛浮潜 + 海钓",two:"只留远岛浮潜",fish:"再加海钓，去不成改夜钓",one:"只出 1 天轮渡",speed:"近岛改快艇或包船",sleep:"想住岛一晚",none:"先不出海"},
   sleepisle:{no:"不住岛",samet:"沙美岛住一晚",larn:"格兰岛住一晚",later:"住岛再看"},
-  night:{show:"看人妖秀",walk:"步行街走一圈",none:"晚上都不要",later:"晚上看到时候"}
+  night:{show:"看人妖秀",walk:"步行街走一圈",soi:"6 号街坐一会儿",adult:"步行街成人表演",none:"晚上都不要",later:"晚上看到时候"}
 };
 function copySummary(){
   const g = grouped();
