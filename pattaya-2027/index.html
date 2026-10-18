@@ -196,7 +196,9 @@
         <div class="cmp"><div class="cmp-top"><b>人妖秀</b><span class="rank">晚上优先</span></div><div class="cmp-meta">Tiffany 或 Alcazar，70–90 分钟。票大约几百到一千多铢，看座位。看较早一场，看完回帕山。10/2 到 10/4 任一晚都可以。</div></div>
         <div class="cmp"><div class="cmp-top"><b>步行街</b><span class="rank alt">晚上可去</span></div><div class="cmp-meta">成人酒吧和夜生活集中在这里，走一圈大约 1 小时。海鲜和按摩不在这里买。帕山下去很近，吵，所以不住在街里面。</div></div>
         <div class="cmp"><div class="cmp-top"><b>6 号街</b><span class="rank alt">晚上可去</span></div><div class="cmp-meta">比步行街小的酒吧街，傍晚就开。坐下来喝酒，点单前问清价格。不在这里吃饭。</div></div>
-        <div class="cmp"><div class="cmp-top"><b>步行街成人表演</b><span class="rank gray">先问过再去</span></div><div class="cmp-meta">短篇成人秀，门口拉客多。坐下前问清时长、含几杯、总价。不想看就只在街上走。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>步行街成人表演</b><span class="rank gray">先问过再去</span></div><div class="cmp-meta">短篇成人秀，门口拉客多。坐下前问清时长、含几杯、总价。不想看就只在街上走。位置就在步行街，地图上不另标一家店。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>实弹射击</b><span class="rank alt">可加</span></div><div class="cmp-meta">Tiffany 秀场同一栋楼里的室内靶场。大约 1–2 小时，按枪型和发数买套餐，价格差很大。多份 2026 年资料写周一休息，去之前再确认。至少两人，现场签免责，按靶场的规矩来。船取消的下午，或看早场秀之前能去。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>微型世界</b><span class="rank gray">船停了再看</span></div><div class="cmp-meta">Mini Siam，世界建筑的缩小模型，大约 1–2 小时，在北芭。雨天也能看一部分。不值得为它单独留一个白天。</div></div>
         <div class="cmp"><div class="cmp-top"><b>泰式按摩</b><span class="rank">停船可用</span></div><div class="cmp-meta">出海回来或船取消的下午。选帕山附近或商场里的店。先问清是泰式、油压还是加钟。</div></div>
         <div class="cmp"><div class="cmp-top"><b>真理寺</b><span class="rank">停船可用</span></div><div class="cmp-meta">半天，在北边。小雨还能看。官网成人日间 500 铢，夜间 700 铢。船停了再去，不和东芭放同一天。</div></div>
         <div class="cmp"><div class="cmp-top"><b>帕山大佛</b><span class="rank alt">顺路</span></div><div class="cmp-meta">住帕山时大约 1 小时，免费，看海。不单独占半天。</div></div>
@@ -223,7 +225,7 @@
             <span class="lg"><i class="dot" style="background:#2C5F84"></i>机场</span>
           </div>
         </div>
-        <p class="hint">点圆点看说明。林岛、竹岛、曼威猜、克拉姆、萨美山在「芭提雅和岛」里。沙美岛和湄兰蓬在罗勇，点「看罗勇」。水上市场、纳中天以导航英文名为准。</p>
+        <p class="hint">点圆点看说明。Tiffany、Alcazar、6 号街、步行街、微型世界在市区这片。林岛、竹岛、曼威猜、克拉姆、萨美山在「芭提雅和岛」里。沙美岛和湄兰蓬在罗勇，点「看罗勇」。</p>
       </div>
     </section>
 
@@ -606,9 +608,17 @@ const ITEMS = [
     good:["酒吧街，坐下来喝一杯。离帕山不远。"],
     bad:"点单前问清价格。不在这里吃饭和按摩。"},
   {id:"city-adult", g:"city", tag:"市区", name:"步行街成人表演", rank:"先问过", rc:"gray", span:"eve",
-    meta:"短篇 · 门口拉客 · 不占白天",
+    meta:"短篇 · 门口拉客 · 不占白天 · 就在步行街",
     good:["想看就看一场，看完离开。"],
     bad:"5 个人先说好。坐下前问清时长、含几杯和总价。不看就只在街上走。"},
+  {id:"city-shoot", g:"city", tag:"市区", name:"实弹射击", rank:"可加", rc:"alt", span:"half",
+    meta:"1–2 小时 · Tiffany 秀场同一栋 · 室内",
+    good:["船取消的下午可以去，也可以排在早场秀之前。","按枪型和发数买套餐。"],
+    bad:"周一可能休息，去之前再确认。至少两人，现场签免责。价格差很大，不写死一套多少钱。"},
+  {id:"city-mini", g:"city", tag:"市区", name:"微型世界", rank:"船停了再看", rc:"gray", span:"half",
+    meta:"1–2 小时 · 北芭 · Mini Siam",
+    good:["雨天也能看模型。5 个人一起，时间短。"],
+    bad:"不值得为它单独留一个白天。"},
   {id:"city-seafood", g:"city", tag:"市区", name:"邦萨雷或中天海鲜", rank:"可加", rc:"alt", span:"eve",
     meta:"一顿晚饭 · 不占白天",
     good:["比步行街的餐厅实在。不住南边的话，专程去吃一顿就够。"],
@@ -636,7 +646,11 @@ const PTS = [
   {name:"北芭海滩", lat:12.96260, lng:100.88449, c:"#0F766E", d:"安静，离真理寺近，离 Bali Hai 大约 20–30 分钟。"},
   {name:"Terminal 21", lat:12.94988, lng:100.88977, c:"#C2671B", d:"下雨吃饭、避雨。不专门排。"},
   {name:"芭提雅海滩", lat:12.93550, lng:100.88340, c:"#C2671B", d:"热闹，海水一般。步行街在这片的南端。"},
-  {name:"步行街", lat:12.92742, lng:100.87465, c:"#C2671B", d:"晚上看一圈即可。海鲜和按摩不在这里买。"},
+  {name:"步行街", lat:12.92742, lng:100.87465, c:"#C2671B", d:"成人酒吧集中在这里。短篇成人表演也在这条街上，坐下前问清总价。海鲜和按摩不在这里买。"},
+  {name:"6 号街", lat:12.94235, lng:100.88632, c:"#C2671B", d:"比步行街小的酒吧街，傍晚就开。点单前问清价格。"},
+  {name:"Alcazar", lat:12.94299, lng:100.88901, c:"#C2671B", d:"人妖秀，在二路。大约 70 分钟。早场大约 17:00。票价看座位，2026 年普通座常见大约 450–600 铢，剧院自营高档套餐更贵。"},
+  {name:"Tiffany 秀和靶场", lat:12.94905, lng:100.88756, c:"#C2671B", d:"人妖秀和室内实弹靶场在同一栋，二路。秀大约 18:00 起。靶场大约 1–2 小时，周一可能休息。"},
+  {name:"微型世界", lat:12.95499, lng:100.90909, c:"#C2671B", d:"Mini Siam。缩小模型，大约 1–2 小时。船停了再去。"},
   {name:"Bali Hai 码头", lat:12.92774, lng:100.86792, c:"#0F766E", d:"格兰岛轮渡和多数快艇从这里走。"},
   {name:"帕山大佛", lat:12.92039, lng:100.86677, c:"#C2671B", d:"帕山上一小时，免费，看海。"},
   {name:"中天海滩", lat:12.87727, lng:100.88437, c:"#0F766E", d:"更适合下水。去码头大约 15–25 分钟。"},
@@ -707,7 +721,7 @@ function dayLoad(p){
   if (yes("sea-night")) { half += 2; notes.push("格兰岛住一晚会再占掉一个白天。林岛、竹岛仍要从市区码头另走一天。"); }
   if (yes("sea-squid") && yes("sea-fish")) notes.push("夜钓不另占白天，出海钓去不成时用。");
   if (yes("city-nongnooch")) half += 2;
-  ["city-sanctuary","city-market","city-cook","city-massage"].forEach(id => { if (yes(id)) half += 1; });
+  ["city-sanctuary","city-market","city-cook","city-massage","city-shoot","city-mini"].forEach(id => { if (yes(id)) half += 1; });
   const stays = ["stay-pratumnak","stay-jomtien","stay-central","stay-north","stay-south"].filter(yes);
   if (stays.length > 1) notes.push("住宿片区留一个。");
   return { days: half / 2, notes };
