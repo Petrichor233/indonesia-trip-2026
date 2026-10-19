@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EEF2F6">
+<meta name="robots" content="noindex,nofollow">
+<title>芭提雅成人场所说明</title>
+<link rel="icon" href="data:,">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root { --safe: env(safe-area-inset-bottom, 0px); --ink:#1F2933; --sub:#7B8794; --line:#E2E8F0; --blue:#2C5F84; --sea:#0F766E; --city:#C2671B; --bg:#EEF2F6; --head-h:52px; }
+  body { font-family:'PingFang SC','Helvetica Neue','Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; font-size:15px; padding-bottom:calc(72px + var(--safe)); }
+  .app { max-width:640px; margin:0 auto; min-height:100vh; }
+  .app-head { position:fixed; left:0; right:0; top:0; max-width:640px; margin:0 auto; z-index:32; background:rgba(238,242,246,.94); backdrop-filter:blur(12px); padding:10px 16px 8px; border-bottom:0.5px solid var(--line); }
+  .app-head h1 { font-size:17px; font-weight:700; }
+  .app-head p { font-size:12px; color:var(--sub); margin-top:2px; }
+  .app-body { padding-top:var(--head-h); }
+  .page { display:none; }
+  .page.on { display:block; }
+  .pane { padding:12px 14px 24px; }
+  .hero { background:linear-gradient(135deg,#7A3E5C,#2C5F84); color:#fff; border-radius:0 0 20px 20px; padding:22px 18px 16px; margin:0 -14px 14px; }
+  .hero h1 { font-size:21px; font-weight:700; }
+  .hero .sub { font-size:12.5px; opacity:.94; margin-top:5px; }
+  .sec-title { display:flex; align-items:center; gap:8px; font-size:16.5px; font-weight:700; margin:20px 2px 10px; }
+  .sec-title::before { content:''; width:5px; height:17px; border-radius:3px; background:var(--blue); }
+  .card { background:#fff; border:0.5px solid var(--line); border-radius:15px; padding:14px 15px; margin-bottom:11px; font-size:13.5px; }
+  .card h3 { font-size:14.5px; margin-bottom:6px; }
+  .card ul { list-style:none; }
+  .card li { position:relative; padding-left:14px; margin:5px 0; color:#33414F; }
+  .card li::before { content:''; position:absolute; left:1px; top:8px; width:6px; height:6px; border-radius:50%; background:var(--blue); }
+  .note { margin:8px 0 11px; border-radius:10px; padding:9px 12px; font-size:12.5px; line-height:1.6; }
+  .red { background:#FDEDED; color:#8A2B30; border-left:3px solid #EA6668; }
+  .yel { background:#FCF5E6; color:#8A5D00; border-left:3px solid #E8A33D; }
+  .grn { background:#EBF6EC; color:#1F6B32; border-left:3px solid #52A85C; }
+  .blu { background:#EAF2F9; color:#23506E; border-left:3px solid #5B93B8; }
+  .note b, .card b { font-weight:700; }
+  .cmp { background:#fff; border:0.5px solid var(--line); border-radius:14px; padding:11px 12px; margin-bottom:8px; }
+  .cmp-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .cmp-top b { font-size:14.5px; }
+  .rank { margin-left:auto; font-size:11px; font-weight:700; border-radius:6px; padding:1px 7px; color:#fff; background:#3F8F5B; }
+  .rank.alt { background:#2F5FC0; }
+  .rank.gray { background:#8A8F99; }
+  .cmp-meta { font-size:12.6px; color:#52606D; margin-top:3px; }
+  .hint { font-size:12.5px; color:var(--sub); margin-bottom:8px; }
+  .tbl { width:100%; border-collapse:collapse; font-size:12.3px; }
+  .tbl th, .tbl td { text-align:left; padding:7px 6px; border-bottom:0.5px solid #EDF1F5; vertical-align:top; }
+  .tbl th { color:var(--sub); font-weight:700; font-size:11px; }
+  .footer { font-size:11px; color:#9AA5B1; line-height:1.65; padding:8px 2px 0; }
+  nav.dock { position:fixed; left:0; right:0; bottom:0; z-index:40; display:grid; grid-template-columns:repeat(5,1fr); background:#fff; border-top:0.5px solid var(--line); padding:6px 0 calc(6px + var(--safe)); max-width:640px; margin:0 auto; }
+  nav.dock button { border:0; background:none; font-family:inherit; font-size:12px; font-weight:700; color:#9AA5B1; padding:6px 0; }
+  nav.dock button.on { color:var(--blue); }
+  .term { background:#fff; border:0.5px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; }
+  .term b { display:block; font-size:14px; margin-bottom:3px; }
+  .term p { font-size:13px; color:#33414F; }
+  @media (min-width:800px) {
+    .app-head, nav.dock { left:50%; right:auto; width:640px; transform:translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-head">
+    <h1>芭提雅成人场所</h1>
+    <p>只讨论 · 行程页没有这一份 · 2026 年公开价，2027 年再核</p>
+  </header>
+  <div class="app-body">
+
+    <section id="page-first" class="page on">
+      <div class="pane">
+        <div class="hero">
+          <h1>成人场所怎么看</h1>
+          <div class="sub">这份只写你们聊过的内容：合法与否、gogo 吧、泰浴、nuru、抓龙筋、情侣怎么进、不插入怎么说。行程攻略里没有这一页。</div>
+        </div>
+
+        <div class="note red"><b>先看这四条。</b>只限满 20 岁的成年人。付钱前把范围写下来。对方随时可以停。酒不要离手，店里不拍照。</div>
+
+        <div class="sec-title">这是不是色情服务</div>
+        <div class="card"><ul>
+          <li>人妖秀、gogo 吧里看台、喝自己的酒：成人表演。到这里还不是色情服务。</li>
+          <li>lady drink：付钱让舞者坐下陪喝。仍然不是性行为。</li>
+          <li>吧费之后的短钟、过夜，以及泰浴、nuru 的全套：色情服务。</li>
+          <li>泰浴和 nuru 的价通常已经包含性行为。不事先说清楚，就会做成插入式性交。</li>
+        </ul></div>
+
+        <div class="sec-title">当地合法吗</div>
+        <div class="card"><ul>
+          <li>到 2026 年 10 月，1996 年的《预防和制止卖淫法》仍有效。废除它的草案还没变成法律。</li>
+          <li>有执照的酒吧、洗浴店可以合法开门。付钱买性行为不在这个执照里。</li>
+          <li>法律没有单独把「向同意的成年人买性服务」写成一条顾客罪。街上公然拉客，从 2023 年 10 月 26 日起是最多 1000 铢的民事罚款。聚集在卖淫场所从事卖淫，仍可处一个月以下拘役或 1000 铢以下罚款。</li>
+          <li>开这种场所、抽成、居间介绍，罚在老板和中间人，可处三年以上。</li>
+          <li>18 岁及以下是另一条线。在这类场所与未满 18 岁的人发生性行为，顾客可处一年以上。对方同意也不能免责。</li>
+          <li>娱乐场所营业时间里，不满 20 岁、又不是店员的人，一般不能进去。带护照。</li>
+        </ul></div>
+        <div class="note yel">芭提雅对成年客人之间的交易很少追究。少追究不等于合法。涉及未成年人、强迫、拍照外传，会变成刑事案件。</div>
+
+        <div class="sec-title">怎么选玩法</div>
+        <div class="cmp"><div class="cmp-top"><b>只看</b><span class="rank">最轻</span></div><div class="cmp-meta">Tiffany / Alcazar 人妖秀，或步行街 gogo 只喝自己的酒。不请人坐下，不付吧费。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>坐下亲近，不带走</b><span class="rank alt">常见</span></div><div class="cmp-meta">请舞者下来，买 lady drink。摸不摸要她本人同意。台上不能摸。看完只付酒钱。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>按摩到不插入</b><span class="rank alt">要先写</span></div><div class="cmp-meta">泰浴或 nuru 进门写：洗澡、身体按摩、用手、用嘴可以；不插入。写不进去就换店。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>全套</b><span class="rank gray">默认含插入</span></div><div class="cmp-meta">泰浴蜜月套餐、nuru 全套、离开酒吧后的短钟，默认包含插入式性交。</div></div>
+
+        <div class="sec-title">你们两人怎么用</div>
+        <div class="card"><ul>
+          <li>对象不想你和其他人插入：酒吧不付吧费；按摩店把「不插入」写在纸上再付钱。</li>
+          <li>对象可以看、不能被第三人碰：只看秀或只看台。</li>
+          <li>对象愿意进同一家色情店：进门分开写她的档和你的档。不写，店会按同一档做。</li>
+          <li>想她正规、你色情：进两家店，或同一条街的两间房。不要进情侣房。</li>
+          <li>5 个人不要进同一间泰浴。想去的人分开去。</li>
+        </ul></div>
+        <p class="footer">价格和营业时间来自 2026 年 8–10 月的公开攻略和店家页面，2027 年 10 月出发前再问柜台。这份不写进行程页。</p>
+      </div>
+    </section>
+
+    <section id="page-bar" class="page">
+      <div class="pane">
+        <div class="sec-title">gogo 吧怎么进</div>
+        <p class="hint">有舞台的酒吧。舞者轮流上台。客人坐下喝酒。步行街最多，LK Metro 更安静、酒便宜一档。</p>
+        <div class="card"><ul>
+          <li>进门大多不收门票。坐下就要点一杯自己的酒。</li>
+          <li>2026 年 10 月：步行街啤酒大约 150–180 铢，lady drink 大约 220–260 铢。LK Metro 略低，lady drink 大约 195–220 铢。</li>
+          <li>台上的人有编号。想让谁下来坐，跟她或妈妈桑说。</li>
+          <li>桌上有一个小杯子，每点一杯会丢一张纸条。结账时对纸条和账单。</li>
+          <li>不能拍照、录像。酒不要离手。穿得太随便、醉得太明显，大店可能不让进。</li>
+        </ul></div>
+
+        <div class="sec-title">lady drink 和摸人</div>
+        <div class="note blu">点 lady drink 不等于可以摸她。这杯酒只表示她坐下陪喝、她拿提成。摸不摸，要她本人明确同意。台上跳舞时不能摸。她摇头或躲开，手就停。</div>
+        <div class="card"><ul>
+          <li>她坐过来，不等于你已经买了这杯。要你让服务员下单才算。</li>
+          <li>可以不买。说「现在不用，谢谢」即可。</li>
+          <li>她自己靠过来、拉手、坐到腿上，才是她允许的亲近。做到哪一步由她说了算。</li>
+          <li>跳舞时可以把小面额钞票放到台上作为小费。这是打赏，不是摸人的借口。</li>
+        </ul></div>
+
+        <div class="sec-title">吧费、短钟、过夜</div>
+        <div class="card"><ul>
+          <li>吧费付给酒吧，让她可以提前下班。2026 年步行街 gogo 常见 1500–2500 铢，LK Metro 大约 1500 铢，啤酒吧大约 400–700 铢。</li>
+          <li>吧费不含离开之后的费用。她可以拒绝走。</li>
+          <li>顺序：先问她本人愿不愿意走，再问妈妈桑吧费多少、要不要先买够几杯，在吧台付款，离开前对账单。</li>
+          <li>短钟通常两三个小时，过夜留到第二天。另谈价。先说清总价、几小时、谁付车和房。</li>
+          <li>有的店用固定价，2026 年有人写短钟 3000、过夜 7000，不能砍。XS、Chick、ATMOS 常被归进这一类。</li>
+        </ul></div>
+        <div class="note yel">不付吧费，人就不要带走。一出酒吧，默认容易做成短钟，也容易做成插入。</div>
+
+        <div class="sec-title">不做爱，在酒吧还能做什么</div>
+        <div class="card"><ul>
+          <li>看台上的舞。大店隔一段时间有群舞或更露骨的小节目，仍然只看。</li>
+          <li>请她下来坐、聊天、再买一两杯 lady drink。</li>
+          <li>她同意的话，可以搂、摸、用手、用嘴。插入不要在酒吧里做，也不要付吧费带走。</li>
+          <li>看完付自己的酒钱就走。</li>
+        </ul></div>
+
+        <div class="sec-title">能不能搂着舞者跳</div>
+        <div class="card"><ul>
+          <li>gogo 吧的结构是看台。没有「付了钱就能搂着指定舞者跳一整晚」的标准店型。</li>
+          <li>啤酒吧（6 号街这一类）请她下来之后，她同意，可以在座位旁跟着音乐晃。这是最接近的。</li>
+          <li>步行街的夜店有舞池：Insomnia、Mixx、808、Candy Shop、Marine Disco。11 点以后才热闹。里面的 coyote 是自己在小台上跳，不是付费舞伴。</li>
+          <li>Baccara 有人写也可以在舞池自己跳，那是客人自己跳，不是搂店里的舞者。</li>
+        </ul></div>
+
+        <div class="sec-title">情侣去哪家 gogo</div>
+        <div class="cmp"><div class="cmp-top"><b>Sapphire / Pin-Up</b><span class="rank">看场面</span></div><div class="cmp-meta">步行街大店，多舞台或大舞台。情侣坐着看很常见。Pin-Up 有的攻略也把它归进固定价带人走的那一类，只看台没有这个问题。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>Windmill</b><span class="rank alt">舞者更主动</span></div><div class="cmp-meta">老客人常说这里的舞者比较接受情侣。女性那一方往往要主动一点。只想安静看，容易觉得被靠近。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>Kink</b><span class="rank gray">更冲</span></div><div class="cmp-meta">在 LK Metro。有人说舞者会主动找女性客人，酒也推得勤。账单看清楚。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>Baccara / Palace / Shark</b><span class="rank alt">中等</span></div><div class="cmp-meta">步行街老店。Baccara 开了很久。Palace 相对简单。Shark 有人写成更像普通过夜而不是交易。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>LK Metro</b><span class="rank gray">第二片</span></div><div class="cmp-meta">步行街往内陆大约 15 分钟，Buakhao 和 Diana 巷之间。酒便宜一档。Champagne、Kiss、Crystal、Showgirls 常被点名。</div></div>
+
+        <div class="sec-title">只看的舞台</div>
+        <div class="cmp"><div class="cmp-top"><b>Tiffany / Alcazar</b><span class="rank">人妖秀</span></div><div class="cmp-meta">剧院，70–90 分钟。票大约几百到一千多铢。Tiffany 大约 18:00、19:30、21:00；Alcazar 大约 17:00、18:30、20:00，有时 21:30。2026 年 10 月查过，出发前再核。从二路雅诗顿打车近。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>步行街短篇成人秀</b><span class="rank gray">先问价</span></div><div class="cmp-meta">台上表演，观众不参与。坐下前问清时长、含几杯、总价。</div></div>
+        <p class="footer">6 号街是啤酒吧，没有大舞台。住二路走路可到。步行街打车大约 10 分钟。</p>
+      </div>
+    </section>
+
+    <section id="page-soapy" class="page">
+      <div class="pane">
+        <div class="sec-title">泰浴是什么</div>
+        <p class="hint">英文常叫 soapy / soapland。泰语 aap ob nuat，洗澡、蒸、按摩。大店包房。和街边泰式、油压不是一类。</p>
+        <div class="card"><ul>
+          <li>下午开门，人最齐是晚上 6 点到 9 点。周末再早一点。</li>
+          <li>大厅玻璃窗或一排座位后面坐着技师，每人一个号或颜色胸牌。颜色就是价位。看完告诉经理号码。没有看上的，可以直接离开。</li>
+          <li>先在柜台付清。让对方把胸牌价、加项、刷卡手续费写下来再付。现金泰铢最省事。有的店刷卡加大约 3%。</li>
+          <li>房间里有浴缸、充气床垫和床。先在浴缸里洗，再到皂沫床垫上用身体滑动，然后是私密部分。整段大约 60–90 分钟，一般含一次。</li>
+          <li>房间里用店里的套。小费另算，常见几百铢，不是强制。拍照片不允许。</li>
+        </ul></div>
+        <div class="note yel">步行街没有泰浴。店在二路或南边。雅诗顿沿二路坐双条车，主路大约 10 铢。</div>
+
+        <div class="sec-title">私密部分默认包含什么</div>
+        <div class="card"><ul>
+          <li>用手、口交，然后性交。店里提供套。这段时间里一般一次。</li>
+          <li>不想插入，进门必须写明。默认会做成插入。</li>
+        </ul></div>
+
+        <div class="sec-title">情侣怎么洗</div>
+        <div class="note blu">服务女客的也是女技师。门口的男人是经理，不上房。这家店型没有男技师配给女客。</div>
+        <div class="card"><ul>
+          <li>进门第一句：两个人、一间房。再看人。常见是两位女技师，各对一位。</li>
+          <li>一位技师服务你们两个人，和两位技师进同一间，是两种价。付钱前写清楚。</li>
+          <li>那位女技师对她做同样的前半段：洗澡，皂沫床垫上用身体按摩。</li>
+          <li>后面是这位女技师和她的身体接触：用手、口交、身体贴在一起。没有男技师插入她这一项。</li>
+          <li>两种走法，进门先说：你们两人自己做、技师在旁边帮忙；或者四个人都参加。她可以拒绝某一步。</li>
+          <li>Sabai Dee 菜单上有蜜月套餐。Honey 1 有情侣做过，价格按两个人算，大约是单人的两倍。</li>
+        </ul></div>
+
+        <div class="sec-title">2026 年在营的泰浴</div>
+        <p class="hint">有一份 2026 年 8 月的名单收成 6 家。另一份名单的价对不上。进门以胸牌为准。</p>
+        <div class="card" style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>店</th><th>位置</th><th>公开价</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td>Honey 2</td><td>二路 × Soi 3，Big C 对面</td><td>1800–2500</td><td>最便宜、最好认。一份写营业到 02:00。外国人有时会被报高一点。</td></tr>
+              <tr><td>Honey 1</td><td>二路进去的 Soi 11</td><td>2000–3500</td><td>店小。2025 年有情侣做过，大约 2800×2。</td></tr>
+              <tr><td>Sabai Room</td><td>二路，Soi 5 和 6 之间</td><td>2000–3000</td><td>老店。没有床垫，滑动在浴缸里。门口有对女客和情侣的牌子。</td></tr>
+              <tr><td>P.P. Body</td><td>Soi Buakhao 的 Soi 21</td><td>2000–3000</td><td>住 Buakhao 才顺路。</td></tr>
+              <tr><td>Sabai Dee</td><td>二路 × Soi 2，海豚环岛</td><td>一份 2500–3800，一份 3300–6000</td><td>人最多，大约 60–80 人。对外有情侣 / 蜜月套餐。加项多，付钱前写总价。约 12:30–01:00。</td></tr>
+              <tr><td>Grand Honey 3</td><td>南芭，Chaloem Phrakiat 19 巷</td><td>3500–8000</td><td>房间和浴缸最好。有中文接待。约 13:00–01:00。步行街北边大约 1 公里。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cmp"><div class="cmp-top"><b>第一家想搞懂泰浴</b></div><div class="cmp-meta">Honey 2。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>情侣房最明确</b></div><div class="cmp-meta">Sabai Dee。进门就说情侣房。</div></div>
+        <div class="cmp"><div class="cmp-top"><b>房间要好</b></div><div class="cmp-meta">Grand Honey 3。</div></div>
+        <p class="footer">Honey 连锁占这 6 家里的 3 家。2026 年这 6 家都收外国人。现金为主。</p>
+      </div>
+    </section>
+
+    <section id="page-massage" class="page">
+      <div class="pane">
+        <div class="sec-title">nuru 和泰浴差在哪</div>
+        <div class="card"><ul>
+          <li>泰浴：洗澡 + 肥皂沫 + 充气床垫滑动，然后私密部分。</li>
+          <li>nuru：用海藻做成的润滑胶，技师用全身在客人身上滑。重点是这种胶，不是泡澡。</li>
+          <li>芭提雅的 nuru 店也常把性行为算进套餐。不插入同样要先写。</li>
+        </ul></div>
+
+        <div class="sec-title">Pattaya Vice</div>
+        <div class="cmp"><div class="cmp-top"><b>二路 × Soi Marine，步行街那一端</b><span class="rank alt">2025 年底开</span></div><div class="cmp-meta">曼谷 BKK Vice 的芭提雅分店。官网写提供情侣房和双技师。2026 年 10 月有人整理：豪华房 40 分钟起 2000 铢；nuru 一小时大约 3000–4000；泰浴一小时大约 3500，只在按摩浴缸房。双人 / 情侣从大约 4000 做到 9500。每天 11:00–02:00。电话 033 083 009。预约有人写 LINE @684fblis、WhatsApp +66 64 054 4701。地址有人写 115 25-25 Moo 10。</div></div>
+
+        <div class="sec-title">其他 nuru（2026 年名单）</div>
+        <div class="card"><ul>
+          <li>价大约 2000–4500 铢一档，Canary、HOHO 更高，到 9800。</li>
+          <li>三路上比较密：88 Massage、Dragon、Banana、PlayTime、Ten Sauna、Nuru Spa 常被放在一起。</li>
+          <li>Canary、Dragon 有人写情侣 nuru，大约 6000 铢起，同一间房，要预约。</li>
+          <li>KINBI 在步行街二路一带。PlayTime、Banana 可以叫去酒店。</li>
+        </ul></div>
+        <div class="note yel">这些店的「全套」含什么，各家不一样。有的停在用手，有的做到插入。柜台问清这一档包什么。</div>
+
+        <div class="sec-title">抓龙筋</div>
+        <div class="note blu">就是前列腺按摩。技师戴手套，从肛门伸入手指按这块腺体。不是普通泰式里按腰、按背。</div>
+        <div class="card"><ul>
+          <li>可以射精，但不是每个人、每一次都会。有人只是涨、酸、想尿。</li>
+          <li>只按前列腺：精液可能流出来，快感比较闷、比较深。有人叫前列腺高潮。</li>
+          <li>一边按，一边用手或用嘴刺激阴茎：射精方式和平时用手接近，前列腺把感觉加强。88 Massage 的 Cat Pose 就是这种。</li>
+          <li>射出来的是精液。涨得像要小便，让技师停。不舒服就说停。射完这次结束，不要接着再做一轮。</li>
+        </ul></div>
+        <div class="cmp"><div class="cmp-top"><b>88 Massage</b><span class="rank">抓龙筋常被点名</span></div><div class="cmp-meta">三路，Terminal 21 附近，Chaloem Phrakiat 6 巷 249 号。韩国客人多。菜单有男士课程和前列腺课程。2026 年公开价大约 2300–4500 铢，90 分钟常见。约 11:00–23:30，最晚接待有人写 22:00。周末要预约。电话 +66 98 883 8488。这家以男士课程为主，对象如果只要正规泰式，不一定能在同一家排到。</div></div>
+
+        <div class="sec-title">两人分开：她正规，你色情</div>
+        <div class="note red">不要进情侣房。店员听成情侣，就会两位技师一起上。</div>
+        <div class="card"><ul>
+          <li>先带她去正规泰式或油压。跟酒店或店员说 Thai massage, no extra。先问清是泰式还是油压，不要加钟。她做完在休息区等，或回酒店汇合。</li>
+          <li>你再去色情店。不想插入，写下来：用手、用嘴、身体按摩可以，不插入。想加抓龙筋，去 88 Massage，同样先写清要不要插入。</li>
+          <li>尺度小：油压加用手。尺度大：再加上身体接触和抓龙筋。</li>
+          <li>街边写 Thai massage 的小店，有的会问要不要加钟。她那一间付钱时再说一遍：只要正规按摩。</li>
+        </ul></div>
+
+        <div class="sec-title">同一家色情店，她会做什么</div>
+        <div class="card"><ul>
+          <li>默认和你同一档。两位女技师，一间或隔壁两间，给她的也是洗澡、身体按摩，再做到用手、用嘴，甚至女技师和她之间的插入。</li>
+          <li>她不想做到这一步，进门分开写：她只要普通油压或泰式，不加身体接触；你要色情那一档。</li>
+          <li>分开写之后，她那一间从轻到重：穿衣服的泰式；油压、可以要求不碰私处；洗澡、擦身体；再加上用手或身体贴着滑，仍然不插入。</li>
+          <li>店如果坚持两个人必须同一档，就换店。她去正规泰式，你自己再去色情店。</li>
+        </ul></div>
+        <p class="footer">对象在场时，你和技师做到哪一步，进门前先跟她说好。</p>
+      </div>
+    </section>
+
+    <section id="page-words" class="page">
+      <div class="pane">
+        <div class="sec-title">店的种类</div>
+        <div class="term"><b>gogo 吧 / go-go bar</b><p>有舞台的酒吧。舞者在台上跳，客人坐下喝。只看、只喝自己的酒，就到此为止。</p></div>
+        <div class="term"><b>啤酒吧 / beer bar</b><p>露天或半露天的小酒吧，没有大舞台。有人过来陪坐。6 号街主要是这种。</p></div>
+        <div class="term"><b>coyote 吧</b><p>台上也有人跳，常被写成只看表演、不付吧费带走。和 gogo 不是同一套。</p></div>
+        <div class="term"><b>泰浴 / soapy / soapland / aap ob nuat</b><p>大店包房，洗澡、肥皂沫、身体按摩，后面默认还有性行为。</p></div>
+        <div class="term"><b>nuru</b><p>用海藻润滑胶做的全身滑动按摩。和泰浴不一样。芭提雅也常把性行为算进套餐。</p></div>
+        <div class="term"><b>人妖秀</b><p>Tiffany、Alcazar 这种剧院。唱歌跳舞 70–90 分钟。舞台表演，不是性行为。</p></div>
+        <div class="term"><b>夜店 / nightclub</b><p>有舞池、有 DJ。11 点以后才热闹。里面的 coyote 是自己跳，不是付费舞伴。</p></div>
+
+        <div class="sec-title">付钱</div>
+        <div class="term"><b>lady drink</b><p>你出钱给舞者买的一杯酒，比你自己的酒贵，差价是她的提成。可以不买。</p></div>
+        <div class="term"><b>吧费 / bar fine</b><p>付给酒吧、让她提前下班的钱。不是给她的，也不包含离开之后。她可以拒绝走。</p></div>
+        <div class="term"><b>短钟 / short time</b><p>离开酒吧之后按几小时算的私人相处，通常两三个小时。</p></div>
+        <div class="term"><b>过夜 / long time</b><p>留到第二天早上。和短钟都要另外谈价。</p></div>
+        <div class="term"><b>全套 / full course</b><p>这一档价钱里包含做到性行为，不是只按摩。</p></div>
+        <div class="term"><b>happy ending</b><p>按摩最后的性服务。可能是用手，也可能做到性交。各店不一样，付钱前问清。</p></div>
+        <div class="term"><b>蜜月套餐 / honeymoon</b><p>Sabai Dee 给一对情侣的项目：一间房、两位女技师。默认包含性行为。</p></div>
+        <div class="term"><b>duo</b><p>两人份。可能是两位技师，也可能是一对情侣。看到先问是哪种。</p></div>
+        <div class="term"><b>加钟</b><p>正规按摩店问要不要加时。在色情语境里，常常等于要不要加性服务。她做正规按摩时明确说不要加钟。</p></div>
+        <div class="term"><b>chit / bin</b><p>酒吧桌上装纸条的小杯子。每点一杯丢一张。结账对这个。</p></div>
+
+        <div class="sec-title">店里的人和动作</div>
+        <div class="term"><b>妈妈桑 / mamasan</b><p>酒吧里管舞者的女经理。吧费问她。</p></div>
+        <div class="term"><b>鱼缸 / fishbowl</b><p>泰浴大厅里供挑选的玻璃窗或一排座位。</p></div>
+        <div class="term"><b>胸牌 / badge</b><p>技师身上的号牌。颜色代表价位。</p></div>
+        <div class="term"><b>Cat Pose</b><p>88 Massage 的招牌：一边身体接触，一边做前列腺按摩。</p></div>
+        <div class="term"><b>抓龙筋</b><p>前列腺按摩。手指从肛门进入，按这块腺体。</p></div>
+        <div class="term"><b>口交</b><p>用嘴做的性接触。</p></div>
+        <div class="term"><b>插入 / 性交</b><p>这里指生殖器进入对方体内。你们说「只要不插入都可以」时，停在这一步之前。</p></div>
+        <div class="term"><b>套</b><p>安全套。房间里用店里的。</p></div>
+        <div class="term"><b>jacuzzi</b><p>房间里的按摩浴缸。有的店只有这种房间才提供泰浴。</p></div>
+        <div class="term"><b>四手 / four hand</b><p>两位技师同时给一个人按摩。88 Massage 的皇帝课程是这种。</p></div>
+
+        <div class="sec-title">地名</div>
+        <div class="term"><b>Walking Street / 步行街</b><p>海滩南端晚上封路的那条。gogo 和短篇成人秀集中在这里。没有泰浴。</p></div>
+        <div class="term"><b>Soi / 巷</b><p>小巷。Soi 6 就是 6 号街。</p></div>
+        <div class="term"><b>二路 / Second Road</b><p>平行于海滩路的主路。雅诗顿在这上面。泰浴大多在二路。</p></div>
+        <div class="term"><b>三路 / Third Road</b><p>再往内一横。88 Massage 等 nuru 店多在这带。</p></div>
+        <div class="term"><b>海豚环岛</b><p>二路北段的转盘。Sabai Dee 在旁边的 Soi 2。</p></div>
+        <div class="term"><b>LK Metro</b><p>步行街往内陆大约 15 分钟的酒吧区。</p></div>
+        <div class="term"><b>双条车 / songthaew</b><p>红色敞篷小公车。主路大约 10 铢一位。</p></div>
+        <div class="term"><b>Soi Buakhao</b><p>二路和三路之间的一条住宿巷。P.P. Body 在附近。</p></div>
+
+        <div class="sec-title">店名速查</div>
+        <div class="term"><b>Sapphire、Pin-Up</b><p>步行街大舞台 gogo，适合坐着看。</p></div>
+        <div class="term"><b>Windmill、Kink</b><p>舞者更主动。只想看、不想被拉去消费，容易不舒服。</p></div>
+        <div class="term"><b>Tiffany、Alcazar</b><p>人妖秀剧院，在二路。</p></div>
+        <div class="term"><b>Sabai Dee、Honey 1 / 2、Grand Honey 3、Sabai Room、P.P.</b><p>泰浴。</p></div>
+        <div class="term"><b>88 Massage</b><p>抓龙筋常被点到的店。</p></div>
+        <div class="term"><b>Pattaya Vice</b><p>步行街口的 nuru / 泰浴，有情侣套餐。</p></div>
+        <div class="term"><b>经纪公司式的店</b><p>短钟过夜写死价格。XS、Chick、ATMOS 常被这样归。</p></div>
+
+        <div class="note grn">行程页：<br>用 Safari 或 Chrome 打开（微信里经常打不开）。这一份是单独的地址，行程里没有入口。</div>
+        <p class="footer">整理自 2026 年 10 月的对话和当时能核对到的公开页。出发前以柜台、菜单、码头和剧院告示为准。</p>
+      </div>
+    </section>
+  </div>
+  <nav class="dock">
+    <button type="button" class="on" data-page="first">先看</button>
+    <button type="button" data-page="bar">酒吧</button>
+    <button type="button" data-page="soapy">泰浴</button>
+    <button type="button" data-page="massage">按摩</button>
+    <button type="button" data-page="words">词表</button>
+  </nav>
+</div>
+<script>
+(function(){
+  const dock = document.querySelector("nav.dock");
+  dock.addEventListener("click", function(e){
+    const btn = e.target.closest("button[data-page]");
+    if (!btn) return;
+    const id = btn.dataset.page;
+    dock.querySelectorAll("button").forEach(b => b.classList.toggle("on", b === btn));
+    document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "page-" + id));
+    window.scrollTo(0, 0);
+  });
+})();
+</script>
+</body>
+</html>
