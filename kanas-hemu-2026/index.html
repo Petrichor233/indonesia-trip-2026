@@ -187,6 +187,37 @@
   .stat span { font-size:11px; color:#7B8794; }
   .stat.miss b { color:#C2671B; }
   .stat.ok b { color:#2F7A3B; }
+  .ebtn, .xbtn { display:inline-flex; align-items:center; justify-content:center; padding:0; line-height:1; }
+  .ebtn { flex-shrink:0; border:0; background:#F3F4F6; color:#4B5563; border-radius:8px; width:28px; height:28px; font-size:15px; }
+  .prep-date { flex:0 0 auto; font-size:12px; font-weight:800; color:#2C5F84; min-width:38px; padding-top:2px; }
+  .date-picks { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
+  .date-pick { border:0.5px solid #DCE3EA; background:#fff; color:#52606D; border-radius:99px; padding:6px 10px; font-size:12px; font-weight:650; }
+  .date-pick.on { background:#2C5F84; color:#fff; border-color:#2C5F84; }
+  .spend-row { display:flex; align-items:flex-start; gap:8px; padding:11px 0; border-top:0.5px solid #EDF1F5; }
+  .spend-row:first-of-type { border-top:none; }
+  .spend-row .lab { flex:1; min-width:0; }
+  .spend-row .lab b { display:block; font-size:14px; }
+  .spend-amt { font-variant-numeric:tabular-nums; font-weight:800; white-space:nowrap; text-align:right; }
+  .spend-amt.wait { color:#C2671B; font-weight:700; font-size:13px; }
+  .spend-sum { display:flex; justify-content:space-between; gap:10px; padding:8px 0 2px; font-size:13px; }
+  .spend-sum span { color:#7B8794; }
+  .spend-bar { display:flex; height:8px; background:#EEF2F1; border-radius:99px; overflow:hidden; margin-top:6px; }
+  .spend-bar i { display:block; height:100%; }
+  .spend-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; vertical-align:1px; }
+  .spend-legend { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:12px; padding-top:10px; border-top:0.5px solid #E2E8F0; font-size:11px; color:#7B8794; }
+  .bar { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .btn { border:0; background:#2C5F84; color:#fff; border-radius:10px; padding:9px 12px; font:inherit; font-weight:700; font-size:13px; }
+  .btn.sec { background:#fff; color:#2C5F84; border:0.5px solid #2C5F84; }
+  .okline { font-size:12px; color:#2F7A3B; margin-top:6px; }
+  .err { font-size:12px; color:#DC2626; margin-top:4px; min-height:1em; }
+  .gate-card { padding:10px 12px; }
+  .gate-card .kicker { font-size:10px; }
+  .gate-card .field { padding:7px 9px; margin-bottom:6px; }
+  .gate-card .hint { margin:4px 0 6px; }
+  .gate-card .btn { padding:7px 10px; font-size:12px; }
+  .gate-card .okline { margin-top:4px; }
+  .add-box[hidden] { display:none !important; }
+  #prepRoot textarea { width:100%; min-height:88px; border:0.5px solid #DCE3EA; border-radius:12px; padding:10px; font:inherit; resize:vertical; background:#F8FAFC; }
   .item-actions { display:flex; gap:4px; }
 @media (min-width:800px) {
   nav.dock, .app-head, .subchrome { left:50%; right:auto; width:640px; transform:translateX(-50%); }
@@ -991,6 +1022,7 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
         {t:'16:00',title:'成都 9C6686 起飞，20:00到天府T2'}
       ]}
   ];
+  // 内置待办。手机上改过的文字、勾选、自加项在云端 lists / prep 里，不要写回这个数组，也不要清空。
   var PREP=[
     {id:'car',g:'行前必办',t:'坦克500已订（订单17925589677251）。押金还要担保，订单里补上航班号 9C6685 和 CZ8995。提车看雪地胎'},
     {id:'policy',g:'行前必办',t:'核对当年冬季政策：喀纳斯零距离/原行网——能否自驾进景区、禾木预约与禁跨片区、喀纳斯进村规则'},
@@ -1002,12 +1034,13 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
     {id:'park',g:'行前必办',t:'原行网按一梦一秋（围哈拉）约对应片区车位；约不到则车停游客中心，坐免费区间车'},
     {id:'ins',g:'行前必办',t:'旅行险必须含航班延误+行程变更。租车已含车损全额（含轮胎）、三者30万、驾驶员5万、停运费'},
     {id:'road',g:'行前必办',t:'关注喀纳斯零距离/平安喀纳斯/原行网/喀纳斯警事/阿勒泰交警：阿禾窗口、S232 2–72km 与 X852 8–49.8km 夜管（常见19:00–次日10:00）及白天临管'},
-    {id:'d1c',g:'按日期',t:'D1 伟竣在雪都机场人脸识别提坦克500，当场看雪地胎。先到麗枫五百里风情街放行李再去将军山。免费权益给姐姐/寒娃/磊子哥/妈妈的日场'},
-    {id:'d2c',g:'按日期',t:'D2 出发前看阿禾与S232；阿禾封则走布尔津，当天仍住一梦一秋；满油+离线地图；车停民宿片区，步行到桥'},
-    {id:'d3c',g:'按日期',t:'D3 08:00 从一梦一秋步行上哈登，不跨片区开车；早看X852/S232，预警则放弃吉克普林、尽快出禾木，仍住山野既来；伟竣用免费滑雪权益'},
-    {id:'d4c',g:'按日期',t:'D3晚看次日S232；预警则放弃湖口/三湾，10:00出山，仍住华丽学府；无预警则问湖口清雪，15:00前离卧龙湾'},
-    {id:'d5c',g:'按日期',t:'D5 不滑雪。12:30从华丽学府去机场，约12:40还坦克500（预约14:30，营业时间内可提前）。北京15:30、成都16:00'}
+    {id:'d1c',g:'按日期',date:'12/11',t:'D1 伟竣在雪都机场人脸识别提坦克500，当场看雪地胎。先到麗枫五百里风情街放行李再去将军山。免费权益给姐姐/寒娃/磊子哥/妈妈的日场'},
+    {id:'d2c',g:'按日期',date:'12/12',t:'D2 出发前看阿禾与S232；阿禾封则走布尔津，当天仍住一梦一秋；满油+离线地图；车停民宿片区，步行到桥'},
+    {id:'d3c',g:'按日期',date:'12/13',t:'D3 08:00 从一梦一秋步行上哈登，不跨片区开车；早看X852/S232，预警则放弃吉克普林、尽快出禾木，仍住山野既来；伟竣用免费滑雪权益'},
+    {id:'d4c',g:'按日期',date:'12/14',t:'D3晚看次日S232；预警则放弃湖口/三湾，10:00出山，仍住华丽学府；无预警则问湖口清雪，15:00前离卧龙湾'},
+    {id:'d5c',g:'按日期',date:'12/15',t:'D5 不滑雪。12:30从华丽学府去机场，约12:40还坦克500（预约14:30，营业时间内可提前）。北京15:30、成都16:00'}
   ];
+  // 内置行李。自加、改名、删除和装包状态在云端，不要写回这个数组。
   var BAGS=[
     {id:'coat',g:'保暖',t:'长款厚羽绒服（-30℃级）'},
     {id:'pants',g:'保暖',t:'加绒防风裤'},
@@ -1028,6 +1061,7 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
     {id:'drv',g:'证件',t:'驾照（磊子哥+伟竣）'},
     {id:'food',g:'证件',t:'保温杯+高热量零食'}
   ];
+  // 内置花费。改金额、补备注、自加和删除在云端 lists，不要写回这个数组，也不要清空。
   var SPENDS=[
     {id:'f-bj',cat:'机票',date:'12/11',name:'北京往返 CZ8995 / CZ8996（伟竣、姐姐，订单总额）',cny:4749},
     {id:'f-cd',cat:'机票',date:'12/11',name:'成都往返 9C6685 / 9C6686（寒娃、磊子哥、妈妈，航变后）',cny:null},
@@ -1040,7 +1074,7 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
     {id:'ski-n',cat:'滑雪',date:'12/11',name:'将军山日场雪具（伟竣自费；其余3人免费雪卡）+夜场另计',cny:null},
     {id:'ski-j',cat:'滑雪',date:'12/13',name:'吉克普林雪具（伟竣，雪票用免费权益）',cny:null},
     {id:'ski-v',cat:'滑雪',date:'12/11',name:'将军山日落缆车（妈妈，用免费权益）',cny:null},
-    {id:'car-r',cat:'租车',date:'12/11',name:'坦克500 2.0T四驱5座，雪都机场12/11 14:30取、12/15 14:30还（订单17925589677251，合计）',cny:1114},
+    {id:'car-r',cat:'租车',date:'12/11',dates:['12/11','12/12','12/13','12/14'],name:'坦克500 2.0T四驱5座，雪都机场12/11 14:30取、12/15 14:30还（订单17925589677251，合计）',cny:1114},
     {id:'fuel',cat:'租车',date:'12/12',name:'油费（阿禾+S232）',cny:null}
   ];
 
@@ -1063,18 +1097,6 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
     var da=new Date(a+'T00:00:00'), db=new Date(b+'T00:00:00');
     return Math.round((db-da)/86400000);
   }
-  function liveSpend(){
-    var s=loadJSON(KEY_SPEND,{extra:[],gone:[],edit:{}});
-    if(!s.extra) s.extra=[]; if(!s.gone) s.gone=[]; if(!s.edit) s.edit={};
-    var rows=SPENDS.filter(function(x){ return s.gone.indexOf(x.id)<0; }).map(function(x){
-      return s.edit[x.id]? Object.assign({},x,s.edit[x.id]) : Object.assign({},x);
-    });
-    s.extra.forEach(function(x){ if(s.gone.indexOf(x.id)<0) rows.push(x); });
-    rows.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
-    return {meta:s, rows:rows};
-  }
-  function saveSpend(meta){ saveJSON(KEY_SPEND, meta); }
-
   var previewIso=null;
   function pickDay(){
     var today=bjToday();
@@ -1140,238 +1162,979 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
       b.addEventListener('click', function(){ previewIso=b.getAttribute('data-iso'); renderToday(); });
     });
   }
-  var KEY_LISTS='kanas2026-lists';
-  var PACK_LABEL={none:'尚无',have:'已有',packed:'已装包'};
-  function loadLists(){
-    var s=loadJSON(KEY_LISTS,{extraPrep:[],extraPack:[],gonePrep:[],gonePack:[]});
-    if(!s.extraPrep) s.extraPrep=[]; if(!s.extraPack) s.extraPack=[];
-    if(!s.gonePrep) s.gonePrep=[]; if(!s.gonePack) s.gonePack=[];
-    return s;
+  var KEY_WHO = 'kanas2026-who';
+  var KEY_SID = 'kanas2026-sid';
+  var KEY_UNLOCK = 'kanas2026-unlock';
+  var KEY_DRAFT = 'kanas2026-draft';
+  var KEY_MIGRATED = 'kanas2026-migrated';
+  var CLOUD_API = 'https://api.textdb.online';
+  var CLOUD_READ = 'https://textdb.online';
+  var PACK_CYCLE = ['none','have','packed'];
+  var PACK_LABEL = {none:'尚无', have:'已有', packed:'已装包'};
+  var SPEND_CATS = Object.keys(CATS);
+  var SPEND_CUSTOM_COLORS = ['#e11d48','#65a30d','#0891b2','#c026d3','#92400e','#4f46e5','#f59e0b','#155e75'];
+  var prepTab = 'todo';
+  var packFilter = 'all';
+  var cloud = { prep:{}, pack:{}, notes:'', pinHash:'', updatedAt:'', by:'', lists:null };
+  var canEdit = false;
+  var syncing = false;
+  var saveTimer = null;
+  var dirty = false;
+  var pushing = false;
+  var bootError = '';
+
+  function emptyLists(){
+    return {
+      extraPrep:[], extraPack:[], extraSpend:[],
+      gonePrep:[], gonePack:[], goneSpend:[],
+      editPrep:{}, editPack:{}, editSpend:{}
+    };
   }
-  function saveLists(s){ saveJSON(KEY_LISTS,s); }
-  function livePrep(){
-    var st=loadJSON(KEY_PREP,{}), lists=loadLists();
-    return PREP.concat(lists.extraPrep).filter(function(p){ return lists.gonePrep.indexOf(p.id)<0; })
-      .map(function(p){ return Object.assign({},p,{done:!!st[p.id], extra:!!p.extra}); });
+  function ensureLists(){
+    var cur = cloud.lists && typeof cloud.lists === 'object' ? cloud.lists : {};
+    cloud.lists = {
+      extraPrep: Array.isArray(cur.extraPrep) ? cur.extraPrep : [],
+      extraPack: Array.isArray(cur.extraPack) ? cur.extraPack : [],
+      extraSpend: Array.isArray(cur.extraSpend) ? cur.extraSpend : [],
+      gonePrep: Array.isArray(cur.gonePrep) ? cur.gonePrep : [],
+      gonePack: Array.isArray(cur.gonePack) ? cur.gonePack : [],
+      goneSpend: Array.isArray(cur.goneSpend) ? cur.goneSpend : [],
+      editPrep: cur.editPrep && typeof cur.editPrep === 'object' ? cur.editPrep : {},
+      editPack: cur.editPack && typeof cur.editPack === 'object' ? cur.editPack : {},
+      editSpend: cur.editSpend && typeof cur.editSpend === 'object' ? cur.editSpend : {}
+    };
+    return cloud.lists;
   }
-  function liveBags(){
-    var st=loadJSON(KEY_PACK,{}), lists=loadLists();
-    return BAGS.concat(lists.extraPack).filter(function(p){ return lists.gonePack.indexOf(p.id)<0; })
-      .map(function(p){ return Object.assign({},p,{st:st[p.id]||'none', extra:!!p.extra}); });
+  function mergeList(base, extra, gone, edits){
+    var hide = {};
+    (gone || []).forEach(function(id){ hide[id] = true; });
+    var patch = edits || {};
+    var out = [];
+    function put(p){
+      if(!p || hide[p.id]) return;
+      out.push(patch[p.id] ? Object.assign({}, p, patch[p.id]) : Object.assign({}, p));
+    }
+    (base || []).forEach(put);
+    (extra || []).forEach(put);
+    return out;
+  }
+  function livePrep(){ var L = ensureLists(); return mergeList(PREP, L.extraPrep, L.gonePrep, L.editPrep); }
+  function liveBags(){ var L = ensureLists(); return mergeList(BAGS, L.extraPack, L.gonePack, L.editPack); }
+  function liveSpend(){ var L = ensureLists(); return mergeList(SPENDS, L.extraSpend, L.goneSpend, L.editSpend); }
+  function isChecked(item){
+    var st = cloud.prep || {};
+    if(Object.prototype.hasOwnProperty.call(st, item.id)) return !!st[item.id];
+    return !!item.done;
+  }
+  function packState(item){
+    var raw = (cloud.pack || {})[item.id];
+    if(raw === 'none' || raw === 'have' || raw === 'packed') return raw;
+    if(raw === true) return 'have';
+    if(raw === false) return 'none';
+    return item.st || 'none';
+  }
+  function nextPackState(cur){
+    var i = PACK_CYCLE.indexOf(cur);
+    return PACK_CYCLE[(i < 0 ? 0 : i + 1) % PACK_CYCLE.length];
+  }
+  function setPackState(id, st){
+    cloud.pack = cloud.pack || {};
+    cloud.pack[id] = st;
+    var L = ensureLists();
+    var extra = L.extraPack.filter(function(p){ return p.id === id; })[0];
+    if(extra) extra.st = st;
+    else L.editPack[id] = Object.assign({}, L.editPack[id], {st:st});
+  }
+  function newItemId(prefix){
+    var bytes = new Uint8Array(4);
+    crypto.getRandomValues(bytes);
+    return prefix + Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+  function spendNum(v){
+    if(v == null || v === '') return null;
+    var n = Number(v);
+    return isFinite(n) ? n : null;
+  }
+  function parseAmt(s){
+    var t = String(s == null ? '' : s).trim().replace(/,/g, '');
+    if(!t) return null;
+    var n = Number(t);
+    return isFinite(n) ? n : null;
+  }
+  function spendPending(item){ return spendNum(item.cny) == null; }
+  function spendDateKey(s){
+    var m = String(s || '').match(/(\d{1,2})[.\/](\d{1,2})/);
+    if(m) return Number(m[1]) * 100 + Number(m[2]);
+    var iso = String(s || '').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(iso) return Number(iso[2]) * 100 + Number(iso[3]);
+    return 9999;
+  }
+  function spendDateLabel(s){
+    var m = String(s || '').match(/(\d{1,2})[.\/](\d{1,2})/);
+    if(m) return Number(m[1]) + '/' + Number(m[2]);
+    var iso = String(s || '').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(iso) return Number(iso[2]) + '/' + Number(iso[3]);
+    return s || '日期待定';
+  }
+  function prepDate(item){
+    var raw = String((item && item.date) || '').trim();
+    if(raw){
+      var lab = spendDateLabel(raw);
+      if(lab && lab !== '日期待定') return lab;
+    }
+    var m = String((item && item.t) || '').match(/(\d{1,2})[.\/](\d{1,2})/);
+    return m ? Number(m[1]) + '/' + Number(m[2]) : '';
+  }
+  function prepGroupRank(g){
+    if(g === '行前必办') return 0;
+    if(g === '按日期') return 1;
+    return 2;
+  }
+  function prepGroups(todos){
+    var seen = [];
+    (todos || []).forEach(function(p){
+      var g = (p && p.g) || '按日期';
+      if(seen.indexOf(g) < 0) seen.push(g);
+    });
+    return seen.sort(function(a,b){ return prepGroupRank(a) - prepGroupRank(b); });
+  }
+  function sortPrepItems(items){
+    return (items || []).slice().sort(function(a,b){ return spendDateKey(prepDate(a)) - spendDateKey(prepDate(b)); });
+  }
+  function spendDayOptions(){
+    var seen = {};
+    var out = [];
+    DAYS.forEach(function(d){
+      var lab = spendDateLabel(d.iso);
+      if(!lab || lab === '日期待定' || seen[lab]) return;
+      seen[lab] = true;
+      out.push(lab);
+    });
+    return out;
+  }
+  function spendDates(item){
+    var raw = Array.isArray(item && item.dates) && item.dates.length
+      ? item.dates
+      : String((item && item.date) || '').split(/[、，,;；/]/);
+    var seen = {};
+    var out = [];
+    raw.forEach(function(part){
+      var t = String(part || '').trim();
+      if(!t) return;
+      var lab = spendDateLabel(t.indexOf('/') < 0 && /^\d{1,2}$/.test(t) ? '' : t);
+      if(!t.match(/\d/)) return;
+      if(t.indexOf('/') < 0 && t.indexOf('.') < 0 && t.indexOf('-') < 0) return;
+      lab = spendDateLabel(t);
+      if(!lab || seen[lab]) return;
+      seen[lab] = true;
+      out.push(lab);
+    });
+    if(!out.length) out.push(item && item.date ? spendDateLabel(item.date) : '日期待定');
+    return out.sort(function(a,b){ return spendDateKey(a) - spendDateKey(b); });
+  }
+  function spendDatesLabel(item){ return spendDates(item).join('、'); }
+  function spendSplitAmt(amt, n){
+    if(!(n > 0) || !isFinite(amt)) return [];
+    var share = Math.round(amt / n * 100) / 100;
+    var parts = [];
+    for(var i = 0; i < n; i++) parts.push(share);
+    parts[n - 1] = Math.round((amt - share * (n - 1)) * 100) / 100;
+    return parts;
+  }
+  function fmtCny(n){
+    if(!isFinite(n)) return '—';
+    var d = Math.abs(n - Math.round(n)) < 1e-6 ? 0 : 2;
+    return n.toLocaleString('zh-CN', {minimumFractionDigits:d, maximumFractionDigits:2});
+  }
+  function spendCatOrder(items){
+    var extra = [];
+    items.forEach(function(p){
+      var c = p.cat || '其他';
+      if(SPEND_CATS.indexOf(c) < 0 && extra.indexOf(c) < 0) extra.push(c);
+    });
+    return SPEND_CATS.concat(extra);
+  }
+  function spendColorMap(cats){
+    var map = {};
+    var i = 0;
+    (cats || []).forEach(function(cat){
+      if(CATS[cat]) map[cat] = CATS[cat];
+      else map[cat] = SPEND_CUSTOM_COLORS[i++ % SPEND_CUSTOM_COLORS.length];
+    });
+    return map;
+  }
+  function itemActions(kind, id){
+    if(!canEdit) return '';
+    return '<button type="button" class="ebtn" data-edit-'+kind+'="'+esc(id)+'" aria-label="编辑">✎</button><button type="button" class="xbtn" data-del-'+kind+'="'+esc(id)+'" aria-label="删除">×</button>';
+  }
+  function addListItem(kind, t, g, date){
+    t = (t || '').trim();
+    if(!t) return;
+    var L = ensureLists();
+    if(kind === 'prep'){
+      var day = prepDate({t:t, date:date});
+      var group = (g || '').trim();
+      if(!group) group = day ? '按日期' : '待办';
+      L.extraPrep.push({id:newItemId('up-'), g:group, t:t, date:day});
+    } else {
+      L.extraPack.push({id:newItemId('ub-'), g:(g || '其他').trim() || '其他', t:t, st:'none'});
+    }
+  }
+  function renameListItem(kind, id, t, g, date){
+    t = (t || '').trim();
+    if(!id || !t) return;
+    var L = ensureLists();
+    var extras = kind === 'prep' ? L.extraPrep : L.extraPack;
+    var extra = extras.filter(function(p){ return p.id === id; })[0];
+    var patch = {t:t};
+    if(kind === 'prep'){
+      var day = prepDate({t:t, date:date});
+      var group = (g || '').trim();
+      if(!group) group = day ? '按日期' : '待办';
+      patch.g = group;
+      patch.date = day;
+    } else if(g && g.trim()){
+      patch.g = g.trim();
+    }
+    if(extra) Object.assign(extra, patch);
+    else if(kind === 'prep') L.editPrep[id] = Object.assign({}, L.editPrep[id], patch);
+    else L.editPack[id] = Object.assign({}, L.editPack[id], patch);
+  }
+  function addSpendItem(fields){
+    var name = (fields.name || '').trim();
+    if(!name) return;
+    ensureLists().extraSpend.push({
+      id:newItemId('us-'),
+      cat:(fields.cat || '其他').trim() || '其他',
+      date:(fields.date || (fields.dates && fields.dates[0]) || '').trim(),
+      dates:Array.isArray(fields.dates) ? fields.dates.slice() : [],
+      name:name,
+      cny:spendNum(fields.cny),
+      note:(fields.note || '').trim()
+    });
+  }
+  function patchSpendItem(id, fields){
+    if(!id || !(fields.name || '').trim()) return;
+    var L = ensureLists();
+    var patch = {
+      name:fields.name.trim(),
+      cat:(fields.cat || '其他').trim() || '其他',
+      date:(fields.date || (fields.dates && fields.dates[0]) || '').trim(),
+      dates:Array.isArray(fields.dates) ? fields.dates.slice() : [],
+      note:(fields.note || '').trim(),
+      cny:spendNum(fields.cny)
+    };
+    var extra = L.extraSpend.filter(function(p){ return p.id === id; })[0];
+    if(extra) Object.assign(extra, patch);
+    else L.editSpend[id] = Object.assign({}, L.editSpend[id], patch);
+  }
+  function removeListItem(kind, id){
+    if(!id) return;
+    var L = ensureLists();
+    if(kind === 'prep'){
+      if(L.gonePrep.indexOf(id) < 0) L.gonePrep.push(id);
+      L.extraPrep = L.extraPrep.filter(function(p){ return p.id !== id; });
+      delete L.editPrep[id];
+      if(cloud.prep) delete cloud.prep[id];
+    } else if(kind === 'pack'){
+      if(L.gonePack.indexOf(id) < 0) L.gonePack.push(id);
+      L.extraPack = L.extraPack.filter(function(p){ return p.id !== id; });
+      delete L.editPack[id];
+      if(cloud.pack) delete cloud.pack[id];
+    } else if(kind === 'spend'){
+      if(L.goneSpend.indexOf(id) < 0) L.goneSpend.push(id);
+      L.extraSpend = L.extraSpend.filter(function(p){ return p.id !== id; });
+      delete L.editSpend[id];
+    }
+  }
+  function addComposer(kind, groups, defaultGroup){
+    var opts = groups.filter(function(g){ return g && g !== '自加'; }).map(function(g){
+      return '<option value="'+esc(g)+'"></option>';
+    }).join('');
+    var dateField = kind === 'prep'
+      ? '<input class="field" data-add-date maxlength="10" list="prep-dates" placeholder="日期（可选，如 12/11）">'+
+        '<datalist id="prep-dates">'+spendDayOptions().map(function(d){ return '<option value="'+esc(d)+'"></option>'; }).join('')+'</datalist>'
+      : '';
+    return '<div class="card add-box" data-composer="'+kind+'" hidden>'+
+      '<div class="kicker">'+(kind === 'prep' ? '添加待办' : '添加行李')+'</div>'+
+      '<input class="field" data-add-text maxlength="120" placeholder="'+(kind === 'prep' ? '要做的事' : '要带的东西')+'">'+
+      '<input class="field" data-add-group maxlength="20" list="'+kind+'-groups" placeholder="分组" value="'+esc(defaultGroup || '')+'">'+
+      '<datalist id="'+kind+'-groups">'+opts+'</datalist>'+
+      dateField+
+      '<div class="bar"><button type="button" class="btn" data-add-save>添加</button><button type="button" class="btn sec" data-add-cancel>取消</button></div>'+
+    '</div>';
+  }
+  function spendComposer(){
+    var cats = SPEND_CATS.map(function(c){ return '<option value="'+esc(c)+'"></option>'; }).join('');
+    var picks = spendDayOptions().map(function(d){
+      return '<button type="button" class="date-pick" data-day="'+esc(d)+'">'+esc(d)+'</button>';
+    }).join('');
+    return '<div class="card add-box" data-composer="spend" hidden>'+
+      '<div class="kicker">添加花费</div>'+
+      '<input class="field" data-add-text maxlength="80" placeholder="项目名称">'+
+      '<input class="field" data-add-cat maxlength="12" list="spend-cats" placeholder="类目" value="其他">'+
+      '<datalist id="spend-cats">'+cats+'</datalist>'+
+      '<div class="kicker" style="margin:2px 0 6px">日期（可多选，费用按天平摊）</div>'+
+      '<div class="date-picks" data-add-dates>'+picks+'</div>'+
+      '<input class="field" data-add-amt inputmode="decimal" placeholder="金额，空着=待补">'+
+      '<input class="field" data-add-note maxlength="80" placeholder="备注（可选）">'+
+      '<div class="bar"><button type="button" class="btn" data-add-save>添加</button><button type="button" class="btn sec" data-add-cancel>取消</button></div>'+
+    '</div>';
+  }
+  function spendFieldsFromForm(form){
+    var name = (form.querySelector('[data-add-text]').value || '').trim();
+    var cat = (form.querySelector('[data-add-cat]').value || '').trim() || '其他';
+    var dates = [];
+    Array.prototype.forEach.call(form.querySelectorAll('[data-day].on'), function(b){ dates.push(b.getAttribute('data-day')); });
+    var note = (form.querySelector('[data-add-note]').value || '').trim();
+    var amt = parseAmt(form.querySelector('[data-add-amt]').value);
+    return {name:name, cat:cat, dates:dates, date:dates[0] || '', note:note, cny:amt};
   }
 
-  var spendEditing=null, adding=null, packFilter='all', spendFilter='all', todoFilter='all';
-  var prepTab='todo';
-  function groupBy(list, key){
-    var g={}, order=[];
-    list.forEach(function(x){ if(!g[x[key]]){ g[x[key]]=[]; order.push(x[key]); } g[x[key]].push(x); });
-    return order.map(function(name){ return {name:name, items:g[name]}; });
+  function sid(){
+    var q = '';
+    try { q = new URLSearchParams(location.search).get('sid') || ''; } catch(e) {}
+    return (q || localStorage.getItem(KEY_SID) || '').trim();
   }
-  function addBox(kind, groups, defG){
-    if(adding!==kind) return '';
-    var opts=groups.map(function(g){ return '<option'+(g===defG?' selected':'')+'>'+esc(g)+'</option>'; }).join('');
-    return '<div class="card add-box"><div class="kicker">添加'+(kind==='todo'?'待办':'行李')+'</div>'+
-      '<input class="field" id="addName" placeholder="'+(kind==='todo'?'例如：确认雪地胎':'例如：暖宝宝')+'">'+
-      '<select class="field" id="addGroup">'+opts+'</select>'+
-      '<button class="mini pri" id="addSave">添加</button> <button class="mini" id="addCancel">取消</button></div>';
+  function isTextDbSid(id){ return /^td[a-f0-9]{16}$/i.test(id || ''); }
+  function who(){ return localStorage.getItem(KEY_WHO) || ''; }
+  function newCloudKey(){
+    var bytes = new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    return 'td' + Array.prototype.map.call(bytes, function(b){ return b.toString(16).padStart(2,'0'); }).join('');
   }
-  function bindAdd(kind){
-    var cancel=document.getElementById('addCancel');
-    if(cancel) cancel.onclick=function(){ adding=null; renderPrep(); };
-    var save=document.getElementById('addSave');
-    if(save) save.onclick=function(){
-      var name=(document.getElementById('addName').value||'').trim();
-      var g=(document.getElementById('addGroup').value||'自加');
-      if(!name) return;
-      var lists=loadLists();
-      var item={id:kind+'-'+Date.now(), g:g, t:name, extra:true};
-      if(kind==='todo') lists.extraPrep.push(item); else lists.extraPack.push(item);
-      saveLists(lists); adding=null; renderPrep();
+  function syncFailHint(e){
+    var raw = (e && e.message) ? e.message : String(e);
+    return raw + '。若仍打不开，把这句原样发给我换存储。';
+  }
+  function emptyCloud(){
+    return {prep:{}, pack:{}, notes:'', pinHash:'', updatedAt:'', by:'', lists:emptyLists()};
+  }
+  function cloudPayload(){
+    ensureLists();
+    return {
+      prep: cloud.prep && typeof cloud.prep === 'object' ? cloud.prep : {},
+      pack: cloud.pack && typeof cloud.pack === 'object' ? cloud.pack : {},
+      notes: cloud.notes || '',
+      pinHash: cloud.pinHash || '',
+      updatedAt: cloud.updatedAt || '',
+      by: cloud.by || '',
+      lists: cloud.lists
     };
   }
-  function renderTodo(){
-    var prep=livePrep();
-    var pd=prep.filter(function(x){return x.done;}).length;
-    var openN=prep.length-pd;
-    var pct=prep.length? Math.round(pd/prep.length*100):0;
-    var shown=prep.filter(function(x){
-      if(todoFilter==='done') return x.done;
-      if(todoFilter==='open') return !x.done;
+  function stampOf(c){
+    var t = Date.parse(c && c.updatedAt ? c.updatedAt : '');
+    return isFinite(t) ? t : 0;
+  }
+  function fmtSyncTime(iso){
+    var t = Date.parse(iso);
+    if(!isFinite(t)) return '';
+    var parts = new Intl.DateTimeFormat('zh-CN', {
+      timeZone:'Asia/Shanghai', year:'numeric', month:'numeric', day:'numeric',
+      hour:'2-digit', minute:'2-digit', hour12:false
+    }).formatToParts(new Date(t));
+    var g = {};
+    parts.forEach(function(p){ if(p.type !== 'literal') g[p.type] = p.value; });
+    return g.year + '.' + Number(g.month) + '.' + Number(g.day) + ' ' + String(g.hour).padStart(2,'0') + ':' + String(g.minute).padStart(2,'0');
+  }
+  function saveDraft(){
+    try {
+      localStorage.setItem(KEY_DRAFT, JSON.stringify({sid:sid() || '', savedAt:Date.now(), cloud:cloudPayload()}));
+    } catch(e) {}
+  }
+  function loadDraft(){
+    try { return JSON.parse(localStorage.getItem(KEY_DRAFT) || 'null'); }
+    catch(e) { return null; }
+  }
+  function applyCloud(data){
+    var base = emptyCloud();
+    var src = data && typeof data === 'object' ? data : {};
+    cloud = {
+      prep: src.prep && typeof src.prep === 'object' ? src.prep : base.prep,
+      pack: src.pack && typeof src.pack === 'object' ? src.pack : base.pack,
+      notes: typeof src.notes === 'string' ? src.notes : '',
+      pinHash: src.pinHash || '',
+      updatedAt: src.updatedAt || '',
+      by: src.by || '',
+      lists: src.lists && typeof src.lists === 'object' ? src.lists : base.lists
+    };
+    ensureLists();
+  }
+  function hashPin(pin){
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('kanas-hemu-2026|' + pin)).then(function(buf){
+      return Array.prototype.map.call(new Uint8Array(buf), function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+    });
+  }
+  function setSid(id){
+    localStorage.setItem(KEY_SID, id);
+    var u = new URL(location.href);
+    u.searchParams.set('sid', id);
+    history.replaceState({}, '', u);
+  }
+  function clearSid(){
+    localStorage.removeItem(KEY_SID);
+    sessionStorage.removeItem(KEY_UNLOCK);
+    canEdit = false;
+    applyCloud(emptyCloud());
+    dirty = false;
+    try { localStorage.removeItem(KEY_DRAFT); } catch(e) {}
+    var u = new URL(location.href);
+    u.searchParams.delete('sid');
+    history.replaceState({}, '', u);
+  }
+  function cloudFetch(url, opts){
+    var next = Object.assign({cache:'no-store'}, opts || {});
+    return fetch(url, next).catch(function(e){
+      var raw = (e && e.message) ? e.message : String(e);
+      throw new Error(raw + ' @ ' + url.split('?')[0]);
+    });
+  }
+  function writeCloud(id, data){
+    var body = new URLSearchParams();
+    body.set('key', id);
+    body.set('value', JSON.stringify(data));
+    return cloudFetch(CLOUD_API + '/update/', {method:'POST', body:body}).then(function(r){
+      if(!r.ok) throw new Error('保存失败 HTTP ' + r.status + ' @ ' + CLOUD_API);
+      return r.json().catch(function(){ throw new Error('保存失败：返回不是 JSON @ ' + CLOUD_API); });
+    }).then(function(j){
+      if(!j || j.status !== 1) throw new Error('保存失败 ' + ((j && (j.info || j.msg)) || JSON.stringify(j)) + ' @ ' + CLOUD_API);
+    });
+  }
+  function readCloudText(id){
+    var urls = [
+      CLOUD_READ + '/' + encodeURIComponent(id) + '?_=' + Date.now(),
+      CLOUD_API + '/' + encodeURIComponent(id) + '?_=' + Date.now()
+    ];
+    function tryAt(i, lastErr){
+      if(i >= urls.length) return Promise.reject(lastErr || new Error('读取失败 @ ' + CLOUD_API));
+      return cloudFetch(urls[i]).then(function(r){
+        if(!r.ok) return tryAt(i + 1, new Error('读取失败 HTTP ' + r.status + ' @ ' + CLOUD_API));
+        return r.text().then(function(text){
+          text = (text || '').trim();
+          if(text) return text;
+          return tryAt(i + 1, new Error('云端还没有这份数据，请重新创建共享 @ ' + CLOUD_API));
+        });
+      }).catch(function(e){ return tryAt(i + 1, e); });
+    }
+    return tryAt(0, null);
+  }
+  function pullCloud(){
+    var id = sid();
+    if(!id) return Promise.resolve(false);
+    if(!isTextDbSid(id)) return Promise.reject(new Error('旧同步通道打不开，请点「重新创建共享」'));
+    return readCloudText(id).then(function(text){
+      var data;
+      try { data = JSON.parse(text); }
+      catch(e) { throw new Error('云端数据损坏 @ ' + CLOUD_API); }
+      if(!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('云端数据损坏 @ ' + CLOUD_API);
+      applyCloud(data);
       return true;
     });
-    var groups=['行前必办','按日期','自加'];
-    var html='<div class="page-head c-blue">待办事项 <span>'+prep.length+' 条任务</span>'+
-      '<button type="button" class="add-pill" data-open-add="todo">＋ 添加</button></div>'+
-      addBox('todo', groups, '自加')+
+  }
+  function pushCloud(){
+    var id = sid();
+    if(!id) return Promise.resolve(false);
+    if(!isTextDbSid(id)) return Promise.reject(new Error('旧同步通道打不开，请点「重新创建共享」'));
+    cloud.updatedAt = new Date().toISOString();
+    cloud.by = who() || '同伴';
+    return writeCloud(id, cloudPayload()).then(function(){ return true; });
+  }
+  function createCloud(){
+    var id = newCloudKey();
+    ensureLists();
+    applyCloud({
+      prep: Object.assign({}, cloud.prep || {}),
+      pack: Object.assign({}, cloud.pack || {}),
+      notes: cloud.notes || '',
+      pinHash: cloud.pinHash || '',
+      updatedAt: new Date().toISOString(),
+      by: who() || '同伴',
+      lists: cloud.lists
+    });
+    return writeCloud(id, cloudPayload()).then(function(){
+      setSid(id);
+      dirty = false;
+      saveDraft();
+    });
+  }
+  function shareLink(){
+    var u = new URL(location.href);
+    if(sid()) u.searchParams.set('sid', sid());
+    return u.toString();
+  }
+  function renderSyncBits(){
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sync]'), function(el){
+      if(pushing) el.textContent = '正在保存到云端…';
+      else if(dirty && sid()) el.textContent = '有改动待保存';
+      else if(!sid()) el.textContent = '仅本机，换浏览器或清缓存会丢失';
+      else if(cloud.updatedAt) el.textContent = '已同步 · ' + (cloud.by || '?') + ' ' + fmtSyncTime(cloud.updatedAt);
+      else el.textContent = '还没有云端记录';
+    });
+  }
+  function schedulePush(){
+    dirty = true;
+    saveDraft();
+    renderSyncBits();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(runPush, 700);
+  }
+  function runPush(){
+    if(pushing) return Promise.resolve();
+    if(!dirty) return Promise.resolve();
+    if(!sid()){ saveDraft(); renderSyncBits(); return Promise.resolve(); }
+    pushing = true;
+    dirty = false;
+    renderSyncBits();
+    return pushCloud().then(function(){ saveDraft(); }).catch(function(err){
+      dirty = true;
+      alert(err.message);
+    }).then(function(){
+      pushing = false;
+      renderSyncBits();
+      if(dirty) saveTimer = setTimeout(runPush, 500);
+    });
+  }
+  function gateCard(){
+    var id = sid();
+    var legacy = id && !isTextDbSid(id);
+    var connected = id && !legacy;
+    var unlocked = canEdit
+      ? '<p class="okline">'+(connected ? '已解锁，行李、待办、花费和备忘会同步到云端。' : '已解锁，但还没创建共享：换浏览器会丢。')+'</p>'
+      : '';
+    var title = legacy ? '旧通道失效' : (connected ? '已连接' : '未创建共享');
+    var hint = connected
+      ? '换手机请用「复制链接」打开，不要只打开网站首页。'
+      : '未共享时改动只留在这台浏览器。创建共享后才能换设备看到。';
+    var button = legacy
+      ? '<button class="btn" id="btnReset" type="button">重新创建</button>'
+      : (connected
+        ? '<button class="btn" id="'+(canEdit ? 'btnLock' : 'btnUnlock')+'" type="button">'+(canEdit ? '改为只读' : '解锁编辑')+'</button>'
+        : '<button class="btn" id="btnCreate" type="button">创建并解锁</button>');
+    return '<div class="card gate-card">'+
+      '<div class="kicker">同伴同步 · '+title+'</div>'+
+      '<input class="field" id="pinBox" type="password" placeholder="同伴口令">'+
+      '<div class="bar">'+button+(connected ? '<button class="btn sec" id="btnCopy" type="button">复制链接</button>' : '')+'</div>'+
+      unlocked+
+      '<p class="hint">'+hint+'</p>'+
+      '<p class="hint" data-sync></p>'+
+      '<p class="err" id="syncErr">'+(legacy ? '旧码无法读取，请重新创建。' : esc(bootError))+'</p>'+
+    '</div>';
+  }
+  function bindGate(box){
+    function err(m){ var el = box.querySelector('#syncErr'); if(el) el.textContent = m; }
+    function afterUnlock(){
+      sessionStorage.setItem(KEY_UNLOCK, '1');
+      canEdit = true;
+      renderPrep();
+    }
+    var btnCreate = box.querySelector('#btnCreate');
+    if(btnCreate) btnCreate.onclick = function(){
+      var pin = (box.querySelector('#pinBox').value || '').trim();
+      if(pin.length < 4) return err('口令至少 4 位');
+      createCloud().then(function(){
+        canEdit = true;
+        return hashPin(pin);
+      }).then(function(h){
+        cloud.pinHash = h;
+        return pushCloud();
+      }).then(afterUnlock).catch(function(e){ err(syncFailHint(e)); });
+    };
+    var btnReset = box.querySelector('#btnReset');
+    if(btnReset) btnReset.onclick = function(){ clearSid(); renderPrep(); };
+    var btnUnlock = box.querySelector('#btnUnlock');
+    if(btnUnlock) btnUnlock.onclick = function(){
+      var pin = (box.querySelector('#pinBox').value || '').trim();
+      if(!pin) return err('输入口令');
+      pullCloud().then(function(){ return hashPin(pin); }).then(function(h){
+        if(cloud.pinHash && cloud.pinHash !== h) throw new Error('口令不对');
+        if(!cloud.pinHash){ cloud.pinHash = h; dirty = true; }
+        var draft = loadDraft();
+        if(draft && draft.sid === sid() && draft.cloud && stampOf(draft.cloud) > stampOf(cloud)){
+          var pinHash = cloud.pinHash;
+          applyCloud(draft.cloud);
+          cloud.pinHash = pinHash;
+          dirty = true;
+        }
+        if(dirty) return runPush();
+      }).then(afterUnlock).catch(function(e){ err(e && e.message === '口令不对' ? '口令不对' : syncFailHint(e)); });
+    };
+    var btnLock = box.querySelector('#btnLock');
+    if(btnLock) btnLock.onclick = function(){
+      sessionStorage.removeItem(KEY_UNLOCK);
+      canEdit = false;
+      renderPrep();
+    };
+    var btnCopy = box.querySelector('#btnCopy');
+    if(btnCopy) btnCopy.onclick = function(){
+      var link = shareLink();
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(link).then(function(){ btnCopy.textContent = '已复制'; }).catch(function(){ prompt('复制这个链接发给对方', link); });
+      } else prompt('复制这个链接发给对方', link);
+    };
+    renderSyncBits();
+  }
+  function openComposer(box, kind, item){
+    var form = box.querySelector('[data-composer="'+kind+'"]');
+    if(!form) return;
+    form.hidden = false;
+    form.setAttribute('data-mode', item ? 'edit' : 'add');
+    form.setAttribute('data-id', item ? item.id : '');
+    if(kind === 'spend'){
+      form.querySelector('.kicker').textContent = item ? '改花费' : '添加花费';
+      form.querySelector('[data-add-save]').textContent = item ? '保存' : '添加';
+      form.querySelector('[data-add-text]').value = item ? (item.name || '') : '';
+      form.querySelector('[data-add-cat]').value = item ? (item.cat || '其他') : '其他';
+      var selected = {};
+      if(item) spendDates(item).forEach(function(d){ if(d !== '日期待定') selected[d] = true; });
+      Array.prototype.forEach.call(form.querySelectorAll('[data-day]'), function(b){
+        b.classList.toggle('on', !!selected[b.getAttribute('data-day')]);
+      });
+      form.querySelector('[data-add-note]').value = item ? (item.note || '') : '';
+      var cny = spendNum(item && item.cny);
+      form.querySelector('[data-add-amt]').value = cny != null ? String(cny) : '';
+    } else {
+      form.querySelector('.kicker').textContent = item
+        ? (kind === 'prep' ? '改待办' : '改行李')
+        : (kind === 'prep' ? '添加待办' : '添加行李');
+      form.querySelector('[data-add-save]').textContent = item ? '保存' : '添加';
+      form.querySelector('[data-add-text]').value = item ? item.t : '';
+      form.querySelector('[data-add-group]').value = item ? (item.g || '') : '';
+      var dateEl = form.querySelector('[data-add-date]');
+      if(dateEl) dateEl.value = item ? (prepDate(item) || '') : '';
+    }
+    var focusEl = form.querySelector('[data-add-text]');
+    if(focusEl) focusEl.focus();
+  }
+  function bindPrepActions(box){
+    Array.prototype.forEach.call(box.querySelectorAll('[data-open-add]'), function(btn){
+      btn.onclick = function(){
+        if(!canEdit){ var pin = box.querySelector('#pinBox'); if(pin) pin.focus(); return; }
+        openComposer(box, btn.getAttribute('data-open-add'));
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-day]'), function(b){
+      b.onclick = function(){ if(canEdit) b.classList.toggle('on'); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-add-cancel]'), function(btn){
+      btn.onclick = function(){
+        var form = btn.closest('[data-composer]');
+        if(form) form.hidden = true;
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-add-save]'), function(btn){
+      btn.onclick = function(){
+        if(!canEdit) return;
+        var form = btn.closest('[data-composer]');
+        var kind = form.getAttribute('data-composer');
+        if(kind === 'spend'){
+          var fields = spendFieldsFromForm(form);
+          if(!fields.name){ form.querySelector('[data-add-text]').focus(); return; }
+          if(form.getAttribute('data-mode') === 'edit') patchSpendItem(form.getAttribute('data-id'), fields);
+          else addSpendItem(fields);
+          renderPrep();
+          schedulePush();
+          return;
+        }
+        var t = form.querySelector('[data-add-text]').value;
+        var g = form.querySelector('[data-add-group]').value;
+        var dateEl = form.querySelector('[data-add-date]');
+        var date = dateEl ? dateEl.value : '';
+        if(!(t || '').trim()){ form.querySelector('[data-add-text]').focus(); return; }
+        if(form.getAttribute('data-mode') === 'edit') renameListItem(kind, form.getAttribute('data-id'), t, g, date);
+        else addListItem(kind, t, g, date);
+        renderPrep();
+        schedulePush();
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-add-text], [data-add-date]'), function(inp){
+      inp.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          var save = inp.closest('[data-composer]');
+          if(save){ var b = save.querySelector('[data-add-save]'); if(b) b.click(); }
+        }
+      });
+    });
+    function bindEdit(attr, kind, listFn){
+      Array.prototype.forEach.call(box.querySelectorAll('['+attr+']'), function(btn){
+        btn.onclick = function(e){
+          e.preventDefault();
+          var item = listFn().filter(function(p){ return p.id === btn.getAttribute(attr); })[0];
+          if(item) openComposer(box, kind, item);
+        };
+      });
+    }
+    function bindDel(attr, kind, msg){
+      Array.prototype.forEach.call(box.querySelectorAll('['+attr+']'), function(btn){
+        btn.onclick = function(e){
+          e.preventDefault();
+          if(!confirm(msg)) return;
+          removeListItem(kind, btn.getAttribute(attr));
+          renderPrep();
+          schedulePush();
+        };
+      });
+    }
+    bindEdit('data-edit-prep', 'prep', livePrep);
+    bindEdit('data-edit-pack', 'pack', liveBags);
+    bindEdit('data-edit-spend', 'spend', liveSpend);
+    bindDel('data-del-prep', 'prep', '删除这条待办？');
+    bindDel('data-del-pack', 'pack', '删除这件行李？');
+    bindDel('data-del-spend', 'spend', '删除这条花费？统计会一起更新。');
+  }
+
+  function renderTodo(){
+    var todos = livePrep();
+    var groups = prepGroups(todos);
+    var left = todos.filter(function(p){ return !isChecked(p); }).length;
+    var pct = todos.length ? Math.round((todos.length - left) / todos.length * 100) : 0;
+    return '<div class="page-head c-blue">待办事项 <span>'+todos.length+' 条任务</span>'+
+      '<button type="button" class="add-pill" data-open-add="prep">＋ 添加</button></div>'+
+      addComposer('prep', groups.length ? groups : ['行前必办','按日期'], '')+
       '<div class="card"><div class="kicker">行前进度</div>'+
-        '<div class="prog-top"><span>已完成 '+pd+' / '+prep.length+'</span><b>'+pct+'%</b></div>'+
+        '<div class="prog-top"><span>已完成 '+(todos.length - left)+' / '+todos.length+'</span><b>'+pct+'%</b></div>'+
         '<div class="prog"><i style="width:'+pct+'%"></i></div>'+
-        '<p class="hint">点一行勾选。点 ＋ 可自加。改完只留在这台手机。</p></div>'+
-      '<div class="stats">'+
-        '<button type="button" class="stat '+(todoFilter==='all'?'on':'')+'" data-todo-filter="all"><b>'+prep.length+'</b><span>全部</span></button>'+
-        '<button type="button" class="stat ok '+(todoFilter==='done'?'on':'')+'" data-todo-filter="done"><b>'+pd+'</b><span>已完成</span></button>'+
-        '<button type="button" class="stat miss '+(todoFilter==='open'?'on':'')+'" data-todo-filter="open"><b>'+openN+'</b><span>未做</span></button>'+
-      '</div>';
-    var gg=groupBy(shown,'g');
-    if(!shown.length) html+='<p class="hint">这一栏是空的。</p>';
-    html+=gg.map(function(g){
-      var items=g.items.map(function(x){
-        return '<div class="check'+(x.done?' done':'')+'"><label class="check-main">'+
-          '<input type="checkbox" data-prep="'+x.id+'" '+(x.done?'checked':'')+'><span class="lab">'+esc(x.t)+'</span></label>'+
-          (x.extra?'<button type="button" class="xbtn" data-del-prep="'+x.id+'" aria-label="删除">×</button>':'')+'</div>';
-      }).join('');
-      return '<div class="card"><div class="kicker'+(g.name==='行前必办'?' urgent':'')+'">'+esc(g.name)+' · '+g.items.length+'</div>'+items+'</div>';
-    }).join('');
-    return html;
+        '<p class="hint">'+(canEdit ? '勾选、添加、删除会立刻同步到云端。点铅笔可改文字和日期。填日期会进「按日期」并按天排序。' : '先解锁才能勾选、添加或删除。')+'</p></div>'+
+      groups.map(function(g){
+        var rows = g === '按日期' ? sortPrepItems(todos.filter(function(p){ return p.g === g; })) : todos.filter(function(p){ return p.g === g; });
+        return '<div class="card"><div class="kicker'+(g === '行前必办' ? ' urgent' : '')+'">'+esc(g)+' · '+rows.length+'</div>'+
+          rows.map(function(p){
+            var day = g === '按日期' ? (prepDate(p) || '—') : '';
+            return '<div class="check'+(isChecked(p) ? ' done' : '')+'"><label class="check-main">'+
+              '<input type="checkbox" data-list="prep" data-id="'+esc(p.id)+'" '+(isChecked(p) ? 'checked' : '')+(canEdit ? '' : ' disabled')+'>'+
+              (day ? '<span class="prep-date">'+esc(day)+'</span>' : '')+
+              '<span class="lab">'+esc(p.t)+'</span></label>'+
+              itemActions('prep', p.id)+'</div>';
+          }).join('')+
+        '</div>';
+      }).join('')+
+      '<div class="card"><div class="kicker">共享备忘</div>'+
+        '<p class="hint">'+(canEdit ? '两人看到的是同一份。不要写护照号、证件号。' : '解锁后可编辑。')+'</p>'+
+        '<textarea id="noteBox" placeholder="租车门店电话、明早谁开车……" '+(canEdit ? '' : 'disabled')+'></textarea></div>';
   }
   function renderPack(){
-    var bags=liveBags();
-    var packed=bags.filter(function(x){return x.st==='packed';}).length;
-    var none=bags.filter(function(x){return x.st==='none';}).length;
-    var shown=bags.filter(function(x){ return packFilter==='all'||x.st===packFilter; });
-    var groups=['保暖','配件','电子','证件','其他'];
-    var html='<div class="page-head c-teal">行李整理 <span>'+bags.length+' 件</span>'+
+    var packedItems = liveBags();
+    var bgroups = [];
+    packedItems.forEach(function(p){ if(bgroups.indexOf(p.g) < 0) bgroups.push(p.g); });
+    var noneN = packedItems.filter(function(p){ return packState(p) === 'none'; }).length;
+    var packedN = packedItems.filter(function(p){ return packState(p) === 'packed'; }).length;
+    var shownBags = packedItems.filter(function(p){ return packFilter === 'all' || packState(p) === packFilter; });
+    var shownGroups = bgroups.filter(function(g){ return shownBags.some(function(p){ return p.g === g; }); });
+    return '<div class="page-head c-teal">行李整理 <span>'+packedItems.length+' 件</span>'+
       '<button type="button" class="add-pill" data-open-add="pack">＋ 添加</button></div>'+
+      addComposer('pack', bgroups.length ? bgroups : ['其他'], '')+
       '<div class="stats">'+
-        '<button type="button" class="stat '+(packFilter==='all'?'on':'')+'" data-pack-filter="all"><b>'+bags.length+'</b><span>全部</span></button>'+
-        '<button type="button" class="stat ok '+(packFilter==='packed'?'on':'')+'" data-pack-filter="packed"><b>'+packed+'</b><span>已装包</span></button>'+
-        '<button type="button" class="stat miss '+(packFilter==='none'?'on':'')+'" data-pack-filter="none"><b>'+none+'</b><span>尚无</span></button>'+
+        '<button type="button" class="stat '+(packFilter === 'all' ? 'on' : '')+'" data-pack-filter="all"><b>'+packedItems.length+'</b><span>全部</span></button>'+
+        '<button type="button" class="stat ok '+(packFilter === 'packed' ? 'on' : '')+'" data-pack-filter="packed"><b>'+packedN+'</b><span>已装包</span></button>'+
+        '<button type="button" class="stat miss '+(packFilter === 'none' ? 'on' : '')+'" data-pack-filter="none"><b>'+noneN+'</b><span>尚无</span></button>'+
       '</div>'+
-      '<p class="hint">点一行切换：尚无 → 已有 → 已装包。点上面三个数字可筛选。</p>'+
-      addBox('pack', groups, '其他');
-    var gg=groupBy(shown,'g');
-    if(!shown.length) html+='<p class="hint">这一栏是空的。</p>';
-    html+=gg.map(function(g){
-      var items=g.items.map(function(x){
-        return '<div class="pack-row"><button type="button" class="pack-st st-'+x.st+'" data-bag="'+x.id+'">'+
-          '<span class="lab">'+esc(x.t)+'</span><span class="st-pill">'+PACK_LABEL[x.st]+'</span></button>'+
-          (x.extra?'<button type="button" class="xbtn" data-del-bag="'+x.id+'" aria-label="删除">×</button>':'')+'</div>';
-      }).join('');
-      return '<div class="card"><div class="kicker">'+esc(g.name)+' · '+g.items.length+'</div>'+items+'</div>';
-    }).join('');
-    return html;
+      '<p class="hint">'+(canEdit ? '点一行切换：尚无 → 已有 → 已装包。点铅笔改名字，点 × 删除。改完会先记在本机，再写入云端。' : '先解锁才能改状态、添加或删除。依次是尚无、已有、已装包。')+' 点上面三个数字可筛选。</p>'+
+      shownGroups.map(function(g){
+        var rows = shownBags.filter(function(p){ return p.g === g; });
+        return '<div class="card"><div class="kicker">'+esc(g)+' · '+rows.length+'</div>'+
+          rows.map(function(p){
+            var st = packState(p);
+            return '<div class="pack-row"><button type="button" class="pack-st st-'+st+'" data-pack="'+esc(p.id)+'" '+(canEdit ? '' : 'disabled')+'>'+
+              '<span class="lab">'+esc(p.t)+'</span><span class="st-pill">'+PACK_LABEL[st]+'</span></button>'+
+              itemActions('pack', p.id)+'</div>';
+          }).join('')+'</div>';
+      }).join('')+
+      (!shownBags.length ? '<p class="hint">这一栏是空的。</p>' : '');
   }
   function renderSpendHtml(){
-    var live=liveSpend(), rows=live.rows;
-    var known=0, pending=0, knownN=0;
-    var byCat={};
-    Object.keys(CATS).forEach(function(c){ byCat[c]={sum:0,wait:0}; });
-    rows.forEach(function(r){
-      if(!byCat[r.cat]) byCat[r.cat]={sum:0,wait:0};
-      if(r.cny==null||r.cny===''){ pending++; byCat[r.cat].wait++; }
-      else { known+=Number(r.cny); knownN++; byCat[r.cat].sum+=Number(r.cny); }
+    var items = liveSpend();
+    var known = items.filter(function(p){ return !spendPending(p); });
+    var waitN = items.length - known.length;
+    var total = known.reduce(function(s, p){ return s + (spendNum(p.cny) || 0); }, 0);
+    var catOrder = spendCatOrder(items);
+    var colorMap = spendColorMap(catOrder);
+    var byCat = catOrder.map(function(cat){
+      var rows = items.filter(function(p){ return (p.cat || '其他') === cat; });
+      if(!rows.length) return null;
+      return {
+        key:cat,
+        cny: rows.reduce(function(s, p){ return s + (spendNum(p.cny) || 0); }, 0),
+        wait: rows.filter(spendPending).length
+      };
+    }).filter(Boolean);
+    var dateMap = {};
+    items.forEach(function(p){
+      var ds = spendDates(p);
+      var cat = p.cat || '其他';
+      var amt = spendNum(p.cny) || 0;
+      var shares = spendSplitAmt(amt, ds.length);
+      ds.forEach(function(label, i){
+        var cur = dateMap[label] || {key:spendDateKey(label), label:label, cny:0, wait:0, parts:{}};
+        var share = shares[i] || 0;
+        cur.cny += share;
+        cur.parts[cat] = (cur.parts[cat] || 0) + share;
+        if(spendPending(p)) cur.wait += 1;
+        dateMap[label] = cur;
+      });
     });
-    var shown=rows.filter(function(r){
-      if(spendFilter==='wait') return r.cny==null||r.cny==='';
-      if(spendFilter==='ok') return r.cny!=null&&r.cny!=='';
-      return true;
-    });
-    var max=Math.max.apply(null, Object.keys(byCat).map(function(c){ return byCat[c].sum; }).concat([1]));
-    var bars=Object.keys(CATS).map(function(c){
-      var w=Math.round(byCat[c].sum/max*100);
-      return '<div class="bar-row"><span style="width:36px;font-weight:700;color:'+CATS[c]+'">'+c+'</span>'+
-        '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+CATS[c]+'"></div></div>'+
-        '<span class="n">'+(byCat[c].sum?('¥'+byCat[c].sum):(byCat[c].wait?'待补':'-'))+'</span></div>';
+    var byDate = Object.keys(dateMap).map(function(k){ return dateMap[k]; }).sort(function(a,b){ return a.key - b.key; });
+    var maxCat = Math.max.apply(null, [0].concat(byCat.map(function(g){ return g.cny; })));
+    var maxDate = Math.max.apply(null, [0].concat(byDate.map(function(g){ return g.cny; })));
+    var catRows = byCat.map(function(g){
+      var pct = maxCat > 0 ? Math.round(g.cny / maxCat * 100) : 0;
+      var color = colorMap[g.key] || '#7B8794';
+      return '<div class="spend-sum"><span><i class="spend-dot" style="background:'+color+'"></i>'+esc(g.key)+(g.wait ? ' · 待补 '+g.wait : '')+'</span><b>¥'+fmtCny(g.cny)+'</b></div>'+
+        '<div class="spend-bar"><i style="width:'+pct+'%;background:'+color+'"></i></div>';
     }).join('');
-    var list=shown.map(function(r){
-      var amt=r.cny==null||r.cny===''? '<span style="color:#C2671B">待补</span>' : '¥'+Number(r.cny).toLocaleString('zh-CN');
-      return '<div class="spend-item"><div><div style="font-weight:600">'+esc(r.name)+'</div>'+
-        '<div class="hint">'+esc(r.date)+' · '+esc(r.cat)+(r.note?(' · '+esc(r.note)):'')+'</div></div>'+
-        '<div style="text-align:right"><div>'+amt+'</div>'+
-        '<button class="mini" data-ed="'+esc(r.id)+'">改</button> '+
-        '<button class="mini" data-del="'+esc(r.id)+'">删</button></div></div>';
+    var dateRows = byDate.map(function(g){
+      var segs = catOrder.map(function(cat){
+        var amt = (g.parts && g.parts[cat]) || 0;
+        if(amt <= 0 || maxDate <= 0) return '';
+        var color = colorMap[cat] || '#7B8794';
+        return '<i style="width:'+(amt / maxDate * 100).toFixed(2)+'%;background:'+color+'" title="'+esc(cat)+' ¥'+fmtCny(amt)+'"></i>';
+      }).join('');
+      return '<div class="spend-sum"><span>'+esc(g.label)+(g.wait ? ' · 待补 '+g.wait : '')+'</span><b>¥'+fmtCny(g.cny)+'</b></div>'+
+        '<div class="spend-bar">'+segs+'</div>';
     }).join('');
-    var form='';
-    if(spendEditing!==null){
-      var cur=rows.filter(function(x){return x.id===spendEditing;})[0] || {name:'',date:'',cat:'其他',cny:'',note:''};
-      var opts=Object.keys(CATS).map(function(c){ return '<option'+(cur.cat===c?' selected':'')+'>'+c+'</option>'; }).join('');
-      form='<div class="card add-box"><div class="kicker">'+(String(spendEditing).indexOf('new-')===0?'记一笔':'改一笔')+'</div>'+
-        '<input class="field" id="spName" placeholder="名称" value="'+esc(cur.name||'')+'">'+
-        '<input class="field" id="spDate" placeholder="日期 如 12/12" value="'+esc(cur.date||'')+'">'+
-        '<select class="field" id="spCat">'+opts+'</select>'+
-        '<input class="field" id="spCny" type="number" inputmode="decimal" placeholder="金额，空着=待补" value="'+(cur.cny==null||cur.cny===''?'':cur.cny)+'">'+
-        '<input class="field" id="spNote" placeholder="备注（可空）" value="'+esc(cur.note||'')+'">'+
-        '<button class="mini pri" id="spSave">保存</button> <button class="mini" id="spCancel">取消</button></div>';
-    }
-    return '<div class="page-head c-orange">花费 <span>'+rows.length+' 笔</span>'+
-      '<button type="button" class="add-pill" id="spAdd">＋ 添加</button></div>'+
+    var dateCats = catOrder.filter(function(cat){ return byDate.some(function(d){ return (d.parts[cat] || 0) > 0; }); });
+    var legend = dateCats.length ? '<div class="spend-legend">'+dateCats.map(function(cat){
+      return '<span><i class="spend-dot" style="background:'+(colorMap[cat] || '#7B8794')+'"></i>'+esc(cat)+'</span>';
+    }).join('')+'</div>' : '';
+    var detail = catOrder.map(function(cat){
+      var rows = items.filter(function(p){ return (p.cat || '其他') === cat; });
+      if(!rows.length) return '';
+      rows = rows.slice().sort(function(a,b){ return spendDateKey(spendDates(a)[0]) - spendDateKey(spendDates(b)[0]); });
+      return '<div class="card"><div class="kicker">'+esc(cat)+' · '+rows.length+'</div>'+
+        rows.map(function(p){
+          var amt = spendPending(p) ? '<div class="spend-amt wait">待补</div>' : '<div class="spend-amt">¥'+fmtCny(spendNum(p.cny))+'</div>';
+          return '<div class="spend-row"><div class="lab"><b>'+esc(p.name)+'</b><div class="hint">'+esc(spendDatesLabel(p))+(p.note ? ' · '+esc(p.note) : '')+'</div></div>'+
+            amt+itemActions('spend', p.id)+'</div>';
+        }).join('')+'</div>';
+    }).join('');
+    return '<div class="page-head c-orange">花费 <span>'+items.length+' 笔</span>'+
+      '<button type="button" class="add-pill" data-open-add="spend">＋ 添加</button></div>'+
+      spendComposer()+
       '<div class="stats">'+
-        '<button type="button" class="stat '+(spendFilter==='all'?'on':'')+'" data-spend-filter="all"><b>'+rows.length+'</b><span>全部</span></button>'+
-        '<button type="button" class="stat ok '+(spendFilter==='ok'?'on':'')+'" data-spend-filter="ok"><b>¥'+known.toLocaleString('zh-CN')+'</b><span>已记账</span></button>'+
-        '<button type="button" class="stat miss '+(spendFilter==='wait'?'on':'')+'" data-spend-filter="wait"><b>'+pending+'</b><span>待补</span></button>'+
+        '<div class="stat ok"><b>¥'+fmtCny(total)+'</b><span>已记账</span></div>'+
+        '<div class="stat miss"><b>'+waitN+'</b><span>待补</span></div>'+
+        '<div class="stat"><b>'+items.length+'</b><span>全部</span></div>'+
       '</div>'+
-      '<p class="hint">未定价先留待补。'+(knownN?('已记账人均约 ¥'+Math.round(known/5)+'。'):'')+'只存在这台手机。</p>'+
-      form+'<div class="card"><div class="kicker">按类目</div>'+bars+'</div>'+
-      '<div class="card"><div class="kicker">明细</div>'+(list||'<p class="hint">还没有账</p>')+'</div>';
+      '<p class="hint">'+(canEdit ? '点铅笔改类目、日期、金额，点 × 删除。多日费用按天数平摊到「按日期」。' : '先解锁才能增删改。')+
+        (known.length ? ' 已记账人均约 ¥'+fmtCny(total / 5)+'。' : '')+'</p>'+
+      '<div class="card"><div class="kicker">按类目</div>'+catRows+'</div>'+
+      '<div class="card"><div class="kicker">按日期（多日费用已平摊）</div>'+dateRows+legend+'</div>'+
+      detail;
   }
   function renderPrep(){
-    var root=document.getElementById('prepRoot'); if(!root) return;
-    root.innerHTML = prepTab==='pack' ? renderPack() : (prepTab==='spend' ? renderSpendHtml() : renderTodo());
-    bindAdd(adding);
-    Array.prototype.forEach.call(root.querySelectorAll('[data-open-add]'), function(b){
-      b.onclick=function(){ adding=b.getAttribute('data-open-add'); renderPrep(); };
-    });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-prep]'), function(el){
-      el.onchange=function(){ var st=loadJSON(KEY_PREP,{}); st[el.getAttribute('data-prep')]=el.checked; saveJSON(KEY_PREP,st); renderPrep(); };
-    });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-del-prep]'), function(b){
-      b.onclick=function(){
-        var lists=loadLists(); lists.gonePrep.push(b.getAttribute('data-del-prep')); saveLists(lists); renderPrep();
+    var root = document.getElementById('prepRoot');
+    if(!root) return;
+    var body = prepTab === 'pack' ? renderPack() : (prepTab === 'spend' ? renderSpendHtml() : renderTodo());
+    root.innerHTML = gateCard() + body;
+    bindGate(root);
+    bindPrepActions(root);
+    Array.prototype.forEach.call(root.querySelectorAll('input[type=checkbox][data-id]'), function(inp){
+      inp.onchange = function(){
+        cloud.prep = cloud.prep || {};
+        cloud.prep[inp.getAttribute('data-id')] = inp.checked;
+        renderPrep();
+        schedulePush();
       };
     });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-bag]'), function(el){
-      el.onclick=function(){
-        var st=loadJSON(KEY_PACK,{}); var id=el.getAttribute('data-bag');
-        var cur=st[id]||'none'; st[id]=cur==='none'?'have':(cur==='have'?'packed':'none');
-        saveJSON(KEY_PACK,st); renderPrep();
+    Array.prototype.forEach.call(root.querySelectorAll('[data-pack]'), function(btn){
+      btn.onclick = function(){
+        if(!canEdit) return;
+        var id = btn.getAttribute('data-pack');
+        var item = liveBags().filter(function(p){ return p.id === id; })[0];
+        setPackState(id, nextPackState(packState(item || {id:id, st:'none'})));
+        renderPrep();
+        schedulePush();
       };
     });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-del-bag]'), function(b){
-      b.onclick=function(){ var lists=loadLists(); lists.gonePack.push(b.getAttribute('data-del-bag')); saveLists(lists); renderPrep(); };
+    Array.prototype.forEach.call(root.querySelectorAll('[data-pack-filter]'), function(btn){
+      btn.onclick = function(){ packFilter = btn.getAttribute('data-pack-filter'); renderPrep(); };
     });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-todo-filter]'), function(b){
-      b.onclick=function(){ todoFilter=b.getAttribute('data-todo-filter'); renderPrep(); };
+    var ta = document.getElementById('noteBox');
+    if(ta){
+      ta.value = cloud.notes || '';
+      ta.oninput = function(){ cloud.notes = ta.value; schedulePush(); };
+    }
+  }
+  function uniqPush(arr, items){
+    (items || []).forEach(function(item){
+      if(item == null) return;
+      var id = typeof item === 'string' ? item : item.id;
+      var exists = arr.some(function(x){ return (typeof x === 'string' ? x : x.id) === id; });
+      if(!exists) arr.push(item);
     });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-pack-filter]'), function(b){
-      b.onclick=function(){ packFilter=b.getAttribute('data-pack-filter'); renderPrep(); };
-    });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-spend-filter]'), function(b){
-      b.onclick=function(){ spendFilter=b.getAttribute('data-spend-filter'); renderPrep(); };
-    });
-    var add=document.getElementById('spAdd');
-    if(add) add.onclick=function(){ spendEditing='new-'+Date.now(); renderPrep(); };
-    var cancel=document.getElementById('spCancel');
-    if(cancel) cancel.onclick=function(){ spendEditing=null; renderPrep(); };
-    var save=document.getElementById('spSave');
-    if(save) save.onclick=function(){
-      var name=document.getElementById('spName').value.trim();
-      var date=document.getElementById('spDate').value.trim()||'—';
-      var cat=document.getElementById('spCat').value;
-      var cnyRaw=document.getElementById('spCny').value.trim();
-      var note=document.getElementById('spNote').value.trim();
-      if(!name) return;
-      var cny=cnyRaw===''? null : Number(cnyRaw);
-      if(cnyRaw!=='' && !isFinite(cny)) return;
-      var meta=liveSpend().meta;
-      var patch={name:name,date:date,cat:cat,cny:cny,note:note};
-      if(String(spendEditing).indexOf('new-')===0) meta.extra.push(Object.assign({id:spendEditing}, patch));
-      else if(SPENDS.some(function(s){return s.id===spendEditing;})) meta.edit[spendEditing]=patch;
-      else meta.extra=meta.extra.map(function(x){ return x.id===spendEditing? Object.assign({},x,patch):x; });
-      saveSpend(meta); spendEditing=null; renderPrep();
-    };
-    Array.prototype.forEach.call(root.querySelectorAll('[data-ed]'), function(b){
-      b.onclick=function(){ spendEditing=b.getAttribute('data-ed'); renderPrep(); };
-    });
-    Array.prototype.forEach.call(root.querySelectorAll('[data-del]'), function(b){
-      b.onclick=function(){
-        if(!confirm('删除这一笔？')) return;
-        var meta=liveSpend().meta, id=b.getAttribute('data-del');
-        meta.gone.push(id);
-        meta.extra=meta.extra.filter(function(x){ return x.id!==id; });
-        delete meta.edit[id];
-        saveSpend(meta); renderPrep();
-      };
-    });
+  }
+  function importLegacy(){
+    try { if(localStorage.getItem(KEY_MIGRATED) === '1') return; }
+    catch(e) { return; }
+    var prepSt = loadJSON(KEY_PREP, null);
+    var packSt = loadJSON(KEY_PACK, null);
+    var spend = loadJSON(KEY_SPEND, null);
+    var lists = loadJSON('kanas2026-lists', null);
+    var has = (prepSt && typeof prepSt === 'object') || (packSt && typeof packSt === 'object') ||
+      (spend && typeof spend === 'object') || (lists && typeof lists === 'object');
+    if(sid()){
+      try { localStorage.setItem(KEY_MIGRATED, '1'); } catch(e) {}
+      return;
+    }
+    if(!has){
+      try { localStorage.setItem(KEY_MIGRATED, '1'); } catch(e) {}
+      return;
+    }
+    ensureLists();
+    if(prepSt && typeof prepSt === 'object' && !Array.isArray(prepSt)){
+      Object.keys(prepSt).forEach(function(id){
+        if(Object.prototype.hasOwnProperty.call(prepSt, id)) cloud.prep[id] = !!prepSt[id];
+      });
+    }
+    if(packSt && typeof packSt === 'object' && !Array.isArray(packSt)){
+      Object.keys(packSt).forEach(function(id){
+        var v = packSt[id];
+        if(v === 'none' || v === 'have' || v === 'packed') cloud.pack[id] = v;
+      });
+    }
+    if(lists && typeof lists === 'object'){
+      uniqPush(cloud.lists.extraPrep, lists.extraPrep);
+      uniqPush(cloud.lists.extraPack, lists.extraPack);
+      uniqPush(cloud.lists.gonePrep, lists.gonePrep);
+      uniqPush(cloud.lists.gonePack, lists.gonePack);
+    }
+    if(spend && typeof spend === 'object'){
+      uniqPush(cloud.lists.extraSpend, spend.extra);
+      uniqPush(cloud.lists.goneSpend, spend.gone);
+      if(spend.edit && typeof spend.edit === 'object'){
+        Object.keys(spend.edit).forEach(function(id){
+          cloud.lists.editSpend[id] = Object.assign({}, cloud.lists.editSpend[id], spend.edit[id]);
+        });
+      }
+    }
+    saveDraft();
+    var saved = loadDraft();
+    if(saved && saved.cloud){
+      try { localStorage.setItem(KEY_MIGRATED, '1'); } catch(e) {}
+    }
+  }
+  function bootSync(){
+    bootError = '';
+    var draft = loadDraft();
+    var id = sid();
+    if(id && isTextDbSid(id)){
+      localStorage.setItem(KEY_SID, id);
+      return pullCloud().then(function(){
+        if(draft && (draft.sid || '') === id && draft.cloud && stampOf(draft.cloud) > stampOf(cloud)){
+          var pinHash = cloud.pinHash;
+          applyCloud(draft.cloud);
+          if(pinHash) cloud.pinHash = pinHash;
+          dirty = true;
+          schedulePush();
+        } else saveDraft();
+      }).catch(function(e){
+        bootError = syncFailHint(e);
+        if(draft && (draft.sid || '') === id && draft.cloud) applyCloud(draft.cloud);
+      }).then(function(){
+        if(sessionStorage.getItem(KEY_UNLOCK) === '1') canEdit = true;
+      });
+    }
+    if(draft && !draft.sid && draft.cloud) applyCloud(draft.cloud);
+    return Promise.resolve();
   }
 
   var TRIP_TABS=[{id:'days',label:'日程'},{id:'hemu',label:'禾木'},{id:'kanas',label:'喀纳斯'},{id:'review',label:'复盘'}];
@@ -1512,6 +2275,11 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
         if(t.classList.contains('leaflet-control')) return true;
         if(t.classList.contains('leaflet-popup')) return true;
         if(t.classList.contains('add-box')) return true;
+        if(t.classList.contains('gate-card')) return true;
+        if(t.classList.contains('date-picks')) return true;
+        if(t.classList.contains('ebtn')) return true;
+        if(t.classList.contains('xbtn')) return true;
+        if(t.classList.contains('add-pill')) return true;
         if(t.classList.contains('dock')) return true;
       }
       var tag=t.tagName;
@@ -1619,6 +2387,45 @@ var KM={"road3w":[[48.688397,87.02711],[48.686957,87.026219],[48.681496,87.02607
   paintSubnav();
   renderToday();
   window.addEventListener('resize', syncHead);
+
+  importLegacy();
+  bootSync().then(function(){
+    if(page==='prep') renderPrep();
+  }).catch(function(){});
+
+  setInterval(function(){
+    if(syncing || pushing || dirty || document.hidden || !isTextDbSid(sid())) return;
+    var ae = document.activeElement;
+    if(ae && (ae.id === 'noteBox' || (ae.closest && ae.closest('[data-composer]')))) return;
+    syncing = true;
+    var prev, prevStamp;
+    try { prev = JSON.stringify(cloudPayload()); prevStamp = stampOf(cloud); }
+    catch(e) { syncing = false; return; }
+    pullCloud().then(function(){
+      if(dirty) return;
+      var changed = stampOf(cloud) !== prevStamp;
+      try { changed = changed || JSON.stringify(cloudPayload()) !== prev; } catch(err) {}
+      if(changed){
+        saveDraft();
+        if(page==='prep') renderPrep();
+      }
+    }).catch(function(){}).then(function(){ syncing = false; });
+  }, 8000);
+
+  window.addEventListener('pagehide', function(){
+    saveDraft();
+    var id = sid();
+    if(!id || !isTextDbSid(id) || !dirty || typeof navigator.sendBeacon !== 'function') return;
+    cloud.updatedAt = new Date().toISOString();
+    cloud.by = who() || '同伴';
+    var body = new URLSearchParams();
+    body.set('key', id);
+    body.set('value', JSON.stringify(cloudPayload()));
+    try {
+      navigator.sendBeacon(CLOUD_API + '/update/', new Blob([body.toString()], { type: 'application/x-www-form-urlencoded' }));
+      dirty = false;
+    } catch(e) {}
+  });
 })();
 </script>
 
